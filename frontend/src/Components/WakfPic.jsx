@@ -1,5 +1,5 @@
 import '../CSS/WakfPic.css'
-
+import '../index.css'
 export  default function WakfPic(){
     return(
         <div className="pic-container">

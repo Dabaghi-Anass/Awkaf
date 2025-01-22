@@ -1,12 +1,7 @@
 *{
     font-family: 'Poppins';
 }
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-}
+
 .Login-container{
    
     position: relative;

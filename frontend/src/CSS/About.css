@@ -1,8 +1,12 @@
 
-
+.story-goal-container{ 
+   position: relative;
+   width: 100%;
+}
 .story-goal{
     margin-top: 4rem;
     position: relative;
+    
 }
 .story-goal::after{
 content: '';
@@ -17,6 +21,7 @@ filter: blur(200.055px);
 transform: matrix(-0.05, -1, 1, 0.02, 0, 0);
 }
 .story-goal .story-text{
+    
 width: 1313px;
 height: 374px;
 font-family: 'Poppins';
@@ -25,32 +30,35 @@ font-weight: 400;
 font-size: 20px;
 line-height: 30px;
 color: #000;
-
-
-
 }
-.story,.our-values{
-font-family: 'Poppins';
-font-style: normal;
-font-weight: 700;
-font-size: 40px;
-line-height: 60px;
+.titles{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.5em;
+    line-height: 3.75em;
+}
+.our-values{
+    color: #fff;
+}
+.story{
 color: #035116;
 }
 .line{
-margin-top: 3rem;
-width: 1300px;
 height: 5px;
-top: 1333px;
 background: #F2CB05;
+margin:  4em auto;
+}
 
+.our-values-container{
+    display: flex;
+    justify-content: center;
+    height: 60em;
+    width: 100%;
+    background-color: #035116;
 }
 .Values{
     position: relative;
-    margin-top: 3rem;
-    width: 1300px;
-    display: flex;
-    justify-content: space-between;
+    gap: 1em;
 }
 .Values::after{
     content: '';
@@ -68,8 +76,8 @@ background: #F2CB05;
     content: '';
     z-index: -10;
     position: absolute;
-    width: 400px;
-    height: 600px;
+    width: 25em;
+    height: 37.5em;
     left: -30%;
     top: -70%;
     filter: blur(95.3132px);

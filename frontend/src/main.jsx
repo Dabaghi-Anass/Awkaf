@@ -11,6 +11,7 @@ import Login from './pages/Login.jsx'
 import About from './pages/About.jsx'
 import Home from './pages/Home.jsx';
 import ZakactCal from './pages/ZakactCal.jsx';
+import { SignUp } from './pages/SignUp.jsx';
 
 
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: "Login/",
     element: <Login></Login>,
+  },
+  {
+    path: "Signup/",
+    element: <SignUp></SignUp>,
   },
 ]);
 

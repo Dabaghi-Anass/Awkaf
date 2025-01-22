@@ -1,13 +1,12 @@
 import '../CSS/AboutPic.css'
-
+import '../index.css'
 
 export default function AboutPic(){
     return(
         <>
        
-        <div className="big-pic">
+        <div className="big-pic center">
             <div className="about">
-               
                
                 <p className="about-text">
                 <h1 className='About'>About</h1>

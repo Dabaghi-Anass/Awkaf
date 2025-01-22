@@ -1,14 +1,14 @@
 
 
+
 .container-values{
-    display: flex;
+    background-color: aliceblue;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    
 }
 .value-pic{
-width: 406px;
-height: 234px;
+width: 26em;
+height: 15em;
 background: url('../assets/images/About.png');
 background-repeat: no-repeat;
 background-position: center;
@@ -25,8 +25,8 @@ color: #035116;
  text-align: center;
 }
 .value-text{
-width: 350px;
-height: 260px;
+width: 22.5em;
+height: 16.25em;
 font-family: 'Poppins';
 font-style: normal;
 font-weight: 400;
