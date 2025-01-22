@@ -1,9 +1,12 @@
 import '../CSS/About.css'
 import AboutPic from '../Components/AboutPic.jsx'
+import { Header } from '../Components/Header.jsx'
 import Values from '../Components/Values.jsx'
+
 export default function About(){
     return(
-        <>
+        <>  
+            <Header></Header>
             <AboutPic></AboutPic>
 
             

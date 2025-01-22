@@ -10,8 +10,10 @@ import Awkaf from './pages/Awkaf.jsx'
 import Login from './pages/Login.jsx'
 import About from './pages/About.jsx'
 import Home from './pages/Home.jsx';
-import ZakactCal from './pages/ZakactCal.jsx';
+import ZakatCal from './pages/ZakatCal.jsx';
 import { SignUp } from './pages/SignUp.jsx';
+import { Header } from './Components/Header.jsx';
+Header
 
 
 const router = createBrowserRouter([
@@ -29,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: "ZakatCalculator/",
-    element: <ZakactCal></ZakactCal>,
+    element: <ZakatCal></ZakatCal>,
   },
   {
     path: "Login/",
@@ -38,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "Signup/",
     element: <SignUp></SignUp>,
+  },
+  {
+    path: "Header/",
+    element: <Header></Header>,
   },
 ]);
 

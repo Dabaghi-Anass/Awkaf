@@ -1,0 +1,45 @@
+
+
+.header-container{
+    width: 100%;
+    background-color: #035116;
+    height: 11em;
+    direction: rtl;
+    box-shadow: 0 2px 10px rgb(141, 139, 139);
+    margin-bottom: 7em;
+}
+
+.header-top{
+padding: 1% 8% 0 0;
+height: 6.5em;
+}
+.logo{
+    font-size: 1.4em;
+    text-decoration: none;
+    color: #F2CB05;
+    font-family: 'El Messiri';
+    font-style: normal;
+    font-weight: 700;
+}
+
+.header-bottom{
+height: 4.5em;
+padding: 2% 8% 0 0;
+background-color: white;
+display: flex;
+}
+.page{
+    font-family: 'El Messiri';
+    text-decoration: none;
+    color: #035116;
+    font-size:1.2em ;
+    font-weight: 700;
+    margin: 0 0 0 2.1em;
+}
+
+
+
+/* منصة حساب زكاة الشركات وتوجيهها للوقف والتنمية */
+
+/* منصة حساب زكاة الشركات وتوجيهها للوقف والتنمية */
+
