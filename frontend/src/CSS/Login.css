@@ -1,0 +1,172 @@
+*{
+    font-family: 'Poppins';
+}
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+.Login-container{
+   
+    position: relative;
+    border-radius: 25px;
+    margin-top: 5em;
+    width:503px ;
+    height: 623px;
+    background: #035116;
+}
+.title{
+padding-top: 1em;
+padding-bottom: 1.5rem;
+margin-bottom: 5px;
+text-align: center;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 700;
+font-size: 39.8462px;
+line-height: 60px;
+color: #F2CB05;
+}
+.input-container{
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    padding:1em 0 1em 0 ;
+    position: relative;
+}
+input{
+    padding: 5px 0 5px 5px;
+    border: none;
+    outline: none;
+    border-radius:15px ;
+    width: 404px;
+    height: 33px;
+    font-size: 1em;
+    /*/height: 43px ;
+    width: 444px;*/
+}
+.error{
+    padding: 1rem 0 1rem 0;
+    color: #8a1818;
+    position: absolute;
+    top: 3rem;
+    left: 3rem;
+    font-weight: 500;
+}
+label {
+    font-weight:lighter;
+    font-size: 13px;
+    color: #fff;
+    left: 3rem;
+    top: -0.5rem;
+    position: absolute;
+   
+}
+.login-btn-cont{
+    padding: 1rem 0 1rem 0;
+    text-align: center;
+}
+.login-btn{
+    outline: none;
+    border: none;
+    width: 100px;
+    height: 31px;
+    left: 670px;
+    top: 581px;
+    background: #F2CB05;
+    border-radius: 7px;
+    font-size:16px ;
+    color: #084220;
+    cursor: pointer;
+}
+.Or{
+    
+    font-size: 15px;
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+.Or::after{
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 4px;
+    border-radius:25px ;
+    right: 2rem;
+    top: 50%;
+    background: #F2CB05;
+}
+.Or::before{
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 4px;
+    border-radius:25px ;
+    left: 2rem;
+    top: 50%;
+    background: #F2CB05;
+}
+.login-with{
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 18px;
+padding-left: 2rem;
+color: #6CB12F;
+padding-bottom: 1rem;
+}
+.other-ways{
+    justify-content: center;
+    display: flex;
+}
+.icon{
+    cursor: pointer;
+margin: 0 0.8rem;
+width: 64px;
+height: 64px;
+background: #FFFFFF;
+border-radius: 17.7778px;
+margin-bottom: 2rem;
+}
+.no-account{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+
+}
+.no-account p{
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 18px;
+color: #F2CB05;
+}
+.no-account p a{
+    position: relative;
+    text-decoration: underline;
+    color: #F2CB05;
+    font-weight: 500;
+    font-size: 15px;
+}
+.no-account p a::after{
+content: '';
+position: absolute;
+height: 1rem;
+width: 0.2rem;
+background: #F2CB05;
+right:-1.5rem;
+
+}
+.terms{
+margin-left: 3rem;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 300;
+font-size: 12px;
+line-height: 18px;
+color: #86FF4E;
+cursor: pointer;
+}

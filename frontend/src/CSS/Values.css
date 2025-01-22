@@ -1,0 +1,37 @@
+
+
+.container-values{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.value-pic{
+width: 406px;
+height: 234px;
+background: url('../assets/images/About.png');
+background-repeat: no-repeat;
+background-position: center;
+background-size: cover;
+}
+.value-num{
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 700;
+font-size: 32px;
+line-height: 48px;
+color: #035116;
+ margin: 2rem 0;
+ text-align: center;
+}
+.value-text{
+width: 350px;
+height: 260px;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+text-align: center;
+color: #000000;
+}

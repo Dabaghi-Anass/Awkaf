@@ -1,0 +1,21 @@
+
+
+.container{
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 6rem;
+}
+.line-yellow-cont{
+    display: flex;
+    justify-content: center;
+}
+.line-yellow{
+width: 989px;
+height: 3px;
+background: #F2CB05;
+border-radius: 45px;
+
+
+}

@@ -1,0 +1,53 @@
+*{
+  /*  font-family: 'Noto Kufi Arabic';
+    direction: rtl;
+    text-align: right;*/
+}
+
+
+.project-container{
+margin-top: 2rem;
+padding: 0px;
+width: 380px;
+background: #fff;
+}
+
+.project-pic{
+width: 380px;
+height: 263px;
+background: url('../assets/images/ZkatPics/plant.png');
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;
+cursor: pointer;
+}
+.project-text h1{
+font-style: normal;
+font-weight: 700;
+font-size: 42px;
+line-height: 30px;
+color: #1E1E1E;
+}
+.project-text p{
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 25px;
+color: #000000;
+margin-bottom: 2rem;
+}
+.join-button-container{
+    text-align: right;
+}
+.join-button{
+    font-weight: 300;
+    font-size: 15.3991px;
+    line-height: 19px;
+    color: #FFFFFF;
+    padding:0.5rem 2.5rem ;
+    background-color:#035116 ;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 0.2rem;
+}

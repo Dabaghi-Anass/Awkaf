@@ -1,0 +1,64 @@
+
+
+
+.pic-container{
+position: relative;
+width: 100%;
+height: 100%;
+background: url('../assets/images/ZkatPics/Rectangle 57.png');
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;
+}
+.green{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #035116;
+    opacity: 0.65;
+}
+.text{
+    padding: 1rem 6rem;
+    position: relative;
+}
+.text .title{
+font-family: 'PNU';
+font-style: normal;
+font-weight: 700;
+font-size: 41.7765px;
+line-height: 50px;
+letter-spacing: 0.01em;
+color: #F2CB05;
+}
+.paragraph{
+font-style: normal;
+font-weight: 400;
+font-size: 23.7771px;
+line-height: 45px;
+letter-spacing: 0.01em;
+color: #FFFFFF;
+margin-bottom: 4rem;
+}
+.join-btn{
+display: flex;
+justify-content: left;
+}
+.join-btn button{
+ margin-bottom: 2rem;
+border: none;
+outline: none;
+cursor: pointer;
+background-color: #F2CB05;
+padding: 0.3rem 1rem;
+font-style: normal;
+font-weight: 400;
+font-size: 23.7771px;
+line-height: 45px;
+letter-spacing: 0.01em;
+color: #035116;
+}
+.line{
+height: 7px;
+background: #fff;
+position: relative;
+}
