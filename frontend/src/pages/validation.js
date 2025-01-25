@@ -4,7 +4,7 @@ export default function validation(data){
     let errors={};
 
     if(!data.email){
-        errors.email="Email required";
+        errors.email="البريد الإلكتروني مطلوب";
     }
     if(!data.password){
         errors.password="password required";

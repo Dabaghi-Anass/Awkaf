@@ -2,11 +2,11 @@ body{
   overflow-x: hidden;
 }
 *{
-  font-family: 'Poppins';
+  font-family: 'El Messiri';
   margin: 0;
   padding: 0;
   box-sizing: border-box;
- 
+  direction: rtl;
 }
 .center{
   display: flex;

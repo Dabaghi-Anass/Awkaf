@@ -1,0 +1,117 @@
+
+
+.sign-up-container{
+    height: 100vh;
+   background-image: radial-gradient(#53C21A,#035116 62%);
+}
+.cyrcle{
+    height: 100%;
+    width: 100%;
+   
+}
+.sign-up{
+    display: flex;
+    height: 80%;
+    width: 60%;
+    background-color: aliceblue;
+}
+.left-sign-up{
+    height: 100%;
+    background-color: #67B21C;
+    width: 45%;
+}
+.right-sign-up{
+height: 100%;
+width: 60%;
+display: flex;
+flex-direction: column;
+}
+.top{
+    height: 25%;
+}
+
+.welcome h2{
+    color: #40850C;
+    font-size: 50px;
+}
+.welcome p{
+    font-size: 10px;
+}
+.welcome{
+    text-align: center;
+}
+.middle{
+    display: flex;
+    justify-content: center;
+    height: 75%;
+}
+.middle form{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.middle form input{
+    width: 15em;
+    font-size: 19px;
+    background-color: transparent;
+    border-color: #035116;
+    border-width: 0 0 2px 0 ;
+    outline: none;
+    margin: 1.7em auto 0 auto ;
+    padding-left: 5px;
+}
+.forgot-password-container{
+    text-align: left;
+}
+.forgot-password{
+    margin-top: 0.3em;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+    text-decoration: none;
+    color: #035116;
+}
+.middle form input::placeholder{
+    color: #000000cc;
+    font-weight: 400;
+    font-size: 13px;
+}
+.login-btn{
+    outline: none;
+    border: none;
+    border-radius: 12px;
+    background-color: #035116;
+    display: block;
+    width: 80%;
+    padding: 0.3em  ;
+    margin:2em auto 0 auto;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
+    transition: 0.5s;
+}
+.login-btn:hover {
+    background-color: #40850C;
+    transition: 0.5s;
+}
+.no-account{
+    margin-top: 5em;
+    display: flex;
+    align-items: center;
+}
+.no-account .signup{
+    text-decoration: none;
+    color: #035116;
+    font-size: 12px;
+}
+.no-account .signup:hover,.forgot-password:hover{
+    text-decoration: underline;
+}
+
+.error{
+    padding: 1rem 0 1rem 0;
+    color: #8a1818;
+    font-weight: 500;
+}

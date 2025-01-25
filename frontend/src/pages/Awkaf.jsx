@@ -1,10 +1,12 @@
 import '../CSS/Awkaf.css'
+import { Header } from '../Components/Header'
 import Project from '../Components/Project'
 import WakfPic  from '../Components/WakfPic'
 export default function Awkaf(){
     return(
         <>
-        <WakfPic></WakfPic> 
+          <Header></Header>
+          <WakfPic></WakfPic> 
         
         <div className="container">
         <Project></Project>
