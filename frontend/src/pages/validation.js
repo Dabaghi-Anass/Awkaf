@@ -7,7 +7,7 @@ export default function validation(data){
         errors.email="البريد الإلكتروني مطلوب";
     }
     if(!data.password){
-        errors.password="password required";
+        errors.password="كلمة المرور مطلوبة";
     }
     return errors;
 }

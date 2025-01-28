@@ -1,144 +1,120 @@
 
-.Login-container{ 
-    position: relative;
-    border-radius: 25px;
-    margin-top: 5em;
-    width:503px ;
-    height: 623px;
-    background: #035116;
-}
-.title{
-padding-top: 1em;
-padding-bottom: 1.5rem;
-margin-bottom: 5px;
-text-align: center;
-font-family: 'Poppins';
-font-style: normal;
-font-weight: 700;
-font-size: 39.8462px;
-line-height: 60px;
-color: #F2CB05;
-}
-.input-container{
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    padding:1em 0 1em 0 ;
-    position: relative;
-}
-/*input{
-    padding: 5px 0 5px 5px;
-    border: none;
-    outline: none;
-    border-radius:15px ;
-    width: 404px;
-    height: 33px;
-    font-size: 1em;
-    /height: 43px ;
-    width: 444px;
-}*/
 
-/*label {
-    font-weight:lighter;
-    font-size: 13px;
-    color: #fff;
-    left: 3rem;
-    top: -0.5rem;
-    position: absolute;
+.sign-up-container{
+   height: 100vh;
+   background-image: radial-gradient(#53C21A,#035116 62%);
+}
+.cyrcle{
+    height: 100%;
+    width: 100%;
    
-}*/
-.login-btn-cont{
-    padding: 1rem 0 1rem 0;
-    text-align: center;
+}
+.sign-up{
+    display: flex;
+    height: 80%;
+    width: 60%;
+    background-color: #fff;
+}
+.left-sign-up{
+    height: 100%;
+    background-color: #67B21C;
+    width: 45%;
 }
 
-.Or{
-    
-    font-size: 15px;
-    color: #fff;
-    text-align: center;
-    position: relative;
+.right-sign-up{
+   
+height: 100%;
+width: 60%;
+display: flex;
+flex-direction: column;
 }
-.Or::after{
-    content: "";
-    position: absolute;
-    width: 200px;
-    height: 4px;
-    border-radius:25px ;
-    right: 2rem;
-    top: 50%;
-    background: #F2CB05;
+.top{
+    height: 25%;
 }
-.Or::before{
-    content: "";
-    position: absolute;
-    width: 200px;
-    height: 4px;
-    border-radius:25px ;
-    left: 2rem;
-    top: 50%;
-    background: #F2CB05;
-}
-.login-with{
-font-family: 'Poppins';
-font-style: normal;
-font-weight: 400;
-font-size: 15px;
-line-height: 18px;
-padding-left: 2rem;
-color: #6CB12F;
-padding-bottom: 1rem;
-}
-.other-ways{
-    justify-content: center;
-    display: flex;
-}
-.icon{
-    cursor: pointer;
-margin: 0 0.8rem;
-width: 64px;
-height: 64px;
-background: #FFFFFF;
-border-radius: 17.7778px;
-margin-bottom: 2rem;
-}
-.no-account{
-    text-align: center;
-    display: flex;
-    justify-content: center;
 
+.welcome h2{
+    color: #40850C;
+    font-size: 40px;
 }
-.no-account p{
-font-family: 'Poppins';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 18px;
-color: #F2CB05;
+.welcome p{
+    font-size: 12px;
 }
-.no-account p a{
+.welcome{
+    text-align: center;
+}
+.middle{
+    display: flex;
+    justify-content: center;
+    height: 75%;
+}
+.middle form{
+    display: flex;
+    flex-direction: column;
     position: relative;
+}
+.middle form input{
+    width: 15em;
+    font-size: 19px;
+    background-color: transparent;
+    border-color: #035116;
+    border-width: 0 0 2px 0 ;
+    outline: none;
+    margin: 1.5em auto 0 auto ;
+    padding-left: 5px;
+}
+.forgot-password-container{
+   display: flex;
+   justify-content: space-between;
+}
+.forgot-password{
+    margin-top: 0.3em;
+    font-size: 12px;
     text-decoration: underline;
-    color: #F2CB05;
+    cursor: pointer;
+    text-decoration: none;
+    color: #035116;
+}
+.middle form input::placeholder{
+    color: #000000cc;
+    font-weight: 400;
+    font-size: 13px;
+}
+.login-btn{
+    outline: none;
+    border: none;
+    border-radius: 12px;
+    background-color: #035116;
+    display: block;
+    width: 65%;
+    padding: 0.3em  ;
+    margin:2em auto 0 auto;
+    color: #fff;
+    cursor: pointer;
     font-weight: 500;
     font-size: 15px;
+    line-height: 30px;
+    transition: 0.5s;
 }
-.no-account p a::after{
-content: '';
-position: absolute;
-height: 1rem;
-width: 0.2rem;
-background: #F2CB05;
-right:-1.5rem;
+.login-btn:hover {
+    background-color: #40850C;
+    transition: 0.5s;
+}
+.no-account{
+    margin-top: 2em;
+    font-size: 12px;
+}
+.no-account .signup-login{
+    text-decoration: none;
+    color: #035116;
+    font-size: 12px;
+}
+.no-account .signup-login:hover,.forgot-password:hover{
+    text-decoration: underline;
+}
 
-}
-.terms{
-margin-left: 3rem;
-font-family: 'Poppins';
-font-style: normal;
-font-weight: 300;
-font-size: 12px;
-line-height: 18px;
-color: #86FF4E;
-cursor: pointer;
+.error{
+    padding-top: 3px;
+    color: #8a1818;
+    font-size: 11px;
+    font-weight: 500;
 }

@@ -7,13 +7,14 @@ import {
 import Project from './Components/Project.jsx'
 import WakfPic from './Components/WakfPic.jsx'
 import Awkaf from './pages/Awkaf.jsx'
-import Login from './pages/Login.jsx'
 import About from './pages/About.jsx'
 import Home from './pages/Home.jsx';
 import ZakatCal from './pages/ZakatCal.jsx';
-import { SignUp } from './pages/SignUp.jsx';
 import { Header } from './Components/Header.jsx';
-Header
+import { LoginPage } from './pages/LoginPage.jsx';
+import { RegisterPage } from './pages/RegisterPage.jsx';
+
+
 
 
 const router = createBrowserRouter([
@@ -35,11 +36,11 @@ const router = createBrowserRouter([
   },
   {
     path: "Login/",
-    element: <Login></Login>,
+    element: <LoginPage></LoginPage>,
   },
   {
-    path: "Signup/",
-    element: <SignUp></SignUp>,
+    path: "Register/",
+    element: <RegisterPage></RegisterPage>,
   },
   {
     path: "Header/",

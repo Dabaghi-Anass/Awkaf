@@ -1,8 +1,8 @@
-import '../CSS/Login.css';
+
 import React, { useState } from 'react';
 import validation from './validation';
 
-export default function Login() {
+export default function Log() {
     const [data, setData] = useState({
         email: "",
         password: ""
