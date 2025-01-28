@@ -3,7 +3,9 @@
 .sign-up-container{
    height: 100vh;
    background-image: radial-gradient(#53C21A,#035116 62%);
+ 
 }
+
 .cyrcle{
     height: 100%;
     width: 100%;
@@ -11,8 +13,8 @@
 }
 .sign-up{
     display: flex;
-    height: 80%;
-    width: 60%;
+    height: 38em;
+    width:50em;
     background-color: #fff;
 }
 .left-sign-up{
@@ -30,14 +32,16 @@ flex-direction: column;
 }
 .top{
     height: 25%;
+    margin-bottom: 3em;
 }
 
 .welcome h2{
     color: #40850C;
-    font-size: 40px;
+    font-size: 4.5em;
 }
 .welcome p{
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 600;
 }
 .welcome{
     text-align: center;
@@ -51,20 +55,25 @@ flex-direction: column;
     display: flex;
     flex-direction: column;
     position: relative;
+   
 }
 .middle form input{
-    width: 15em;
-    font-size: 19px;
+    width: 23em;
+    font-size: 18px;
     background-color: transparent;
     border-color: #035116;
     border-width: 0 0 2px 0 ;
     outline: none;
-    margin: 1.5em auto 0 auto ;
     padding-left: 5px;
+    
+}
+.middle form .input-container{
+    margin-bottom: 2.5em;
+
 }
 .forgot-password-container{
-   display: flex;
-   justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
 .forgot-password{
     margin-top: 0.3em;
@@ -76,24 +85,24 @@ flex-direction: column;
 }
 .middle form input::placeholder{
     color: #000000cc;
-    font-weight: 400;
-    font-size: 13px;
+    font-weight: 500;
+    font-size: 15px;
 }
 .login-btn{
+    display: inline;
     outline: none;
     border: none;
     border-radius: 12px;
     background-color: #035116;
     display: block;
-    width: 65%;
-    padding: 0.3em  ;
-    margin:2em auto 0 auto;
+    margin:0 auto 0 auto;
     color: #fff;
     cursor: pointer;
     font-weight: 500;
-    font-size: 15px;
-    line-height: 30px;
+    font-size: 1.2em;
     transition: 0.5s;
+    padding: 0.6em 1.5em;
+    margin-top: 2em;
 }
 .login-btn:hover {
     background-color: #40850C;
@@ -101,12 +110,13 @@ flex-direction: column;
 }
 .no-account{
     margin-top: 2em;
-    font-size: 12px;
+    font-size: 15px;
+    font-weight: 500;
 }
 .no-account .signup-login{
     text-decoration: none;
     color: #035116;
-    font-size: 12px;
+    font-size: 16px;
 }
 .no-account .signup-login:hover,.forgot-password:hover{
     text-decoration: underline;
@@ -115,6 +125,6 @@ flex-direction: column;
 .error{
     padding-top: 3px;
     color: #8a1818;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 500;
 }

@@ -42,7 +42,7 @@ export const RegisterPage = () => {
     
             if (response.ok) {
               // Success notification
-                console.log("Fetch Succeced")
+                console.log("Fetch Succeced",data)
               setFormData(userData);  // Reset form after successful submission
             } else {
               // Error handling from backend
