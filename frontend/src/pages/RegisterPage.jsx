@@ -1,9 +1,9 @@
 import React from 'react'
 import '../CSS/Register.css'
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 export const RegisterPage = () => {
-
+  const navigate = useNavigate();
     const userData={
         company_name:'',
         username:'',
@@ -42,9 +42,11 @@ export const RegisterPage = () => {
             const data = await response.json();
     
             if (response.ok) {
+              navigate('/');
               // Success notification
                 console.log("Fetch Succeced",data)
               setFormData(userData);  // Reset form after successful submission
+              
             } else {
               // Error handling from backend
              console.log('Somthing went wrong');
