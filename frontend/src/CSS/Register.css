@@ -3,6 +3,24 @@
 .register-container{
     border-radius: 10px;
     background-color: #fff;
-    height: 90%;
-    width:30%;
+    height: 38em;
+    width:32em;
+}
+.welcome{
+    font-size: 10px;
+}
+.register-top{
+    margin-bottom: 0;
+}
+
+.input-container-register{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2em;
+}
+
+
+
+.signup-btn{
+    margin-top: 0;
 }

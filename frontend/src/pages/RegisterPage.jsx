@@ -6,6 +6,7 @@ export const RegisterPage = () => {
 
     const userData={
         company_name:'',
+        username:'',
         email:'',
         password:'',
         confirm_password:'',
@@ -60,24 +61,28 @@ export const RegisterPage = () => {
           /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     
         if (!values.company_name.trim()) {
-          errors.company_name = "company name required!";
+          errors.company_name = "اسم الشركة مطلوب!";
+        }
+
+        if (!values.username.trim()) {
+          errors.username = "اسم المستخدم مطلوب!";
         }
         
        
         if (!values.email.trim()) {
-          errors.email = "Email required!";
+          errors.email = "البريد الإلكتروني مطلوب!";
         } else if (!regex.test(values.email)) {
-          errors.email = "Email is not valid!";
+          errors.email = "البريد الإلكتروني غير صالح!";
         }
 
         if (!values.password.trim()) {
-          errors.password = "Password required!";
+          errors.password = "كلمة المرور مطلوبة!";
         } else if (values.password.length < 4) {
-          errors.password = "Password must be more than 4 characters";
+          errors.password = "يجب أن تكون كلمة المرور أكثر من 4 أحرف!";
         } 
 
         if (values.password !== values.confirm_password) {
-          errors.confirm_password = "Passwords do not match!";
+          errors.confirm_password = "كلمتا المرور غير متطابقتين!";
         }
 
         return errors;
@@ -89,49 +94,70 @@ export const RegisterPage = () => {
    <>
       <div className="sign-up-container center">
             <div className="register-container">
-            <div className="top center">
-                  <div className='welcome'>
+            <div className="top center register-top">
+                  <div className='welcome register-w'>
                       <h2>إنشاء حساب جديد</h2>
                       <p>يرجى تقديم بياناتك لإنشاء حساب جديد</p>
                   </div>  
                    
                 </div>
-                <div className="middle ">
+                <div className="middle">
                       <form  onSubmit={handleSubmit}>
-                          
-                          <input  placeholder='إسم الشركة'
-                            name="company_name"
-                             onChange={handleChange}
-                             value={formData.company_name}
-                           />
-                           <span className="error-msg">{formErrors.company_name}</span>
+                          <div className="input-container-register">
+                                <input  placeholder='إسم الشركة'
+                                  name="company_name"
+                                  onChange={handleChange}
+                                  value={formData.company_name}
+                                />
+                                <span className="error">{formErrors.company_name}</span>
+                          </div>
 
-                            <input  placeholder='البريد الالكتروني '
-                            name="email" 
-                            onChange={handleChange}
-                            value={formData.email}
+                          <div className="input-container-register">
+                                <input  placeholder='إسم المستخدم'
+                                  name="username"
+                                  onChange={handleChange}
+                                  value={formData.username}
+                                />
+                                <span className="error">{formErrors.username}</span>
+                          </div>
 
-                           />
-                           <span className="error-msg">{formErrors.email}</span>
-                           
 
-                            <input type="password" 
-                            placeholder='كلمة المرور'
-                            name="password"
-                             onChange={handleChange}
-                             value={formData.password}
-                           />
-                            <span className="error-msg">{formErrors.password}</span>
+                           <div className="input-container-register"> 
+                              <input  placeholder='البريد الالكتروني '
+                                name="email" 
+                                onChange={handleChange}
+                                value={formData.email}
+
+                              />
+                              <span className="error">{formErrors.email}</span>
+
+                           </div>
                             
-                          <input type="password"
-                           placeholder='تأكيد كلمة المرور '
-                            name="confirm_password"
-                             onChange={handleChange}
-                             value={formData.confirm_password}
-                           />
-                          <span className="error-msg">{formErrors.confirm_password}</span>
+                           
+                           <div className="input-container-register">
+                              <input type="password" 
+                                placeholder='كلمة المرور'
+                                name="password"
+                                onChange={handleChange}
+                                value={formData.password}
+                              />
+                                <span className="error">{formErrors.password}</span>
+                           </div>
+                            
+
+                            <div className="input-container-register" >
+                                  <input type="password"
+                                placeholder='تأكيد كلمة المرور '
+                                  name="confirm_password"
+                                  onChange={handleChange}
+                                  value={formData.confirm_password}
+                                />
+                                <span className="error">{formErrors.confirm_password}</span>
+
+                            </div>
+                          
                         
-                          <button className='login-btn' type="submit">إنشاء حساب</button>
+                          <button className=' login-btn signup-btn ' type="submit">إنشاء حساب</button>
                           <div className="no-account center">
                           لديك حساب مسبقًا؟<Link className='signup-login' to={'/Login'} >تسجيل الدخول</Link>
                       </div>

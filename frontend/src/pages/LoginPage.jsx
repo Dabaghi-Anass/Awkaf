@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState,useEffect } from 'react';
+import { Link ,useNavigate} from 'react-router-dom';
 import validation from './validation';
 import '../CSS/Login.css';
 
 export const LoginPage = () => {
+
+    const navigate = useNavigate();
   const [data, setData] = useState({
     username: "",
     password: ""
@@ -19,6 +21,12 @@ export const LoginPage = () => {
     });
   };
 
+  useEffect(() => {
+    setData({
+      username: "",
+      password: "",
+    });
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validation(data);
@@ -26,7 +34,7 @@ export const LoginPage = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/token/", {
+        const response = await fetch("http://127.0.0.1:8000/apif/token/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -45,6 +53,7 @@ export const LoginPage = () => {
           localStorage.setItem("refreshToken", tokens.refresh);
 
           console.log("You are logged in!");
+          navigate('/');
         } else {
           setLoginError("Invalid username or password. Please try again.");
         }
@@ -58,7 +67,7 @@ export const LoginPage = () => {
   return (
     <div className="sign-up-container center">
       <div className="sign-up">
-        <div className="left-sign-up"></div>
+      
 
         <div className="right-sign-up">
           <div className="top center">
@@ -77,6 +86,7 @@ export const LoginPage = () => {
                   value={data.username}
                   name="username"
                   onChange={handleChange}
+                  autoComplete="off"
                 />
                 {errors.username && <p className="error">{errors.username}</p>}
               </div>
@@ -88,6 +98,7 @@ export const LoginPage = () => {
                   value={data.password}
                   name="password"
                   onChange={handleChange}
+                  autoComplete="off"
                 />
                 <div className="forgot-password-container">
                   {errors.password && <p className="error">{errors.password}</p>}
