@@ -2,14 +2,15 @@ body{
   overflow-x: hidden;
 }
 *{
-  font-family: 'El Messiri';
+  font-family: 'Inter';
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  direction: rtl;
+  /*direction: rtl;*/
 }
 .center{
   display: flex;
   justify-content: center;
   align-items: center;
+
 }

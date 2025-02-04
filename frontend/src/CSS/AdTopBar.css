@@ -1,0 +1,45 @@
+.admin-top-bar{
+    background-color: red;
+    width: 51.56em;
+    height: 3.5em;
+    border-radius: 10px;
+    background-color: #fff;
+   justify-content: left;
+}
+.inside-admin-top-bar{
+    display: flex;
+    align-items: center;
+    color: #3A3A3A;
+    
+}
+.page-number{
+    margin: 0 1em 0 1em;
+    font-size: 20px;
+    font-weight: 400;
+    font-family: 'Inter';
+}
+.vertical-line{
+    margin-right:1em ;
+    height: 2.75em;
+    width: 2px;
+    background-color: black;
+}
+
+.add-input-btn,.save-cancel button{
+width: 6.4em;
+height: 1.8em;
+outline: none;
+border: none;
+font-size: 1.2em;
+font-weight:700;
+border-radius: 5px;
+background-color:#b9b9b9;
+cursor: pointer;
+transition:0.3s;
+font-family: 'Inter';
+
+}
+.add-input-btn:hover, .save-cancel button:hover {
+    background-color: #dfdfdf;
+    transition: 0.3s;
+}

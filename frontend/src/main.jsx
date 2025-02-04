@@ -13,7 +13,10 @@ import ZakatCal from './pages/ZakatCal.jsx';
 import { Header } from './Components/Header.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
-
+import { CompanyPic } from './Components/CompanyPic.jsx';
+import { Zakat1 } from './Components/Zakat1.jsx';
+import { Zakat2 } from './Components/Zakat2.jsx';
+import { Admin } from './pages/Admin.jsx';
 
 
 
@@ -45,6 +48,14 @@ const router = createBrowserRouter([
   {
     path: "Header/",
     element: <Header></Header>,
+  },
+  {
+    path: "test/",
+    element: <Zakat2></Zakat2>,
+  },
+  {
+    path: "Admin/",
+    element: <Admin></Admin>,
   },
 ]);
 
