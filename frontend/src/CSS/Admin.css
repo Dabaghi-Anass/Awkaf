@@ -5,12 +5,14 @@
    justify-content: center;
 }
 .inputs-displayer{
-   display: flex;
-   justify-content: center;
+   position: relative;
    border-radius: 1em;
    height: 35.375em;
    width: 51.56em;
    background-color: #fff;
+   display: flex;
+   justify-content: center;
+   overflow-y: scroll;
 }
 .middle-admin-page{
    margin: 0 2em;
@@ -19,12 +21,9 @@
    margin-bottom: 1em;
 }
 .inputs-displayer-content{
-   display: flex;
-   flex-direction: column;
-   padding-top: 4em;
-   width: 60%;
-   
+   margin-bottom: 2em;
 }
+
 .inputs-displayer-content label{
 margin-bottom: 0.5em;
 font-family: 'Inter';
@@ -48,5 +47,9 @@ line-height: 23px;
 border: none;
 padding-left: 0.8em;
 margin-bottom: 1.2em;
-cursor:default;
+cursor:pointer;
+}
+.inputs-displayer-content-container{
+   width: 60%;
+   padding-top: 4em;
 }
