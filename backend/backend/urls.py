@@ -16,8 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView,UserDeleteView,UserUpdateView
+from api.views import CreateUserView,UserDeleteView,UserUpdateView,AdminRegisterView,AdminLoginView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,6 +29,8 @@ urlpatterns = [
     path("apif/", include("api.urls")),#path delete task 
     path('apif/user/update/', UserUpdateView.as_view(), name='user-update'),
     path('apif/user/delete/', UserDeleteView.as_view(), name='user-delete'), 
+    path('apif/admin/register/', AdminRegisterView.as_view(), name='admin-register'),
+    path('apif/admin/login/', AdminLoginView.as_view(), name='admin-login'),
 ]
 
 
