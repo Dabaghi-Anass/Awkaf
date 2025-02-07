@@ -63,16 +63,28 @@ class AdminRegisterView(APIView):
 class AdminLoginView(TokenObtainPairView):
     """
     Admin login view that uses JWT to authenticate admins.
+    Admins must log in using this view and not through the regular login.
     """
     def post(self, request, *args, **kwargs):
-        # Get the response from TokenObtainPairView (standard JWT login)
-        response = super().post(request, *args, **kwargs)
-
-        # Get the user by username (you can access it from the request object or token)
+        # Get the user by username
         user = User.objects.get(username=request.data["username"])
 
         # Check if the user is an admin (is_staff=True)
         if not user.is_staff:
-            raise exceptions.PermissionDenied("You are not authorized to log in as an admin.")
+            raise PermissionDenied("Only admins can log in via this endpoint.")
 
-        return response
+        # If the user is an admin, proceed with token generation
+        return super().post(request, *args, **kwargs)
+    
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        # Retrieve user by username
+        user = User.objects.get(username=request.data["username"])
+
+        # Check if the user is an admin (is_staff=True)
+        if user.is_staff:
+            # If the user is an admin, prevent login through the regular user endpoint
+            raise PermissionDenied("Admins cannot log in through the regular user login endpoint. Please use the admin login endpoint.")
+
+        # Proceed with normal JWT token creation for regular users
+        return super().post(request, *args, **kwargs)
