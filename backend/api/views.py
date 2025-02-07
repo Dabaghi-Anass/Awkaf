@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializer import UserSerializer
+from .serializer import UserSerializer, InputFieldSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -11,8 +11,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from rest_framework import exceptions
-
-
+from .models import InputField
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -44,6 +43,7 @@ class UserDeleteView(generics.DestroyAPIView):
 
     def get_object(self):
         return self.request.user
+
 class AdminRegisterView(APIView):
     permission_classes = [AllowAny]  # Allow unauthenticated users to register
 
@@ -60,6 +60,7 @@ class AdminRegisterView(APIView):
             user = serializer.save()  # Admin user is created with is_staff=True
             return Response({"message": "Admin user created successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class AdminLoginView(TokenObtainPairView):
     """
     Admin login view that uses JWT to authenticate admins.
@@ -88,3 +89,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         # Proceed with normal JWT token creation for regular users
         return super().post(request, *args, **kwargs)
+
+class InputFieldListCreate(generics.ListCreateAPIView):
+    queryset = InputField.objects.all()
+    serializer_class = InputFieldSerializer
+    permission_classes = [IsAuthenticated]
+
+class InputFieldUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+    queryset = InputField.objects.all()
+    serializer_class = InputFieldSerializer
+    permission_classes = [IsAuthenticated]

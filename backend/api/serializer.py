@@ -12,7 +12,7 @@ from .models import Employee
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Employee
+from .models import Employee , InputField
 
 class UserSerializer(serializers.ModelSerializer):
     company = serializers.CharField(write_only=True, required=False)
@@ -60,7 +60,6 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
@@ -71,3 +70,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
         company = validated_data.get('company')
         employee = Employee.objects.create(user=user, company=company)
         return employee
+
+class InputFieldSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InputField
+        fields = '__all__'
