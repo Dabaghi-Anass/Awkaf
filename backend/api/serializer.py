@@ -75,3 +75,42 @@ class InputFieldSerializer(serializers.ModelSerializer):
     class Meta:
         model = InputField
         fields = '__all__'
+
+class BulkInputFieldSerializer(serializers.ListSerializer):
+    child = InputFieldSerializer()  # Each item in the list is an InputField
+
+    def create(self, validated_data):
+        # If the input is a single object, create it normally
+        if isinstance(validated_data, dict):
+            return InputField.objects.create(**validated_data)
+
+        # If input is a list, create multiple objects
+        input_fields = [InputField(**item) for item in validated_data]
+        return InputField.objects.bulk_create(input_fields)
+
+    def to_internal_value(self, data):
+        # If the input is a single object, wrap it in a list
+        if isinstance(data, dict):
+            data = [data]
+        return super().to_internal_value(data)
+class BulkInputFieldUpdateSerializer(serializers.ListSerializer):
+    child = InputFieldSerializer()  # Each item in the list is an InputField
+
+    def update(self, instances, validated_data):
+        # Map instances by ID for easy lookup
+        instance_mapping = {instance.id: instance for instance in instances}
+
+        # Update each instance with the validated data
+        updated_instances = []
+        for item in validated_data:
+            instance = instance_mapping.get(item.get('id'))
+            if instance:
+                for attr, value in item.items():
+                    setattr(instance, attr, value)
+                updated_instances.append(instance)
+
+        # Save all updated instances
+        InputField.objects.bulk_update(updated_instances, fields=[
+            'label', 'placeholder', 'input_type', 'is_required', 'max_characters', 'min_characters', 'file'
+        ])
+        return updated_instances

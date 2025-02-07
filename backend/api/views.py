@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializer import UserSerializer, InputFieldSerializer
+from .serializer import UserSerializer, InputFieldSerializer , BulkInputFieldSerializer , BulkInputFieldUpdateSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -12,6 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from rest_framework import exceptions
 from .models import InputField
+
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -90,12 +91,70 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         # Proceed with normal JWT token creation for regular users
         return super().post(request, *args, **kwargs)
 
-class InputFieldListCreate(generics.ListCreateAPIView):
-    queryset = InputField.objects.all()
-    serializer_class = InputFieldSerializer
-    permission_classes = [IsAuthenticated]
+class InputFieldListCreate(APIView):
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access this view
 
-class InputFieldUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
-    queryset = InputField.objects.all()
-    serializer_class = InputFieldSerializer
-    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        # Check if the request data is a single object (dict) or a list
+        if isinstance(request.data, dict):  
+            serializer = InputFieldSerializer(data=request.data)  # Single object creation
+        elif isinstance(request.data, list):
+            serializer = InputFieldSerializer(data=request.data, many=True)  # Bulk creation
+        else:
+            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            serializer.save()  # ✅ Ensure many=True serializer is saved properly
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+
+
+class BulkInputFieldUpdate(APIView):
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access this view
+
+    def put(self, request):
+        data = request.data
+
+        # Handle single update (convert single object to list)
+        if isinstance(data, dict):
+            data = [data]
+
+        # Extract instance IDs
+        instance_ids = [item.get('id') for item in data]
+        instances = InputField.objects.filter(id__in=instance_ids)
+
+        # Ensure all IDs exist
+        if instances.count() != len(instance_ids):
+            return Response({"error": "Some IDs do not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Serialize and update the objects
+        serializer = InputFieldSerializer(instances, data=data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class BulkInputFieldDelete(APIView):
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access this view
+
+    def delete(self, request):
+        data = request.data
+
+        # Handle single delete (convert single ID to list)
+        if isinstance(data, dict) and "id" in data:
+            data = {"ids": [data["id"]]}
+        
+        instance_ids = data.get('ids', [])
+
+        if not instance_ids:
+            return Response({"error": "No IDs provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Ensure the requested IDs exist
+        deleted_count, _ = InputField.objects.filter(id__in=instance_ids).delete()
+
+        if deleted_count == 0:
+            return Response({"error": "No valid IDs found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"message": "InputFields deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
