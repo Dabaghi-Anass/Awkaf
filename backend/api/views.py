@@ -120,6 +120,14 @@ class BulkInputFieldUpdate(APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request):
+        """Handles full updates (replacing all fields)."""
+        return self.update_fields(request, partial=False)
+
+    def patch(self, request):
+        """Handles partial updates (modifying only specified fields)."""
+        return self.update_fields(request, partial=True)
+
+    def update_fields(self, request, partial):
         data = request.data
 
         # Convert single update request into a list
@@ -142,7 +150,7 @@ class BulkInputFieldUpdate(APIView):
         # Apply updates manually
         for item in data:
             instance = instances.get(item["id"])
-            serializer = BulkUpdateInputFieldSerializer(instance, data=item, partial=True)
+            serializer = BulkUpdateInputFieldSerializer(instance, data=item, partial=partial)
 
             if serializer.is_valid():
                 updated_instance = serializer.save()
@@ -157,6 +165,7 @@ class BulkInputFieldUpdate(APIView):
         serialized_data = BulkUpdateInputFieldSerializer(updated_instances, many=True).data
 
         return Response({"message": "Successfully updated", "data": serialized_data}, status=status.HTTP_200_OK)
+
 
 
 class BulkInputFieldDelete(APIView):
