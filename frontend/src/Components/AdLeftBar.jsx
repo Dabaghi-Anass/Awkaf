@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const AdLeftBar = ({ savedInputs,handleSelectInput}) => {
+export const AdLeftBar = ({ savedInputList,selectSavedInput}) => {
   return (
     <>
       <div className="side-bar">
@@ -16,8 +16,8 @@ export const AdLeftBar = ({ savedInputs,handleSelectInput}) => {
           <div className="side-bar-line"></div>
           <div className="side-bar-sub-title">Inputs</div>
           <div className="side-bar-pages">
-            {savedInputs.map((input, index) => (
-              <li key={index} className='side-bar-input-title' onClick={() => handleSelectInput(input)}>{input.label}</li>
+            {savedInputList.map((input, index) => (
+              <li key={index} className='side-bar-input-title' onClick={() => selectSavedInput(input.id)}>{input.label}</li>
             ))}
           </div>
         </div>

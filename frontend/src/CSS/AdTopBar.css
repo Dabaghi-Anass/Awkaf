@@ -26,7 +26,7 @@
     background-color: black;
 }
 
-.add-input-btn,.save-cancel button,.save-clear-btn{
+.add-input-btn, .delete-input-btn, .save-cancel button{
 width: 6.4em;
 height: 1.8em;
 outline: none;
@@ -40,13 +40,7 @@ transition:0.3s;
 font-family: 'Inter';
 
 }
-.save-clear-btn{
-    position: absolute;
-    right: 1em;
-}
-.add-input-btn:hover, 
-.save-clear-btn:hover, 
-.save-cancel button:hover {
+.add-input-btn:hover, .save-cancel button:hover,.delete-input-btn:hover {
     background-color: #dfdfdf;
     transition: 0.3s;
 }

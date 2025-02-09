@@ -9,10 +9,10 @@
    border-radius: 1em;
    height: 35.375em;
    width: 51.56em;
-   background-color: #fff;
+   background-color: #035116;
    display: flex;
    justify-content: center;
-   overflow-y: scroll;
+  
 }
 .middle-admin-page{
    margin: 0 2em;
@@ -21,22 +21,24 @@
    margin-bottom: 1em;
 }
 .inputs-displayer-content{
-   margin-bottom: 2em;
+   padding: 4em 2em 0 2em;
+   width: 70%;
+   overflow-y: scroll;
 }
-
-.inputs-displayer-content label{
-margin-bottom: 0.5em;
+.input-label label{
+margin-left: 0.5em;
 font-family: 'Inter';
 font-style: normal;
 font-weight: 700;
-font-size: 20px;
+font-size: 23px;
 line-height: 23px;
-color: #000000;
+color: #fff;
 }
-.inputs-displayer-content input{
+.input-label input{
+margin-top: 0.5em;
 outline: none;
 width: 100%;
-height: 2em;
+height: 2.4em;
 background: #F1F1F1;
 border-radius: 10px;
 font-family: 'Inter';
@@ -46,10 +48,19 @@ font-size: 20px;
 line-height: 23px;
 border: none;
 padding-left: 0.8em;
-margin-bottom: 1.2em;
 cursor:pointer;
+transition: 0.3s;
 }
-.inputs-displayer-content-container{
-   width: 60%;
-   padding-top: 4em;
+.input-label input:hover{
+   background-color: #f1f1f1a1;
+   transition: 0.3s;
+}
+
+
+
+
+.save-delete-btns{
+   display: flex;
+   gap: 1em;
+   margin-bottom: 1.5em;
 }

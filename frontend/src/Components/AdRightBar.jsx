@@ -1,7 +1,11 @@
-import React from 'react';
-import '../CSS/AdRightBar.css';
+import React from 'react'
+import '../CSS/AdRightBar.css'
+export const AdRightBar = ({inputFeild,addNewInput,handleChange,handleCancel}) => {
 
-export const AdRightBar = ({ inputFeild, handleChange, saveInput, handleCancel }) => {
+      
+
+
+
   return (
     <>
       <div className="side-bar">
@@ -17,27 +21,23 @@ export const AdRightBar = ({ inputFeild, handleChange, saveInput, handleCancel }
 
           <div className="side-bar-line"></div>
 
-          <div className='side-bar-sub-title'>Input Type</div>
-          <select id="inputTypes" className="side-bar-input" value={inputFeild.type || "text"} onChange={handleChange} name='type'>
-            <option value="text">Text</option>
-            <option value="password">Password</option>
-            <option value="email">Email</option>
-            <option value="search">Search</option>
-            <option value="url">URL</option>
-            <option value="tel">Telephone</option>
-            <option value="number">Number</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="radio">Radio</option>
-            <option value="range">Range</option>
-            <option value="date">Date</option>
-            <option value="datetime-local">Datetime-local</option>
-            <option value="month">Month</option>
-            <option value="week">Week</option>
-            <option value="time">Time</option>
-            <option value="file">File</option>
-            <option value="image">Image</option>
-           
-          </select>
+                    <div className='side-bar-sub-title'>input type</div>
+                    <select id="inputTypes" className="side-bar-input" value={inputFeild.type} onChange={handleChange} name='type'>
+                            <option value="text">Text</option>
+                            <option value="password">Password</option>
+                            <option value="email">Email</option>
+                            <option value="search">Search</option>
+                            <option value="url">URL</option>
+                            <option value="tel">Telephone</option>
+                            <option value="number">Number</option>
+                            <option value="checkbox">Checkbox</option>
+                            <option value="radio">Radio</option>
+                            <option value="range">Range</option>
+                            <option value="date">Date</option>
+                            <option value="file">File</option>
+                       
+                    </select>
+          
 
           <div className="side-bar-line"></div>
 
@@ -62,7 +62,7 @@ export const AdRightBar = ({ inputFeild, handleChange, saveInput, handleCancel }
           <div className="side-bar-line"></div>
 
           <div className="save-cancel center">
-            <button className="save-input-btn" onClick={saveInput}>Add</button>
+            <button className="save-input-btn" onClick={addNewInput}>Add</button>
             <button className="cancel-input-btn" onClick={handleCancel}>Cancel</button>
           </div>
         </div>
