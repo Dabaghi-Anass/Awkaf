@@ -5,25 +5,27 @@ import { AdLeftBar } from '../Components/AdLeftBar';
 import '../CSS/Admin.css';
 
 export const Admin = () => {
+
+
+  
   const resetInputs = {
     id:null,
     type: "text",
     placeHolder: "",
     label: "",
     isRequired: false,
-    max: null,
-    min: null, 
     choices: [{
       content:"",
       id:""
     }]
   };
-
+  
   const [savedInputList,setSavedInputList]=useState([]); // array pour les champs enregistré 
   const [inputList, setInputList] = useState([]);// tableau pour stocker les champs en cours de creation
   const [inputFeild, setInputField] = useState(resetInputs);//un objet contient les infomations du champ 
   const [existingInput,setExistingInput]=useState(null);
-
+  const [existingChoice, setExistingChoice] = useState("");  // Stores choice text  
+  const [existingChoiceId, setExistingChoiceId] = useState(null); // Stores choice ID  
 
   const addNewInput = () => {
     if (!inputFeild.type || !inputFeild.label) {
@@ -31,11 +33,13 @@ export const Admin = () => {
         return;
     }
 
-    // Check for duplicate label in both inputList and savedInputList
-    const isDuplicate = [...inputList, ...savedInputList].some(input => input.label === inputFeild.label);
-    if (isDuplicate) {
-        console.log("Duplicate label found! Please use a unique label.");
-        return;
+    // Only check for duplicates when adding a NEW input
+    if (existingInput === null) {
+        const isDuplicate = [...inputList, ...savedInputList].some(input => input.label === inputFeild.label);
+        if (isDuplicate) {
+            console.log("Duplicate label found! Please use a unique label.");
+            return;
+        }
     }
 
     if (existingInput !== null) {
@@ -54,32 +58,10 @@ export const Admin = () => {
     setInputField(resetInputs); // Reset input field
 };
 
+
   
 
-  {/*const saveInput = () => {
-    if (inputList.length === 0) return; // Prevent empty saves
-
-    setSavedInputList(prev => {
-        let updatedList = [...prev];
-
-        if (existingInput !== null) {
-            // Update existing input in savedInputList
-            updatedList = updatedList.map(input =>
-                input.id === existingInput ? { ...inputFeild, id: existingInput } : input
-            );
-            setExistingInput(null); // Reset editing mode
-        } else {
-            // Add new inputs from inputList (ensuring they have an ID)
-            const newInputs = inputList.map(input => ({ ...input, id: input.id || Date.now() }));
-            updatedList = [...updatedList, ...newInputs];
-        }
-
-        return updatedList;
-    }); 
-
-    };
-    */}
-
+ 
    
 
     const saveeInput = (ID) => {
@@ -125,18 +107,12 @@ export const Admin = () => {
    
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
-    setInputField(prevState => {
-      const updatedField = { ...prevState, [name]: value };
-  
-      const updatedList = inputList.map(input =>
-        input.id === prevState.id ? updatedField : input // Use id for comparison
-      );
-  
-      setInputList(updatedList);
-      return updatedField;
-    });
-  };
+    setInputField(prevState => ({
+        ...prevState,
+        [name]: value
+    }));
+};
+
   
    
  // Select an input when clicked (updates the right bar)
@@ -178,6 +154,86 @@ export const Admin = () => {
 };
 
 
+const renderInputField = (input) => {
+  switch (input.type) {
+    case "dropDown":
+      return (
+        <select onChange={(e) => selectChoice(e.target.value)}>
+          {input.choices?.map((choice) => (
+            <option key={choice.id} value={choice.id}>
+              {choice.content}
+            </option>
+          ))}
+        </select>
+      );
+
+    case "multipleChoice":
+      return (
+        <div>
+          {input.choices?.map((choice) => (
+            <label key={choice.id} onClick={() => selectChoice(choice.id)}>
+              <input type="checkbox" /> {choice.content}
+            </label>
+          ))}
+        </div>
+      );
+
+    default:
+      return (
+        <div className="input-label">
+          <label>{input.label || "Label"}</label>
+          <br />
+          <input
+            type={input.type || "text"}
+            readOnly
+            placeholder={input.placeHolder || "Place holder"}
+            onClick={() => selectInput(input.id)}
+          />
+        </div>
+      );
+  }
+};
+
+
+const addChoice = () => {
+  if (!existingChoice.trim()) return; // Prevent empty choices
+
+  setInputField(prevState => ({
+      ...prevState,
+      choices: [...prevState.choices, { content: existingChoice, id: Date.now() }]
+  }));
+
+  setExistingChoice(""); // Reset input after adding
+};
+
+const selectChoice = (choiceId) => {
+  console.log("Clicked choice ID:", choiceId); // Ensure function is triggered
+
+  // Ensure inputFeild.choices exists and is an array
+  if (!inputFeild.choices || !Array.isArray(inputFeild.choices)) {
+    console.error("Error: inputFeild.choices is not an array", inputFeild.choices);
+    return;
+  }
+
+  // Ensure choiceId is compared properly (convert to Number if necessary)
+  const selectedChoice = inputFeild.choices.find((choice) => String(choice.id) === String(choiceId));
+
+  console.log("Found choice:", selectedChoice); // Check if a choice was found
+
+  if (selectedChoice) {
+    setExistingChoice(selectedChoice.content);
+    setExistingChoiceId(selectedChoice.id);
+  } else {
+    console.log("No choice found with this ID.");
+  }
+};
+
+
+
+
+
+
+
 
 
   
@@ -193,20 +249,14 @@ export const Admin = () => {
 
           <div className="inputs-displayer">
             <div className="inputs-displayer-content">
-              {inputList.map((input, index) => (
-
-                <div key={index} className='input-label-btn'>
-
-                    <div className='input-label'>
-                      <label>{input.label || "label"}</label> <br />
-                      <input type={input.type || "text"} readOnly placeholder={input.placeHolder || "place holder"} onClick={()=>selectInput(input.id)} />
-                    </div>
-                      <br />
-                      <div className="save-delete-btns">
-                        <button className='delete-input-btn' onClick={()=>{deleteInput(input.id)}}>Delete</button>
-                        <button className='add-input-btn' onClick={()=>saveeInput(input.id)}>save</   button>
-                      </div>
-
+            {inputList.map((input, index) => (
+                <div key={index} className="input-label-btn">
+                  {renderInputField(input)}
+                  <br />
+                  <div className="save-delete-btns">
+                    <button className="delete-input-btn" onClick={() => deleteInput(input.id)}>Delete</button>
+                    <button className="add-input-btn" onClick={() => saveeInput(input.id)}>Save</button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -219,6 +269,11 @@ export const Admin = () => {
           addNewInput={addNewInput}
           handleChange={handleChange}
           handleCancel={handleCancel}
+          setInputField={setInputField}
+          existingInput={existingInput}
+          setExistingChoice={setExistingChoice}
+          addChoice={addChoice}
+          existingChoice={existingChoice}
         />
       </div>
     </>
