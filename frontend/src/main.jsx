@@ -10,13 +10,13 @@ import Awkaf from './pages/Awkaf.jsx'
 import About from './pages/About.jsx'
 import Home from './pages/Home.jsx';
 import ZakatCal from './pages/ZakatCal.jsx';
-import { Header } from './Components/Header.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { CompanyPic } from './Components/CompanyPic.jsx';
 import { Zakat1 } from './Components/Zakat1.jsx';
 import { Zakat2 } from './Components/Zakat2.jsx';
 import { Admin } from './pages/Admin.jsx';
+import { ZakatForm } from './Components/ZakatForm.jsx';
 
 
 
@@ -46,8 +46,8 @@ const router = createBrowserRouter([
     element: <RegisterPage></RegisterPage>,
   },
   {
-    path: "Header/",
-    element: <Header></Header>,
+    path: "Form/",
+    element: <ZakatForm></ZakatForm>,
   },
   {
     path: "test/",

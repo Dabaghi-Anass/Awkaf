@@ -1,0 +1,53 @@
+.Form-container{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+.Zakat-form{
+    color: #fff;
+    height: 100em;
+    width: 50em;
+    background-color: #035115;
+}
+.Zakat-form h2{
+    color: #F2CB05;
+}
+.form-title{
+    font-size: 2em;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.5em;
+    margin-bottom: 2em;
+}
+.Zakat-form form{
+    width: 90%;
+    height: 40em;
+    text-align: left;
+}
+.Zakat-form form div{
+    margin-bottom: 1em;
+}
+.asset-input{
+    font-size: 20px;
+    font-weight: 700;
+    padding:12px 10px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    margin-left: 5px;
+}
+
+.Zakat-form label{
+    font-size: 20px;
+
+    padding: 0;
+    display: inline-block;
+    padding: 10px 5px;
+    cursor: pointer;
+    margin: 5px 0;
+    border-radius: 10px;
+}
+.Zakat-form label:hover{
+    background-color: #fff;
+    color: #035115;
+}
