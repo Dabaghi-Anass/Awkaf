@@ -160,7 +160,7 @@ export const ZakatForm = () => {
             </div>
 
      
-            <div className="center">
+            <div className="">
               <button type="button" className="calculate-btn" onClick={calculateZakat}>
                 Calculer la Zakat
               </button>

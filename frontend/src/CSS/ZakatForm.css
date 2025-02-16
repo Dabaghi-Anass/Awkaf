@@ -51,3 +51,19 @@
     background-color: #fff;
     color: #035115;
 }
+.calculate-btn{
+    color: #035115;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: 0.5s;
+    outline: none;
+}
+.calculate-btn:hover{
+    transform: scale(1.1);
+    transition: 0.5s;
+}
