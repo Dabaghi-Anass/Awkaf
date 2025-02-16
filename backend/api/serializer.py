@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import InputField
+from .models import InputField,ZakatHistory
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -86,4 +86,11 @@ class BulkUpdateInputFieldSerializer(serializers.ModelSerializer):
     class Meta:
         model = InputField
         fields = ["id", "label", "placeholder", "input_type", "is_required", "max_characters", "min_characters"]
-        list_serializer_class = BulkUpdateListSerializer  # Use custom bulk update serializer
+        list_serializer_class = BulkUpdateListSerializer
+        # Use custom bulk update serializer
+class ZakatHistorySerializer(serializers.ModelSerializer):
+    created_at = serializers.DateField(format="%Y-%m-%d")  # Ensure it stays as a date
+
+    class Meta:
+        model = ZakatHistory
+        fields = '__all__'

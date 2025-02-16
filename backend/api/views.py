@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializer import UserSerializer, InputFieldSerializer, BulkUpdateInputFieldSerializer
+from .serializer import UserSerializer, InputFieldSerializer, BulkUpdateInputFieldSerializer,ZakatHistorySerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -11,7 +11,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from rest_framework import exceptions
-from .models import InputField
+from .models import InputField,ZakatHistory
+from datetime import datetime
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -190,3 +191,62 @@ class BulkInputFieldDelete(APIView):
             return Response({"error": "No valid IDs found"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"message": "InputFields deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    
+class SaveZakatHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Define required fields
+        required_fields = [
+            "liquidites", "investissements", "bien_location", 
+            "creances_clients", "bien_usage_interne", 
+            "fonds_non_dispo", "stocks_invendable", "stocks", "created_at"
+        ]
+
+        # Validate required fields
+        missing_fields = [field for field in required_fields if field not in request.data]
+        if missing_fields:
+            return Response({field: "This field is required." for field in missing_fields}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Copy request data & assign authenticated user
+        data = request.data.copy()
+        data["user"] = request.user.id  
+
+        # Ensure created_at is formatted correctly as a DATE (YYYY-MM-DD)
+        try:
+            data["created_at"] = datetime.strptime(data["created_at"], "%Y-%m-%d").date()  # Convert to date
+        except ValueError:
+            return Response({"created_at": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Calculate zakat amount
+        try:
+            data["zakat_amount"] = self.calculate_zakat(data)  
+        except ValueError:
+            return Response({"error": "Invalid numeric values provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate & save data
+        serializer = ZakatHistorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def calculate_zakat(self, data):
+        """Calculate zakat amount based on user input"""
+        try:
+            zakatable_assets = (
+                int(data["liquidites"]) + 
+                int(data["investissements"]) + 
+                int(data["bien_location"]) + 
+                int(data["creances_clients"]) + 
+                int(data["stocks"])  
+            )
+            non_zakatable_assets = (
+                int(data["bien_usage_interne"]) + 
+                int(data["fonds_non_dispo"]) + 
+                int(data["stocks_invendable"])
+            )
+            net_assets = zakatable_assets - non_zakatable_assets
+            return round(net_assets * 0.025, 2)  # 2.5% zakat
+        except (ValueError, TypeError):
+            raise ValueError("Invalid numeric values for calculation.")

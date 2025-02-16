@@ -33,3 +33,18 @@ class InputField(models.Model):
 
     def __str__(self):
         return self.label
+class ZakatHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    liquidites = models.FloatField()
+    stocks = models.FloatField()
+    investissements = models.FloatField()
+    bien_location = models.FloatField()
+    creances_clients = models.FloatField()
+    bien_usage_interne = models.FloatField()
+    fonds_non_dispo = models.FloatField()
+    stocks_invendable = models.FloatField()
+    zakat_amount = models.FloatField()
+    created_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"ZakatHistory({self.user.username} - {self.created_at})"
