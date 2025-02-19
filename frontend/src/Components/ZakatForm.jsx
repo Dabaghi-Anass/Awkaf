@@ -4,16 +4,16 @@ import '../CSS/ZakatForm.css';
 export const ZakatForm = () => {
   const [zakatFormInfos, setZakatFormInfos] = useState({
     actifs: {
-      liquidites: 0,
-      stocks: 0,
-      investissements: 0,
-      bienLocation: 0,
-      creancesClients: 0,
-      bienUsageInterne: 0
+      liquidites: null,
+      stocks: null,
+      investissements: null,
+      bienLocation: null,
+      creancesClients: null,
+      bienUsageInterne: null
     },
     filtered: {
-      fondsNonDispo: 0,
-      stocksInvendable: 0,
+      fondsNonDispo: null,
+      stocksInvendable: null,
     }
   });
 
@@ -136,7 +136,7 @@ export const ZakatForm = () => {
               <h2>Souhaitez-vous utiliser l’année lunaire (2,5 %) ou solaire (2,577 %) ?</h2>
               <label>
                 <input
-                  className='asset-input'
+                  
                   type="radio"
                   name="rate"
                   value="2.5"
@@ -148,7 +148,7 @@ export const ZakatForm = () => {
               <br />
               <label>
                 <input
-                  className='asset-input'
+                  
                   type="radio"
                   name="rate"
                   value="2.577"
@@ -158,7 +158,7 @@ export const ZakatForm = () => {
                 Année solaire (2.577 %)
               </label>
             </div>
-
+            
      
             <div className="">
               <button type="button" className="calculate-btn" onClick={calculateZakat}>

@@ -6,5 +6,5 @@ urlpatterns = [
     path("inputfields/", InputFieldListCreate.as_view(), name="inputfield-list-create"),
     path("inputfields/bulk-update/", BulkInputFieldUpdate.as_view(), name="inputfield-bulk-update"),
     path("inputfields/bulk-delete/", BulkInputFieldDelete.as_view(), name="inputfield-bulk-delete"),
-      path("save-zakat-history/", SaveZakatHistoryView.as_view(), name="save_zakat_history"),
+    path("save-zakat-history/", SaveZakatHistoryView.as_view(), name="save_zakat_history"),
 ]

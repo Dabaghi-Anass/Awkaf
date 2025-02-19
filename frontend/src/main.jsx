@@ -17,6 +17,7 @@ import { Zakat1 } from './Components/Zakat1.jsx';
 import { Zakat2 } from './Components/Zakat2.jsx';
 import { Admin } from './pages/Admin.jsx';
 import { ZakatForm } from './Components/ZakatForm.jsx';
+import { TestForm } from './Components/TestForm.jsx';
 
 
 
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
   },
   {
     path: "Form/",
-    element: <ZakatForm></ZakatForm>,
+    element: <TestForm></TestForm>,
   },
   {
     path: "test/",
