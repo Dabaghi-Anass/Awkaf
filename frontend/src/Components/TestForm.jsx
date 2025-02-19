@@ -13,6 +13,7 @@ export const TestForm = () => {
         fondsNonDispo: "",
         stocksInvendable: "",
         zakatAmount: "",
+        created_at: new Date().toISOString().split("T")[0],
     };
 
     const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
@@ -41,27 +42,58 @@ export const TestForm = () => {
 
     // Handles form submission (Sends selected data to the backend)
     const saveZakatHistory = async () => {
+        const token = localStorage.getItem("accessToken");
+    
+        const zakatData = {
+            liquidites: zakatFormInfos.liquidites || 0,
+            investissements: zakatFormInfos.investissements || 0,
+            bien_location: zakatFormInfos.bienLocation || 0,
+            creances_clients: zakatFormInfos.creancesClients || 0,
+            bien_usage_interne: zakatFormInfos.bienUsageInterne || 0,
+            fonds_non_dispo: zakatFormInfos.fondsNonDispo || 0,
+            stocks_invendable: zakatFormInfos.stocksInvendable || 0,
+            stocks: zakatFormInfos.stocks || 0,
+            created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+        };
+    
         try {
-            const response = await fetch("http://127.0.0.1:8000/save-zakat-history/", {
+            const response = await fetch("http://localhost:8000/apif/save-zakat-history/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify(zakatFormInfos),
+                body: JSON.stringify(zakatData),
             });
     
+            const data = await response.json();
             if (!response.ok) {
+                console.error("Backend error:", data);
                 throw new Error("Failed to save Zakat history");
             }
     
-            const data = await response.json();
             console.log("Zakat history saved successfully:", data);
             alert("Zakat history saved successfully!");
+    
+            // Reset form after successful save
+            setZakatFormInfos(initialZakatData);
+            setIsLiquidites(false);
+            setIsStocks(false);
+            setIsInvestissements(false);
+            setIsBienLocation(false);
+            setIsCreancesClients(false);
+            setIsBienUsageInterne(false);
+            setIsFondsNonDispo(false);
+            setIsStocksInvendable(false);
+            setShowInputs(false); // Hide input fields again
+    
         } catch (error) {
             console.error("Error:", error);
-            alert("Failed to save Zakat history. Please try again.");
+            alert(error.message);
         }
     };
+    
+    
     
 
     const calculateZakat = () => {

@@ -1,13 +1,12 @@
-.zakat-form-container{
-    height:56.5em ;
-    width: 70.3em;
-    display: flex;
-}
 
-.left-side{
-    height: 100%;
-    width: 55%;
-    background-color: grey;
+
+.zakat-form-container{
+    margin-top: 2em;
+    min-height: 52em;
+    width: 38em;
+    background-color: #035116;
+    color: #F2CB05;
+    border-radius: 1em;
 }
 .zakat-calculator-title h1{
     text-align: center;
@@ -23,7 +22,7 @@
 .line-hor{
     width: 90%;
     height: 2px;
-    background-color: #000;
+    background-color: #F2CB05;
     margin: auto;
     margin-top: 3em;
     border-radius: 15px;
@@ -47,8 +46,9 @@
 
 }
 .choice{
+    color: #035116;
     cursor: pointer;
-    background-color: #D9D9D9;
+    background-color: #fff;
     margin: 8px auto;
     width: 98%;
     padding: 10px 5px;
@@ -56,14 +56,39 @@
     transition: 0.3s;
 }
 .active{
-    background-color: #12c73f;
+    background-color: #F2CB05;
+    
 }
-.active:hover{
-    background-color: aqua;
+.yes-no button{
+    margin-top: 1em;
+    cursor: pointer;
+    width: 8em;
+    height: 2.5em;
+    transition: 0.4s;
+    font-weight: 500;
+    font-family: 'Inter';
+    outline: none;
+    border: none;
+    padding: 5px 0;
+    background-color: #fff;
+    color: #035116;
 }
 
-.choice:hover{
-    background-color: #c71212;
+.yes{
+    border-radius: 5px 0 0 5px;
+}
+.yes.active,.no.active {
+    background-color: #F2CB05;
+    font-weight: 800;
+    color: #035116;
+}
+
+.no{
+    border-radius: 0 5px 5px 0;
+}
+
+.choice:hover,.yes-no button:hover{
+    background-color: #929793;
 }
 .next-btn{
     padding: 8px 10px;
@@ -78,15 +103,17 @@
     cursor: pointer;
 }
 .right-side{
-    height: 100%;
-    width: 45%;
-    background-color: #12c73f;
+    width: 80%;
+    background-color: #fff;
+    margin: auto;
+    border-radius: 1em;
+    margin-top: 1em;
+    color: #035116;
+    transition: 0.5s;
 }
 .montants{
     margin: auto;
-    background-color: #12c73f;
     width: 100%;
-
     display: flex;
     flex-direction: column;
 }
@@ -110,7 +137,7 @@
     font-weight: 700;
     width:10em;
     border: none;
-    border-bottom: 2px solid;
+    border-bottom: 1px solid #035116;
     background-color: transparent;
     outline: none;
     padding: 2px 5px 2px 5px;
@@ -143,6 +170,8 @@
     background: #0f7829;
 }
 .result-container{
+  
+    color: #fff;
     width: 90%;
     height: 40%;
     margin: auto;
@@ -150,6 +179,7 @@
     background-color: #035116;
     border-radius: 10px;
     text-align: center;
+    height: 20em;
 }
 .result-container h2{
     font-size: 2.4em;
