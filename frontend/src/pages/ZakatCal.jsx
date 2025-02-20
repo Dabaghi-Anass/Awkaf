@@ -43,7 +43,7 @@ export const ZakactCal = () => {
 
     // Handles Yes/No questions & selections
     const handleSelection = (field, value) => {
-        setZakatFormInfos(prev => ({ ...prev, [field]: value ? "" : undefined }));
+        setZakatFormInfos(prev => ({ ...prev, [field]: value ? "" : -1 }));
     };
 
     // Handles form submission (Sends selected data to the backend)
@@ -51,14 +51,14 @@ export const ZakactCal = () => {
         const token = localStorage.getItem("accessToken");
     
         const zakatData = {
-            liquidites: zakatFormInfos.liquidites || 0,
-            investissements: zakatFormInfos.investissements || 0,
-            bien_location: zakatFormInfos.bienLocation || 0,
-            creances_clients: zakatFormInfos.creancesClients || 0,
-            bien_usage_interne: zakatFormInfos.bienUsageInterne || 0,
-            fonds_non_dispo: zakatFormInfos.fondsNonDispo || 0,
-            stocks_invendable: zakatFormInfos.stocksInvendable || 0,
-            stocks: zakatFormInfos.stocks || 0,
+            liquidites: zakatFormInfos.liquidites || -1,
+            investissements: zakatFormInfos.investissements || -1,
+            bien_location: zakatFormInfos.bienLocation || -1,
+            creances_clients: zakatFormInfos.creancesClients || -1,
+            bien_usage_interne: zakatFormInfos.bienUsageInterne || -1,
+            fonds_non_dispo: zakatFormInfos.fondsNonDispo || -1,
+            stocks_invendable: zakatFormInfos.stocksInvendable || -1,
+            stocks: zakatFormInfos.stocks || -1,
             created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
         };
     

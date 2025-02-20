@@ -19,6 +19,7 @@ import { Admin } from './pages/Admin.jsx';
 import { ZakatForm } from './Components/ZakatForm.jsx';
 import { TestForm } from './Components/TestForm.jsx';
 import { ZakatInputs } from './Components/ZakatInputs.jsx';
+import { RapportCal } from './Components/RapportCal.jsx';
 
 
 
@@ -53,7 +54,7 @@ const router = createBrowserRouter([
   },
   {
     path: "test/",
-    element: <ZakatInputs></ZakatInputs>,
+    element: <RapportCal></RapportCal>,
   },
   {
     path: "Admin/",

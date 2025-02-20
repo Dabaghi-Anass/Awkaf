@@ -1,0 +1,36 @@
+.details-container{
+    margin-top: 2em;
+    height: 35em;
+    width: 35em;
+    border-radius: 10px;
+    background-color: #035116;
+}
+.details-container h1{
+    border-radius: 10px 10px 0 0 ;
+    height: 15%;
+    padding: 15px 10px;
+    border-bottom: 4px solid gold;
+    color: #F2CB05;
+}
+.mbape{
+    justify-content: center;
+    padding: 5px 15px;
+    color: #fff;
+}
+.mbape label{
+    font-size: 1.5em;
+    font-weight: 600;
+}
+.mbape input{
+    color: #F2CB05;
+    font-size: 23px;
+    font-weight: 600;
+    padding: 10px;
+    width: 8em;
+    border: none;
+    border-radius: 5px;
+    margin: 0.3em 0 1em 0.3em;
+    background-color: transparent;
+    outline: none;
+    cursor:auto;
+}

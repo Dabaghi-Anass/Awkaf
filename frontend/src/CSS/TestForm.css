@@ -21,11 +21,10 @@
     line-height: 18px;
 }
 .line-hor{
-    width: 90%;
+    width: 80%;
     height: 2px;
     background-color: #F2CB05;
-    margin: auto;
-    margin-top: 3em;
+    margin: 2em auto  ;
     border-radius: 15px;
 }
 
@@ -54,11 +53,11 @@
     width: 98%;
     padding: 10px 5px;
     border-radius: 5px;
-    transition: 0.3s;
+  
 }
 .active{
-    background-color: #F2CB05;
-    
+  
+    color: red;
 }
 .yes-no{
     display: flex;
@@ -68,7 +67,6 @@
     margin-top: 1em;
     cursor: pointer;
     padding: 8px 4em;
-    transition: 0.4s;
     font-weight: 500;
     font-family: 'Inter';
     outline: none;
@@ -86,16 +84,16 @@
 }
 
 
-
-.choice:hover,.yes-no button:hover{
+.choice:hover{
+    background: #F2CB05;
+}
+.yes-no button:hover{
     background-color: #F2CB05;
 }
 
 .user-inputs{
     border-radius: 1em;
     margin-top: 1em;
-    transition: 0.5s;
-    
 }
 
 .date-zakat{
@@ -112,7 +110,7 @@
    font-weight: 500;
    color: #fff;
    cursor: pointer;
-   transition: 0.3s;
+  
    margin: 1em 5px;
 }
 .zakat-form-btns-container button:hover{
