@@ -89,7 +89,9 @@ class BulkUpdateInputFieldSerializer(serializers.ModelSerializer):
         list_serializer_class = BulkUpdateListSerializer
         # Use custom bulk update serializer
 class ZakatHistorySerializer(serializers.ModelSerializer):
-    created_at = serializers.DateField(format="%Y-%m-%d")  # Ensure it stays as a date
+    created_at = serializers.DateField(format="%Y-%m-%d")
+    zakat_amount = serializers.FloatField(required=False, allow_null=True)  # ✅ Not required
+    nisab = serializers.FloatField(required=False, allow_null=True)  # ✅ Added nisab
 
     class Meta:
         model = ZakatHistory

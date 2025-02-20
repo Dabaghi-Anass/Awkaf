@@ -43,7 +43,8 @@ class ZakatHistory(models.Model):
     bien_usage_interne = models.FloatField()
     fonds_non_dispo = models.FloatField()
     stocks_invendable = models.FloatField()
-    zakat_amount = models.FloatField()
+    zakat_amount = models.FloatField(null=True, blank=True, default=None)  # ✅ Allows NULL values
+    nisab = models.FloatField(null=True, blank=True, default=None)  # Allow NULL values
     created_at = models.DateTimeField()
 
     def __str__(self):
