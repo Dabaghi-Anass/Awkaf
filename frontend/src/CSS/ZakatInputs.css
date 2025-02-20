@@ -1,0 +1,34 @@
+.zakat-inputs{
+    height: 20em;
+    width: 25em;
+    background-color: red;
+}
+
+.input-label-montants input{
+    font-size:15px ;
+    font-weight: 300;
+    border: none;
+    border: 1px solid #035116;
+    background-color: transparent;
+    outline: none;
+    width: 90%;
+    padding: 0.5em 5px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.input-label-montants label{
+    font-size: 16px;
+    font-weight: 300;
+}
+.input-label-montants {
+    margin: 0.5em 0;
+    padding-left: 0.5em;
+   
+}
+.input-montants-container{
+   background-color: aqua;
+   width: 100%;
+}
+.montants{
+text-align: left;
+}

@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom'
 import React, { useState } from 'react';
 import { Header } from '../Components/Header'
+import { ZakatInputs } from '../Components/ZakatInputs';
 
 export const ZakactCal = () => {
    
@@ -31,7 +32,7 @@ export const ZakactCal = () => {
     const [isFondsNonDispo, setIsFondsNonDispo] = useState(false);
     const [isStocksInvendable, setIsStocksInvendable] = useState(false);
     const [showInputs, setShowInputs] = useState(false);
-
+    const [showResault,setShowResault]=useState(false);
     // Handles text input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -120,6 +121,7 @@ export const ZakactCal = () => {
             ...prevState,
             zakatAmount: zakat.toFixed(2) // Store zakat amount as a string for display
         }));
+        setShowResault(true);
     };
     
 
@@ -178,22 +180,20 @@ export const ZakactCal = () => {
                     <div className="right-side">
                         <div className="montants">
                             <h3>Veuillez saisir vos infos:</h3>
-                            <div className="input-montants-container">
-                                {isLiquidites && <p className='input-label-montants'><label>Trésorerie</label><input type="text" name="liquidites" value={zakatFormInfos.liquidites} onChange={handleChange} /></p>}
-                                {isStocks && <p className='input-label-montants'><label>Stocks</label><input type="text" name="stocks" value={zakatFormInfos.stocks} onChange={handleChange} /></p>}
-                                {isInvestissements && <p className='input-label-montants'><label>Investissements</label><input type="text" name="investissements" value={zakatFormInfos.investissements} onChange={handleChange} /></p>}
-                                {isBienUsageInterne && <p className='input-label-montants'><label>Bien d'usage interne</label><input type="text" name="bienUsageInterne" value={zakatFormInfos.bienUsageInterne} onChange={handleChange} /></p>}
-                                {isBienLocation && <p className='input-label-montants'><label>Biens en location</label><input type="text" name="bienLocation" value={zakatFormInfos.bienLocation} onChange={handleChange} /></p>}
-                                {isCreancesClients && <p className='input-label-montants'><label>Créances clients</label><input type="text" name="creancesClients" value={zakatFormInfos.creancesClients} onChange={handleChange} /></p>}
-                                {isFondsNonDispo && <p className='input-label-montants'><label>Fonds non disponibles</label><input type="text" name="fondsNonDispo" value={zakatFormInfos.fondsNonDispo} onChange={handleChange} /></p>}
-                                {isStocksInvendable && <p className='input-label-montants'><label>Stocks invendables</label><input type="text" name="stocksInvendable" value={zakatFormInfos.stocksInvendable} onChange={handleChange} /></p>}
-                            </div>
+                            <ZakatInputs 
+                             isLiquidites={isLiquidites} isStocks={isStocks} isInvestissements={isInvestissements}
+                             isBienUsageInterne={isBienUsageInterne} isBienLocation={isBienLocation} isCreancesClients={isCreancesClients}
+                             isFondsNonDispo={isFondsNonDispo} isStocksInvendable={isStocksInvendable} 
+                             zakatFormInfos={zakatFormInfos} handleChange={handleChange}
+                            ></ZakatInputs>
+                            
                             <div className="zakat-calcul-container center">
                             <button className="zakat-calcl-btn" onClick={calculateZakat}>Calculer la Zakat</button>
                             </div>
                             
                         </div>
-                        <div className="result-container">
+                        {showResault&&(
+                            <div className="result-container">
                             <h2>قيمة الزكاة الواجبة على شركتكم</h2>
                             <div className="line-ver"></div>
                             <div className="zakat-amount">{zakatFormInfos.zakatAmount}</div>
@@ -203,8 +203,14 @@ export const ZakactCal = () => {
                             يمتد لأجيال قادمة.
                             </p>
                         </div>
+                        )}
+                        
 
-                       <div className="savee center"><button className="save-btn" onClick={saveZakatHistory}>Save</button></div>
+                       <div className="savee center">
+
+                        <button className="save-btn" onClick={saveZakatHistory}>Save</button>
+                        <button className="save-btn" onClick={()=>{setShowInputs(false) ;setShowResault(false)} }>Previous</button>
+                       </div>
                     </div>
                 )}
                 

@@ -18,6 +18,7 @@ import { Zakat2 } from './Components/Zakat2.jsx';
 import { Admin } from './pages/Admin.jsx';
 import { ZakatForm } from './Components/ZakatForm.jsx';
 import { TestForm } from './Components/TestForm.jsx';
+import { ZakatInputs } from './Components/ZakatInputs.jsx';
 
 
 
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
   },
   {
     path: "test/",
-    element: <Zakat2></Zakat2>,
+    element: <ZakatInputs></ZakatInputs>,
   },
   {
     path: "Admin/",

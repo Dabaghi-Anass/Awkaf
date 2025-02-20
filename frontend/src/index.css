@@ -14,3 +14,9 @@ body{
   align-items: center;
 
 }
+.button{
+  outline: none;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 15px;
+}
