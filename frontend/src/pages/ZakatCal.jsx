@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import React, { useState } from 'react';
 import { Header } from '../Components/Header'
 import { ZakatInputs } from '../Components/ZakatInputs';
+import { ZakatAmount } from '../Components/ZakatAmount';
 
 export const ZakactCal = () => {
    
@@ -33,6 +34,7 @@ export const ZakactCal = () => {
     const [isStocksInvendable, setIsStocksInvendable] = useState(false);
     const [showInputs, setShowInputs] = useState(false);
     const [showResault,setShowResault]=useState(false);
+    const [isUnnaire,setIsUnnaire]=useState(false);
     // Handles text input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -108,8 +110,8 @@ export const ZakactCal = () => {
         const stocksInvendable = Number(zakatFormInfos.stocksInvendable) || 0;
     
         // Ensure selectedRate is a number (default to 2.5% if not set)
-        const zakatRate =  2.5;
-    
+        const zakatRate =  isUnnaire ? 2.5 : 2.577;
+        
         // Calculate total eligible assets
         const totalActifs = (liquidites + stocks) - (fondsNonDispo + stocksInvendable);
     
@@ -171,15 +173,23 @@ export const ZakactCal = () => {
                             </div>
                         </div>
 
-                        {/* Next Button */}
                         <div className="question">
+                            <h3>3. Avez-vous des stocks invendables ?</h3>
+                            <div className="yes-no">
+                                <button className={`yes ${isUnnaire ? "active" : ""}`} onClick={() => { setIsUnnaire(true);  }}>Unnaire</button>
+                                <button className={`no ${!isUnnaire ? "active" : ""}`} onClick={() => { setIsUnnaire(false); }}>Solaire</button>
+                            </div>
+                        </div>
+
+                        {/* Next Button */}
+                        <div className="zakat-form-btns-container center">
                             <button className="next-btn" onClick={() => setShowInputs(true)}>Next</button>
                         </div>
                         <div className="line-hor"></div>
                         {showInputs && (
-                    <div className="right-side">
-                        <div className="montants">
-                            <h3>Veuillez saisir vos infos:</h3>
+                    <div className="user-inputs">
+                        <div className="question">
+                            <h3>4.Veuillez saisir vos infos:</h3>
                             <ZakatInputs 
                              isLiquidites={isLiquidites} isStocks={isStocks} isInvestissements={isInvestissements}
                              isBienUsageInterne={isBienUsageInterne} isBienLocation={isBienLocation} isCreancesClients={isCreancesClients}
@@ -187,39 +197,23 @@ export const ZakactCal = () => {
                              zakatFormInfos={zakatFormInfos} handleChange={handleChange}
                             ></ZakatInputs>
                             
-                            <div className="zakat-calcul-container center">
+                            <div className="zakat-form-btns-container center">
                             <button className="zakat-calcl-btn" onClick={calculateZakat}>Calculer la Zakat</button>
                             </div>
                             
                         </div>
-                        {showResault&&(
-                            <div className="result-container">
-                            <h2>قيمة الزكاة الواجبة على شركتكم</h2>
-                            <div className="line-ver"></div>
-                            <div className="zakat-amount">{zakatFormInfos.zakatAmount}</div>
-                            <p>
-                            لقد قمنا بحساب زكاتك وهي تبلغ [مبلغ الزكاة] دولار أمريكي. ندعوك لاستخدام زكاتك في الوقف، حيث ستسهم
-                            في مشاريع مستدامة تحقق فائدة طويلة الأمد للمجتمع. بادر بالمساهمة بزكاتك للوقف ودع أثرها الإيجابي
-                            يمتد لأجيال قادمة.
-                            </p>
-                        </div>
-                        )}
                         
+                            <ZakatAmount 
+                                zakatFormInfos={zakatFormInfos}  showResault={showResault} setShowInputs={setShowInputs}
+                                saveZakatHistory={saveZakatHistory}
+                            />
+                            
 
-                       <div className="savee center">
-
-                        <button className="save-btn" onClick={saveZakatHistory}>Save</button>
-                        <button className="save-btn" onClick={()=>{setShowInputs(false) ;setShowResault(false)} }>Previous</button>
-                       </div>
                     </div>
                 )}
                 
                     </div>
                 </div>
-
-                {/* Right Section - Inputs */}
-               
-
             
         </div>
         </>

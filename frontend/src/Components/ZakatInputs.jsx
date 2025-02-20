@@ -3,7 +3,7 @@ import '../CSS/ZakatInputs.css'
 export const ZakatInputs = ({isLiquidites, isStocks, isInvestissements,isBienUsageInterne, isBienLocation, isCreancesClients,isFondsNonDispo, isStocksInvendable,zakatFormInfos, handleChange}) => {
   return (
    <>
-    <div className="center">
+    
     <div className="input-montants-container">
                                 {isLiquidites && <p className='input-label-montants'><label>Trésorerie</label><br /><input type="number" name="liquidites" min={0} value={zakatFormInfos.liquidites} onChange={handleChange} /></p>}
                                 {isStocks && <p className='input-label-montants'><label>Stocks</label><br /><input type="number" name="stocks" min={0} value={zakatFormInfos.stocks} onChange={handleChange} /></p>}
@@ -14,7 +14,7 @@ export const ZakatInputs = ({isLiquidites, isStocks, isInvestissements,isBienUsa
                                 {isFondsNonDispo && <p className='input-label-montants'><label>Fonds non disponibles</label><br /><input type="number" min={0} name="fondsNonDispo" value={zakatFormInfos.fondsNonDispo} onChange={handleChange} /></p>}
                                 {isStocksInvendable && <p className='input-label-montants'><label>Stocks invendables</label><br /><input type="number" min={0} name="stocksInvendable" value={zakatFormInfos.stocksInvendable} onChange={handleChange} /></p>}
                             </div>
-    </div>
+   
    </>
   )
 }

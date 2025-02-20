@@ -1,0 +1,36 @@
+.result-container{
+  
+    color: #035116;
+    width: 60%;
+    height: 40%;
+    margin: auto;
+    margin-top: 2em;
+    background-color: #fff;
+    border-radius: 10px;
+    text-align: center;
+    height: 20em;
+}
+.result-container h2{
+    font-size: 2.4em;
+    padding: 0.5em 0;
+}
+.result-container p{
+    font-size: 17px;
+    font-weight:500;
+}
+.line-ver{
+    height: 2px;
+    width: 90%;
+    background-color: #F2CB05;
+    margin: auto;
+    margin-top: 1em;
+    border-radius: 20px;
+}
+.zakat-amount{
+    margin: 0.5em 0 0.3em 0;
+    font-weight: 600;
+    font-size: 3em;
+    display: inline-block;
+    padding:5px 10px;
+    border-radius: 8px;
+}

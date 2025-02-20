@@ -3,7 +3,7 @@
 .zakat-form-container{
     margin-top: 2em;
     min-height: 52em;
-    width: 38em;
+    width: 50em;
     background-color: #035116;
     color: #F2CB05;
     border-radius: 1em;
@@ -60,76 +60,50 @@
     background-color: #F2CB05;
     
 }
+.yes-no{
+    display: flex;
+    justify-content: space-around;
+}
 .yes-no button{
     margin-top: 1em;
     cursor: pointer;
-    width: 8em;
-    height: 2.5em;
+    padding: 8px 4em;
     transition: 0.4s;
     font-weight: 500;
     font-family: 'Inter';
     outline: none;
     border: none;
-    padding: 5px 0;
     background-color: #fff;
     color: #035116;
+    border-radius: 5px;
 }
 
-.yes{
-    border-radius: 5px 0 0 5px;
-}
+
 .yes.active,.no.active {
     background-color: #F2CB05;
     font-weight: 800;
     color: #035116;
 }
 
-.no{
-    border-radius: 0 5px 5px 0;
-}
+
 
 .choice:hover,.yes-no button:hover{
-    background-color: #929793;
+    background-color: #F2CB05;
 }
-.next-btn{
-    padding: 8px 10px;
-    background-color: #D9D9D9;
-    font-size: 17px;
-    font-weight: 600;
-    color: #000;
-    width: 7em;
-    border-radius: 5px;
-    outline: none;
-    border: none;
-    cursor: pointer;
-}
-.right-side{
-    width: 80%;
-    background-color: #fff;
-    margin: auto;
+
+.user-inputs{
     border-radius: 1em;
     margin-top: 1em;
-    color: #035116;
     transition: 0.5s;
-    position: absolute;
-    top: 3em;
-    transform: translateX(10%);
-    min-height: 30em;
+    
 }
-
-
-
-
-
 
 .date-zakat{
     margin-top: 0.5em;
 }
-.zakat-calcul-container {
-    margin-top: 2em;
-}
-.zakat-calcul-container button{
-   padding: 8px 4em;
+
+.zakat-form-btns-container button{
+   padding: 8px 1em;
    border-radius: 5px;
    outline: none;
    border: none;
@@ -139,43 +113,9 @@
    color: #fff;
    cursor: pointer;
    transition: 0.3s;
+   margin: 1em 5px;
 }
-.zakat-calcul-container button:hover{
-    background: #0f7829;
-}
-.result-container{
-  
-    color: #fff;
-    width: 90%;
-    height: 40%;
-    margin: auto;
-    margin-top: 2em;
-    background-color: #035116;
-    border-radius: 10px;
-    text-align: center;
-    height: 20em;
-}
-.result-container h2{
-    font-size: 2.4em;
-    padding: 0.5em 0;
-}
-.line-ver{
-    height: 2px;
-    width: 90%;
-    background-color: yellow;
-    margin: auto;
-    margin-top: 1em;
-    border-radius: 20px;
-}
-.zakat-amount{
-   margin: 0.2em 0 0.3em 0;
-    font-weight: 600;
-    font-size: 3em;
-}
-.save-btn{
-    padding: 8px 1em;
-    font-size: 15px;
-    color: #fff;
-    background-color: #035116;
-    border-radius: 5px;
+.zakat-form-btns-container button:hover{
+    background: #F2CB05;
+    color: #035116;
 }
