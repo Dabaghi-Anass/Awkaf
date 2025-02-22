@@ -31,5 +31,6 @@ urlpatterns = [
     path('apif/user/delete/', UserDeleteView.as_view(), name='user-delete'), 
     path('apif/admin/register/', AdminRegisterView.as_view(), name='admin-register'),
     path('apif/admin/login/', AdminLoginView.as_view(), name='admin-login'),  # Admin login
+     
 ]
 

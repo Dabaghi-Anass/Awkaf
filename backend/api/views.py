@@ -14,6 +14,8 @@ from rest_framework import exceptions
 from .models import InputField,ZakatHistory
 from datetime import datetime
 from django.shortcuts import get_object_or_404
+from django.db import connection
+from django.conf import settings
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -71,18 +73,28 @@ class AdminRegisterView(APIView):
 class AdminLoginView(TokenObtainPairView):
     """
     Admin login view that uses JWT to authenticate admins.
-    Admins must log in using this view and not through the regular login.
+    Admins must provide a secret key along with their credentials.
     """
 
     def post(self, request, *args, **kwargs):
-        # Get the user by username
-        user = User.objects.get(username=request.data["username"])
+        username = request.data.get("username")
+        secret_key = request.data.get("secret_key")  # Get secret key from frontend
 
-        # Check if the user is an admin (is_staff=True)
-        if not user.is_staff:
-            raise PermissionDenied("Only admins can log in via this endpoint.")
+        try:
+            user = User.objects.get(username=username)
 
-        # If the user is an admin, proceed with token generation
+            # Check if the user is an admin
+            if not user.is_staff:
+                raise PermissionDenied("Only admins can log in via this endpoint.")
+
+            # Verify the secret key
+            if secret_key != settings.ADMIN_SECRET_KEY:
+                return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+
+        except User.DoesNotExist:
+            return Response({"error": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Proceed with JWT token generation
         return super().post(request, *args, **kwargs)
 
 
@@ -241,3 +253,56 @@ class AdminDeleteUserView(APIView):
         
         user.delete()
         return Response({"message": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+class ManageZakatHistoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Add a new column to the api_zakathistory table."""
+        if not request.user.is_staff:
+            raise PermissionDenied("Only admins can manage tables.")
+
+        column_name = request.data.get("column_name")
+        column_type = request.data.get("column_type", "VARCHAR(255)")
+
+        if not column_name:
+            return Response({"error": "Missing column_name"}, status=status.HTTP_400_BAD_REQUEST)
+
+        query = f"ALTER TABLE api_zakathistory ADD COLUMN {column_name} {column_type};"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+
+        return Response({"message": f"Column {column_name} added to api_zakathistory"}, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        """Rename or modify an existing column in api_zakathistory."""
+        if not request.user.is_staff:
+            raise PermissionDenied("Only admins can manage tables.")
+
+        old_column = request.data.get("old_column")
+        new_column = request.data.get("new_column")
+        new_type = request.data.get("new_type", "VARCHAR(255)")
+
+        if not old_column or not new_column:
+            return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+        query = f"ALTER TABLE api_zakathistory CHANGE {old_column} {new_column} {new_type};"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+
+        return Response({"message": f"Column {old_column} renamed to {new_column} in api_zakathistory"}, status=status.HTTP_200_OK)
+
+    def delete(self, request):
+        """Delete a column from the api_zakathistory table."""
+        if not request.user.is_staff:
+            raise PermissionDenied("Only admins can manage tables.")
+
+        column_name = request.data.get("column_name")
+
+        if not column_name:
+            return Response({"error": "Missing column_name"}, status=status.HTTP_400_BAD_REQUEST)
+
+        query = f"ALTER TABLE api_zakathistory DROP COLUMN {column_name};"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+
+        return Response({"message": f"Column {column_name} deleted from api_zakathistory"}, status=status.HTTP_200_OK)

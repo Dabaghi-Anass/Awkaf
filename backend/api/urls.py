@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView
+from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView
 
 urlpatterns = [
     # InputField URLs
@@ -7,5 +7,7 @@ urlpatterns = [
     path("inputfields/bulk-update/", BulkInputFieldUpdate.as_view(), name="inputfield-bulk-update"),
     path("inputfields/bulk-delete/", BulkInputFieldDelete.as_view(), name="inputfield-bulk-delete"),
     path("save-zakat-history/", SaveZakatHistoryView.as_view(), name="save_zakat_history"),
-    path('admin/delete-user/<int:user_id>/', AdminDeleteUserView.as_view(), name='admin-delete-user')
+    path('admin/delete-user/<int:user_id>/', AdminDeleteUserView.as_view(), name='admin-delete-user'),
+    path('admin/manage-zakat/', ManageZakatHistoryAPIView.as_view(), name='manage-zakat')
+    
 ]
