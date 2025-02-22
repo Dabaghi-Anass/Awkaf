@@ -13,6 +13,7 @@ from rest_framework import status
 from rest_framework import exceptions
 from .models import InputField,ZakatHistory
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -226,3 +227,17 @@ class SaveZakatHistoryView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class AdminDeleteUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, user_id):
+        if not request.user.is_staff:
+            raise PermissionDenied("Only admins can delete users.")
+        
+        user = get_object_or_404(User, id=user_id)
+        
+        if user.is_staff:
+            return Response({"error": "You cannot delete another admin."}, status=status.HTTP_403_FORBIDDEN)
+        
+        user.delete()
+        return Response({"message": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
