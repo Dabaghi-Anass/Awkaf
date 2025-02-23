@@ -271,7 +271,7 @@ class ManageZakatHistoryAPIView(APIView):
         with connection.cursor() as cursor:
             cursor.execute(query)
 
-        return Response({"message": f"Column {column_name} added to api_zakathistory"}, status=status.HTTP_200_OK)
+        return Response({"message": f"Column '{column_name}' added to api_zakathistory"}, status=status.HTTP_200_OK)
 
     def put(self, request):
         """Rename or modify an existing column in api_zakathistory."""
@@ -289,7 +289,36 @@ class ManageZakatHistoryAPIView(APIView):
         with connection.cursor() as cursor:
             cursor.execute(query)
 
-        return Response({"message": f"Column {old_column} renamed to {new_column} in api_zakathistory"}, status=status.HTTP_200_OK)
+        return Response({"message": f"Column '{old_column}' renamed to '{new_column}' in api_zakathistory"}, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        """Rename a column or change its type in api_zakathistory."""
+        if not request.user.is_staff:
+            raise PermissionDenied("Only admins can manage tables.")
+
+        old_column = request.data.get("old_column")
+        new_column = request.data.get("new_column")
+        new_type = request.data.get("new_type")
+
+        if not old_column:
+            return Response({"error": "Missing old_column"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if new_column and new_type:
+            query = f"ALTER TABLE api_zakathistory CHANGE {old_column} {new_column} {new_type};"
+            message = f"Column {old_column} renamed to {new_column} and type changed to {new_type}."
+        elif new_column:
+            query = f"ALTER TABLE api_zakathistory CHANGE {old_column} {new_column} VARCHAR(255);"
+            message = f"Column {old_column} renamed to {new_column}."
+        elif new_type:
+            query = f"ALTER TABLE api_zakathistory MODIFY {old_column} {new_type};"
+            message = f"Column {old_column} type changed to {new_type}."
+        else:
+            return Response({"error": "Missing new_column or new_type"}, status=status.HTTP_400_BAD_REQUEST)
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+
+        return Response({"message": message}, status=status.HTTP_200_OK)
 
     def delete(self, request):
         """Delete a column from the api_zakathistory table."""
@@ -305,4 +334,4 @@ class ManageZakatHistoryAPIView(APIView):
         with connection.cursor() as cursor:
             cursor.execute(query)
 
-        return Response({"message": f"Column {column_name} deleted from api_zakathistory"}, status=status.HTTP_200_OK)
+        return Response({"message": f"Column '{column_name}' deleted from api_zakathistory"}, status=status.HTTP_200_OK)
