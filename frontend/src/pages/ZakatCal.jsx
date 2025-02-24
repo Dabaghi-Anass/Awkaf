@@ -19,6 +19,7 @@ export const ZakactCal = () => {
         stocksInvendable: "",
         zakatAmount: "",
         created_at: new Date().toISOString().split("T")[0],
+        nisab:800000,
     };
 
     const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
@@ -60,6 +61,8 @@ export const ZakactCal = () => {
             stocks_invendable: zakatFormInfos.stocksInvendable || -1,
             stocks: zakatFormInfos.stocks || -1,
             created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+            nisab:zakatFormInfos.nisab,
+            zakat_amount:zakatFormInfos.zakatAmount,
         };
     
         try {
@@ -108,23 +111,28 @@ export const ZakactCal = () => {
         const stocks = Number(zakatFormInfos.stocks) || 0;
         const fondsNonDispo = Number(zakatFormInfos.fondsNonDispo) || 0;
         const stocksInvendable = Number(zakatFormInfos.stocksInvendable) || 0;
-    
-        // Ensure selectedRate is a number (default to 2.5% if not set)
-        const zakatRate =  isUnnaire ? 2.5 : 2.577;
         
-        // Calculate total eligible assets
+        // Vérifie que nissab est défini
+        const nissab = zakatFormInfos.nisab || 0;
+    
+        // Définir le taux de Zakat
+        const zakatRate = isUnnaire ? 2.5 : 2.577;
+        
+        // Calcul du total des actifs éligibles
         const totalActifs = (liquidites + stocks) - (fondsNonDispo + stocksInvendable);
+        
+        // Calcul de la Zakat avec la bonne condition
+        const zakat = (totalActifs > nissab) ? (totalActifs * (zakatRate / 100)) : 0;
     
-        // Calculate zakat
-        const zakat = totalActifs * (zakatRate / 100);
-    
-        // Update the zakatAmount in zakatFormInfos
+        // Met à jour l'état
         setZakatFormInfos(prevState => ({
             ...prevState,
-            zakatAmount: zakat.toFixed(2) // Store zakat amount as a string for display
+            zakatAmount: zakat.toFixed(2) // Stocke le montant en string pour l'affichage
         }));
+    
         setShowResault(true);
     };
+    
     
 
     return (
