@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import InputField,ZakatHistory
+from .models import InputField,ZakatHistory,WaqfProject
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -95,4 +95,10 @@ class ZakatHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ZakatHistory
+        fields = '__all__'
+
+
+class WaqfProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WaqfProject
         fields = '__all__'

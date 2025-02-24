@@ -16,6 +16,10 @@ from datetime import datetime
 from django.shortcuts import get_object_or_404
 from django.db import connection
 from django.conf import settings
+from rest_framework import generics, permissions
+from .models import WaqfProject
+from .serializer import WaqfProjectSerializer
+from .permissions import IsStaffUser  # Custom permission
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -335,3 +339,13 @@ class ManageZakatHistoryAPIView(APIView):
             cursor.execute(query)
 
         return Response({"message": f"Column '{column_name}' deleted from api_zakathistory"}, status=status.HTTP_200_OK)
+    
+class WaqfProjectListCreateView(generics.ListCreateAPIView):
+    queryset = WaqfProject.objects.all()
+    serializer_class = WaqfProjectSerializer
+    permission_classes = [IsStaffUser]  # Only staff users can add
+
+class WaqfProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WaqfProject.objects.all()
+    serializer_class = WaqfProjectSerializer
+    permission_classes = [IsStaffUser]  # Only staff users can edit/delete
