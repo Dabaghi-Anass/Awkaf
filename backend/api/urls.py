@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,   WaqfProjectListCreateView, WaqfProjectDetailView
+from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,   WaqfProjectListCreateView, WaqfProjectDetailView,send_contact_email
 
 urlpatterns = [
     # InputField URLs
@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/delete-user/<int:user_id>/', AdminDeleteUserView.as_view(), name='admin-delete-user'),
     path('admin/manage-zakat/', ManageZakatHistoryAPIView.as_view(), name='manage-zakat'),
     path("waqf-projects/", WaqfProjectListCreateView.as_view(), name="waqfproject-list-create"),
-    path("waqf-projects/<int:pk>/", WaqfProjectDetailView.as_view(), name="waqfproject-detail")
+    path("waqf-projects/<int:pk>/", WaqfProjectDetailView.as_view(), name="waqfproject-detail"),
+    path("send-email/", send_contact_email, name="send_email")
     
 ]

@@ -20,6 +20,8 @@ from rest_framework import generics, permissions
 from .models import WaqfProject
 from .serializer import WaqfProjectSerializer
 from .permissions import IsStaffUser  # Custom permission
+from django.core.mail import send_mail
+from django.http import JsonResponse
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -349,3 +351,57 @@ class WaqfProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WaqfProject.objects.all()
     serializer_class = WaqfProjectSerializer
     permission_classes = [IsStaffUser]  # Only staff users can edit/delete
+
+
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt  # Bypass CSRF protection for testing
+def send_contact_email(request):
+    if request.method == "POST":
+        try:
+            # Decode the JSON body
+            data = json.loads(request.body.decode("utf-8"))
+
+            first_name = data.get("first_name")
+            last_name = data.get("last_name")
+            sender_email = data.get("email")
+            phone = data.get("phone")
+            message = data.get("message")
+
+            # Debugging: Print values to check if they are received
+            print("Received Data:")
+            print(f"First Name: {first_name}")
+            print(f"Last Name: {last_name}")
+            print(f"Email: {sender_email}")
+            print(f"Phone: {phone}")
+            print(f"Message: {message}")
+
+            if not all([first_name, last_name, sender_email, message]):
+                return JsonResponse({"error": "All fields are required"}, status=400)
+
+            subject = f"New Message from {first_name} {last_name}"
+            full_message = f"""
+            First Name: {first_name}
+            Last Name: {last_name}
+            Email: {sender_email}
+            Phone: {phone}
+
+            Message:
+            {message}
+            """
+            receiver_email = "aminecheikh17@gmail.com"  # Replace with actual email
+
+            send_mail(subject, full_message, sender_email, [receiver_email])
+
+            return JsonResponse({"success": "Email sent successfully"}, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
