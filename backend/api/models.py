@@ -49,3 +49,23 @@ class ZakatHistory(models.Model):
 
     def __str__(self):
         return f"ZakatHistory({self.user.username} - {self.created_at})"
+
+class WaqfProject(models.Model):
+    name = models.CharField(max_length=255)  # Project Name
+    introduction = models.TextField()  # Project Introduction
+    background = models.TextField()  # Project Background
+    objectives = models.TextField()  # Project Objectives
+    key_stages = models.TextField()  # Main Stages of the Project
+    expected_outcomes = models.TextField()  # Expected Results
+    challenges_solutions = models.TextField()  # Challenges and Solutions
+    required_resources = models.TextField()  # Required Resources
+    timeline = models.TextField()  # Project Timeline
+    tools_technologies = models.TextField()  # Tools and Technologies
+    team_members = models.TextField()  # Team Members
+    partners_supporters = models.TextField()  # Partners and Supporters
+    conclusion = models.TextField()  # Conclusion
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when created
+    updated_at = models.DateTimeField(auto_now=True)  # Timestamp when updated
+
+    def __str__(self):
+        return self.name
