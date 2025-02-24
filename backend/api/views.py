@@ -468,7 +468,7 @@ class RequestPasswordResetView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 class ResetPasswordView(APIView):
-    permission_classes = [AllowAny]  # ✅ Publicly accessible
+    permission_classes = [AllowAny]  # ✅ Allow all users to access this endpoint (no auth required)
 
     def post(self, request, uidb64, token):
         try:
@@ -476,15 +476,27 @@ class ResetPasswordView(APIView):
             user = User.objects.get(pk=uid)
 
             if not default_token_generator.check_token(user, token):
-                return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
 
             new_password = request.data.get("password")
             if not new_password:
-                return Response({"error": "Password is required."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
 
             user.set_password(new_password)
             user.save()
-            return Response({"message": "Password reset successful!"})
 
-        except (User.DoesNotExist, ValueError, TypeError):
-            return Response({"error": "Invalid reset link."}, status=status.HTTP_400_BAD_REQUEST)
+            # ✅ Send email notification
+            send_mail(
+                subject="Password Changed Successfully",
+                message="Your password has been changed successfully. If you did not request this change, please contact support immediately.",
+                from_email="noreply@yourdomain.com",
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return Response({"message": "Password reset successful. A confirmation email has been sent."}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
