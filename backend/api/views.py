@@ -22,6 +22,14 @@ from .serializer import WaqfProjectSerializer
 from .permissions import IsStaffUser  # Custom permission
 from django.core.mail import send_mail
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -29,6 +37,11 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        user.is_active = False  # Deactivate account until email is verified
+        user.save()
+        # Send email verification logic here
 
 class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserSerializer
@@ -49,13 +62,13 @@ class UserUpdateView(generics.UpdateAPIView):
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
-
 class UserDeleteView(generics.DestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
+
 
 
 class AdminRegisterView(APIView):
@@ -106,16 +119,14 @@ class AdminLoginView(TokenObtainPairView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        # Retrieve user by username
-        user = User.objects.get(username=request.data["username"])
-
-        # Check if the user is an admin (is_staff=True)
-        if user.is_staff:
-            # If the user is an admin, prevent login through the regular user endpoint
-            raise PermissionDenied("Admins cannot log in through the regular user login endpoint. Please use the admin login endpoint.")
-
-        # Proceed with normal JWT token creation for regular users
+        username = request.data.get("username")
+        user = User.objects.filter(username=username).first()
+        
+        if user and not user.is_active:
+            return Response({"error": "Email not verified. Please verify your email before logging in."}, status=status.HTTP_403_FORBIDDEN)
+        
         return super().post(request, *args, **kwargs)
+
 
 
 class InputFieldListCreate(APIView):
@@ -392,7 +403,7 @@ def send_contact_email(request):
             Message:
             {message}
             """
-            receiver_email = "aminecheikh17@gmail.com"  # Replace with actual email
+            receiver_email = "amine.dizo123@gmail.com"  # Replace with actual email
 
             send_mail(subject, full_message, sender_email, [receiver_email])
 
@@ -405,3 +416,20 @@ def send_contact_email(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]  # ✅ Make sure anyone can access this
+
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            if default_token_generator.check_token(user, token):
+                user.is_active = True
+                user.save()
+                return JsonResponse({"message": "Email verified successfully!"})
+            else:
+                return JsonResponse({"error": "Invalid or expired token."}, status=400)
+
+        except (User.DoesNotExist, ValueError, TypeError):
+            return JsonResponse({"error": "Invalid verification link."}, status=400)
