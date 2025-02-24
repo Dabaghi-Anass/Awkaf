@@ -36,6 +36,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+   
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
+
+
 }
 
 SIMPLE_JWT = {

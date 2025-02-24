@@ -21,6 +21,10 @@ import { TestForm } from './Components/TestForm.jsx';
 import { ZakatInputs } from './Components/ZakatInputs.jsx';
 import { RapportCal } from './Components/RapportCal.jsx';
 import { DashboardAdmin } from './pages/DashboardAdmin.jsx';
+import { ZakatProvider } from './Components/ZakatProvider.jsx';
+import { AdminRegister } from './pages/AdminRegister.jsx';
+import { AdminLogin } from './pages/AdminLogin.jsx';
+import { Contact } from './pages/Contact.jsx';
 
 
 
@@ -32,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: "About/",
     element: <About></About>,
+  },
+  {
+    path: "Contact/",
+    element: <Contact></Contact>,
   },
   {
     path: "Awkaf/",
@@ -61,12 +69,21 @@ const router = createBrowserRouter([
     path: "Admin/",
     element: <Admin></Admin>,
   },
+  {
+    path: "AdminRegister/",
+    element: <AdminRegister></AdminRegister>,
+  },
+  {
+    path: "AdminLogin/",
+    element: <AdminLogin></AdminLogin>,
+  },
 ]);
 
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-  <RouterProvider router={router} />
-  </StrictMode>,
-)
+    <ZakatProvider>  {/* 🔥 Now, all pages inside the router have access to ZakatContext */}
+      <RouterProvider router={router} />
+    </ZakatProvider>
+  </StrictMode>)
