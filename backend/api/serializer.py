@@ -9,6 +9,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from .models import InputField, ZakatHistory, WaqfProject
+from django.db import connection
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -123,13 +124,16 @@ class BulkUpdateInputFieldSerializer(serializers.ModelSerializer):
         list_serializer_class = BulkUpdateListSerializer
         # Use custom bulk update serializer
 class ZakatHistorySerializer(serializers.ModelSerializer):
-    created_at = serializers.DateField(format="%Y-%m-%d")
-    zakat_amount = serializers.FloatField(required=False, allow_null=True)  # ✅ Not required
-    nisab = serializers.FloatField(required=False, allow_null=True)  # ✅ Added nisab
+    created_at = serializers.DateField(format="%Y-%m-%d", required=True)
+    zakat_amount = serializers.FloatField(required=False, allow_null=True)  # ✅ Optional field
+    nisab = serializers.FloatField(required=True)  # ✅ Required field
 
     class Meta:
         model = ZakatHistory
-        fields = '__all__'
+        fields = "__all__"  # ✅ Include all fields
+        extra_kwargs = {
+            "user": {"read_only": True}  # ✅ Make 'user' read-only so it's set automatically
+        }
 
 
 class WaqfProjectSerializer(serializers.ModelSerializer):

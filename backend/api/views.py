@@ -40,6 +40,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+#from rest_framework.request import Request
 
 
 
@@ -250,40 +251,58 @@ class BulkInputFieldDelete(APIView):
 
         return Response({"message": "InputFields deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
+from django.db import connection
+
 class SaveZakatHistoryView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get_dynamic_columns(self):
+        """Fetch all column names in api_zakathistory except default ones."""
+        with connection.cursor() as cursor:
+            cursor.execute("SHOW COLUMNS FROM api_zakathistory;")
+            columns = [row[0] for row in cursor.fetchall()]
+        
+        # Exclude predefined columns
+        default_columns = {
+            "id", "user_id", "liquidites", "investissements", "bien_location", 
+            "creances_clients", "bien_usage_interne", "fonds_non_dispo", 
+            "stocks_invendable", "stocks", "created_at", "nisab", "zakat_amount"
+        }
+        return [col for col in columns if col not in default_columns]
+
     def post(self, request):
-        required_fields = [
-            "liquidites", "investissements", "bien_location", 
-            "creances_clients", "bien_usage_interne", 
-            "fonds_non_dispo", "stocks_invendable", "stocks", 
-            "created_at", "nisab"  # ✅ Ensuring nisab is required
-        ]
-
-        # Ensure all required fields exist
-        missing_fields = [field for field in required_fields if field not in request.data]
-        if missing_fields:
-            return Response({field: "This field is required." for field in missing_fields}, status=status.HTTP_400_BAD_REQUEST)
-
         data = request.data.copy()
-        data["user"] = request.user.id  
+        data["user_id"] = request.user.id  # ✅ Assign authenticated user
 
         # Ensure valid date format
         try:
-            data["created_at"] = datetime.strptime(data["created_at"], "%Y-%m-%d").date()  
+            data["created_at"] = datetime.strptime(data["created_at"], "%Y-%m-%d").date()
         except ValueError:
             return Response({"created_at": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Ensure zakat_amount is optional
-        if "zakat_amount" not in data:
-            data["zakat_amount"] = None  # ✅ Defaults to None
+        # ✅ Get dynamically added columns
+        dynamic_columns = self.get_dynamic_columns()
 
-        serializer = ZakatHistorySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # ✅ Ensure only existing columns are inserted
+        allowed_columns = set(dynamic_columns + [
+            "user_id", "liquidites", "investissements", "bien_location", 
+            "creances_clients", "bien_usage_interne", "fonds_non_dispo", 
+            "stocks_invendable", "stocks", "created_at", "nisab", "zakat_amount"
+        ])
+        filtered_data = {k: v for k, v in data.items() if k in allowed_columns}
+
+        # ✅ Construct the SQL query dynamically
+        columns = ", ".join(filtered_data.keys())
+        values = ", ".join(["%s"] * len(filtered_data))
+        sql = f"INSERT INTO api_zakathistory ({columns}) VALUES ({values})"
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, list(filtered_data.values()))
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({"message": "Zakat history saved successfully"}, status=status.HTTP_201_CREATED)
 class AdminDeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
 
