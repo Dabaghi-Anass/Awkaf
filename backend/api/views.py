@@ -17,7 +17,7 @@ from django.shortcuts import get_object_or_404
 from django.db import connection
 from django.conf import settings
 from rest_framework import generics, permissions
-from .models import WaqfProject
+from .models import WaqfProject,Employee
 from .serializer import WaqfProjectSerializer
 from .permissions import IsStaffUser  # Custom permission
 from django.core.mail import send_mail
@@ -43,6 +43,7 @@ from rest_framework import status
 
 
 
+
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -54,31 +55,46 @@ class CreateUserView(generics.CreateAPIView):
         user.save()
         # Send email verification logic here
 
-class UserUpdateView(generics.UpdateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+class UpdateDeleteUserView(APIView):
+    permission_classes = [IsAuthenticated]  # Only logged-in users
 
-    def get_object(self):
-        return self.request.user
+    def get_object(self, request):
+        """Get the logged-in user's object"""
+        return request.user
 
-    def perform_update(self, serializer):
-        password = serializer.validated_data.get('password', None)
-        if password:
-            self.request.user.set_password(password)
-            serializer.validated_data.pop('password', None)
-        serializer.save()
+    def put(self, request, *args, **kwargs):
+        """Full update of user profile"""
+        return self.update_user(request, partial=False)
 
-    def get(self, request, *args, **kwargs):
-        user = self.get_object()
-        serializer = self.get_serializer(user)
-        return Response(serializer.data)
+    def patch(self, request, *args, **kwargs):
+        """Partial update of user profile"""
+        return self.update_user(request, partial=True)
 
-class UserDeleteView(generics.DestroyAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    def update_user(self, request, partial):
+        """Handles both PUT and PATCH updates"""
+        user = self.get_object(request)
+        serializer = UserSerializer(user, data=request.data, partial=partial)
 
-    def get_object(self):
-        return self.request.user
+        if serializer.is_valid():
+            serializer.save()
+
+            # Update company if the user has one
+            if hasattr(user, "employee") and "company" in request.data:
+                user.employee.company = request.data["company"]
+                user.employee.save()
+
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, *args, **kwargs):
+        """Allow users to delete their own account"""
+        user = self.get_object(request)
+
+        # Delete Employee record if it exists
+        Employee.objects.filter(user=user).delete()
+
+        user.delete()
+        return Response({"message": "Account deleted successfully."}, status=204)
 
 
 
