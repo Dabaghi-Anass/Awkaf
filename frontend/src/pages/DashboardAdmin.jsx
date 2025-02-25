@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import '../CSS/DashboardAdmin.css'
+import { ManageAwkaf } from './ManageAwkaf';
 export const DashboardAdmin = () => {
 
     const [column,setColumn]=useState({
@@ -78,6 +79,8 @@ export const DashboardAdmin = () => {
                 </div>
             ))} */}
             </div>
+
+            <ManageAwkaf></ManageAwkaf>
             
 
         </div>

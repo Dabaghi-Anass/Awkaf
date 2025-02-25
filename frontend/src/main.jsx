@@ -4,7 +4,6 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Project from './Components/Project.jsx'
 import WakfPic from './Components/WakfPic.jsx'
 import Awkaf from './pages/Awkaf.jsx'
 import About from './pages/About.jsx'
@@ -25,6 +24,8 @@ import { ZakatProvider } from './Components/ZakatProvider.jsx';
 import { AdminRegister } from './pages/AdminRegister.jsx';
 import { AdminLogin } from './pages/AdminLogin.jsx';
 import { Contact } from './pages/Contact.jsx';
+import { WakfP } from './pages/WakfP.jsx';
+import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 
 
 
@@ -63,11 +64,15 @@ const router = createBrowserRouter([
   },
   {
     path: "test/",
-    element: <DashboardAdmin></DashboardAdmin>,
+    element: <ManageAwkaf></ManageAwkaf>,
   },
   {
     path: "Admin/",
     element: <Admin></Admin>,
+  },
+  {
+    path: "wakf/",
+    element: <WakfP></WakfP>,
   },
   {
     path: "AdminRegister/",

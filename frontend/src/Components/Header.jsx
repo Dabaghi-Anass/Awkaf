@@ -15,7 +15,7 @@ export const Header = () => {
                 <Link to={"/About"} className='page'>عن الزكاة</Link>
                 <Link to={"/ZakatCalculator"} className='page'>حاسبة الزكاة</Link>
                 <Link to={"/Awkaf"} className='page'>مشاريع الوقف</Link>
-                <Link to={""} className='page'>تواصل مباشرة معنا </Link>
+                <Link to={"/Contact"} className='page'>تواصل مباشرة معنا </Link>
             </div>
             
           </div>
