@@ -51,7 +51,7 @@ export const ManageAwkaf = () => {
             console.log("Project added:", data);
             alert("Project Added");
             setProjectInfos(defaultProject);
-            
+           
         } catch (error) {
             console.error("Error:", error);
             alert(error.message);
