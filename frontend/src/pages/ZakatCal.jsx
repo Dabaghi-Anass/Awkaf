@@ -1,28 +1,14 @@
 
 import { Link } from 'react-router-dom'
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { Header } from '../Components/Header'
 import { ZakatInputs } from '../Components/ZakatInputs';
 import { ZakatAmount } from '../Components/ZakatAmount';
+import { ZakatContext } from '../Components/ZakatProvider';
 
 export const ZakactCal = () => {
-   
-    // Initial empty values
-    const initialZakatData = {
-        liquidites: "",
-        stocks: "", 
-        investissements: "",
-        bienLocation: "",
-        creancesClients: "",
-        bienUsageInterne: "",
-        fondsNonDispo: "",
-        stocksInvendable: "",
-        zakatAmount: "",
-        created_at: new Date().toISOString().split("T")[0],
-        nisab:800000,
-    };
-
-    const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
+    const { zakatFormInfos, setZakatFormInfos,initialZakatData } = useContext(ZakatContext);
+    
 
     // States to track which fields the user selects
     const [isLiquidites, setIsLiquidites] = useState(false);
@@ -202,7 +188,7 @@ export const ZakactCal = () => {
                              isLiquidites={isLiquidites} isStocks={isStocks} isInvestissements={isInvestissements}
                              isBienUsageInterne={isBienUsageInterne} isBienLocation={isBienLocation} isCreancesClients={isCreancesClients}
                              isFondsNonDispo={isFondsNonDispo} isStocksInvendable={isStocksInvendable} 
-                             zakatFormInfos={zakatFormInfos} handleChange={handleChange}
+                             handleChange={handleChange}
                             ></ZakatInputs>
                             
                             <div className="zakat-form-btns-container center">
@@ -212,7 +198,7 @@ export const ZakactCal = () => {
                         </div>
                         
                             <ZakatAmount 
-                                zakatFormInfos={zakatFormInfos}  showResault={showResault} setShowInputs={setShowInputs}
+                                  showResault={showResault} setShowInputs={setShowInputs}
                                 saveZakatHistory={saveZakatHistory}
                             />
                             

@@ -13,7 +13,7 @@ export const ZakatProvider = ({ children }) => {
         bienUsageInterne: "",
         fondsNonDispo: "",
         stocksInvendable: "",
-        zakatAmount: "",
+        zakatAmount: 0,
         created_at: new Date().toISOString().split("T")[0],
         nisab: 800000,
     };

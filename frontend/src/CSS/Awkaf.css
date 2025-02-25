@@ -1,11 +1,14 @@
 
 
-.container{
-    margin-top: 4rem;
-    margin-bottom: 4rem;
-    display: flex;
-    justify-content: space-between;
+.project-container-grid{
+   margin: 4em auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns per row */
+    gap: 20px; /* Space between cards */
     padding: 0 6rem;
+    background-color: #F2CB05;
+    width: 80em;
+
 }
 .line-yellow-cont{
     display: flex;

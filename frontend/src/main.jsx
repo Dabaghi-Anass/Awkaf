@@ -4,7 +4,6 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Project from './Components/Project.jsx'
 import WakfPic from './Components/WakfPic.jsx'
 import Awkaf from './pages/Awkaf.jsx'
 import About from './pages/About.jsx'
@@ -21,6 +20,12 @@ import { TestForm } from './Components/TestForm.jsx';
 import { ZakatInputs } from './Components/ZakatInputs.jsx';
 import { RapportCal } from './Components/RapportCal.jsx';
 import { DashboardAdmin } from './pages/DashboardAdmin.jsx';
+import { ZakatProvider } from './Components/ZakatProvider.jsx';
+import { AdminRegister } from './pages/AdminRegister.jsx';
+import { AdminLogin } from './pages/AdminLogin.jsx';
+import { Contact } from './pages/Contact.jsx';
+import { WakfP } from './pages/WakfP.jsx';
+import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 
 
 
@@ -32,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: "About/",
     element: <About></About>,
+  },
+  {
+    path: "Contact/",
+    element: <Contact></Contact>,
   },
   {
     path: "Awkaf/",
@@ -55,11 +64,23 @@ const router = createBrowserRouter([
   },
   {
     path: "test/",
-    element: <DashboardAdmin></DashboardAdmin>,
+    element: <ManageAwkaf></ManageAwkaf>,
   },
   {
     path: "Admin/",
     element: <Admin></Admin>,
+  },
+  {
+    path: "wakf/",
+    element: <WakfP></WakfP>,
+  },
+  {
+    path: "AdminRegister/",
+    element: <AdminRegister></AdminRegister>,
+  },
+  {
+    path: "AdminLogin/",
+    element: <AdminLogin></AdminLogin>,
   },
 ]);
 
@@ -67,6 +88,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-  <RouterProvider router={router} />
-  </StrictMode>,
-)
+    <ZakatProvider>  {/* 🔥 Now, all pages inside the router have access to ZakatContext */}
+      <RouterProvider router={router} />
+    </ZakatProvider>
+  </StrictMode>)

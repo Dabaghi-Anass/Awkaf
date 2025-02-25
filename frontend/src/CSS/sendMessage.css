@@ -1,0 +1,106 @@
+.send-msg-container{
+    width: 42em;
+    height: 39em;
+    background: #035116;
+    border-radius: 1em;
+   
+}
+.send-msg-container h2{
+    color: #F2CB05;
+    position: relative;
+    padding: 0.5em 0 0 0.5em;
+}
+
+.send-msg-container h2::before{
+    position: absolute;
+    content: '';
+    height: 2px;
+    width: 45%;
+    bottom: -1em;
+    background-color: #F2CB05;
+}
+
+.send-msg-container form{
+    
+    margin-top: 3.5em;
+    width: 95%;
+    margin: 3.5em auto 0 auto;
+}
+.send-msg-input-container  {
+    
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8em;
+}
+.send-msg-input-container input{
+    outline: none;
+    border: none;
+    font-size: 18px;
+    padding: 10px 5px 10px 5px;
+    border-radius: 15px;
+    width: 45%;
+}
+.full input{
+    width: 100%;
+}
+.send-msg-container form textarea{
+    width: 100%;
+    resize: none;
+    padding: 10px 5px 10px 5px;
+    border-radius: 15px;
+    height: 15em;
+    font-size: 18px;
+    outline: none;
+    border: none;
+}
+.send-msg-container form p{
+    text-align: center;
+    margin-top: 0.5em;
+    color: #fff;
+}
+.send-msg-btn-container button{
+    margin: 0.8em auto 0 auto;
+    display: block;
+    background-color: #F2CB05;
+    width: 45%;
+    font-weight: 800;
+    font-size: 18px;
+    cursor: pointer;
+}
+.contact-text{
+    margin: auto;
+    color: #035116;
+}
+.contact-text h1{
+    margin-bottom: 0.5em;
+}
+.contact-container{
+    margin-top: 2em;
+    position: relative;
+}
+.contact-text h1{
+font-size: 4.875em;
+}
+.contact-text p{
+    width: 80%;
+    font-size: 2em;
+}
+.con{
+    width: 75em;
+    display: flex;
+    position: relative;
+}
+.deco{
+    position: absolute;
+    height: 15em;
+    background-color: #035116;
+    width: 15em;
+    border-radius: 33% 67% 30% 70% / 53% 58% 42% 47% ;
+    filter: blur(6em);
+}
+.two{
+    right: 0;
+    bottom: 0;
+    width: 10em;
+    height: 11em;
+}

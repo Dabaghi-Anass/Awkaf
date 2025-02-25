@@ -6,6 +6,7 @@
     height: 7em;
     direction: rtl;
     box-shadow: 0 2px 10px rgb(141, 139, 139); 
+    /* position: fixed;*/
 }
 
 .header-top{
