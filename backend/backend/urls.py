@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView,AdminRegisterView,AdminLoginView,CustomTokenObtainPairView,VerifyEmailView,UpdateDeleteUserView
+from api.views import CreateUserView,AdminRegisterView,AdminLoginView,CustomTokenObtainPairView,VerifyEmailView,UpdateDeleteUserView,LogoutView
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -32,6 +32,8 @@ urlpatterns = [
     path('apif/admin/register/', AdminRegisterView.as_view(), name='admin-register'),
     path('apif/admin/login/', AdminLoginView.as_view(), name='admin-login'),  # Admin login
     path("apif/user/verify-email/<uidb64>/<token>/", VerifyEmailView.as_view(), name="verify-email"),  # ✅ Email verification endpoint
+    path("apif/logout/", LogoutView.as_view(), name="logout"),  # Single logout endpoint for all users
+    
      
 ]
 
