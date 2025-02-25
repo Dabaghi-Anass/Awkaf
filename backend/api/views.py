@@ -17,11 +17,33 @@ from django.shortcuts import get_object_or_404
 from django.db import connection
 from django.conf import settings
 from rest_framework import generics, permissions
-from .models import WaqfProject
+from .models import WaqfProject,Employee
 from .serializer import WaqfProjectSerializer
 from .permissions import IsStaffUser  # Custom permission
 from django.core.mail import send_mail
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+#from rest_framework.request import Request
+
+
+
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -29,33 +51,53 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        user.is_active = False  # Deactivate account until email is verified
+        user.save()
+        # Send email verification logic here
 
-class UserUpdateView(generics.UpdateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+class UpdateDeleteUserView(APIView):
+    permission_classes = [IsAuthenticated]  # Only logged-in users
 
-    def get_object(self):
-        return self.request.user
+    def get_object(self, request):
+        """Get the logged-in user's object"""
+        return request.user
 
-    def perform_update(self, serializer):
-        password = serializer.validated_data.get('password', None)
-        if password:
-            self.request.user.set_password(password)
-            serializer.validated_data.pop('password', None)
-        serializer.save()
+    def put(self, request, *args, **kwargs):
+        """Full update of user profile"""
+        return self.update_user(request, partial=False)
 
-    def get(self, request, *args, **kwargs):
-        user = self.get_object()
-        serializer = self.get_serializer(user)
-        return Response(serializer.data)
+    def patch(self, request, *args, **kwargs):
+        """Partial update of user profile"""
+        return self.update_user(request, partial=True)
 
+    def update_user(self, request, partial):
+        """Handles both PUT and PATCH updates"""
+        user = self.get_object(request)
+        serializer = UserSerializer(user, data=request.data, partial=partial)
 
-class UserDeleteView(generics.DestroyAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+        if serializer.is_valid():
+            serializer.save()
 
-    def get_object(self):
-        return self.request.user
+            # Update company if the user has one
+            if hasattr(user, "employee") and "company" in request.data:
+                user.employee.company = request.data["company"]
+                user.employee.save()
+
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, *args, **kwargs):
+        """Allow users to delete their own account"""
+        user = self.get_object(request)
+
+        # Delete Employee record if it exists
+        Employee.objects.filter(user=user).delete()
+
+        user.delete()
+        return Response({"message": "Account deleted successfully."}, status=204)
+
 
 
 class AdminRegisterView(APIView):
@@ -106,16 +148,14 @@ class AdminLoginView(TokenObtainPairView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        # Retrieve user by username
-        user = User.objects.get(username=request.data["username"])
-
-        # Check if the user is an admin (is_staff=True)
-        if user.is_staff:
-            # If the user is an admin, prevent login through the regular user endpoint
-            raise PermissionDenied("Admins cannot log in through the regular user login endpoint. Please use the admin login endpoint.")
-
-        # Proceed with normal JWT token creation for regular users
+        username = request.data.get("username")
+        user = User.objects.filter(username=username).first()
+        
+        if user and not user.is_active:
+            return Response({"error": "Email not verified. Please verify your email before logging in."}, status=status.HTTP_403_FORBIDDEN)
+        
         return super().post(request, *args, **kwargs)
+
 
 
 class InputFieldListCreate(APIView):
@@ -211,40 +251,58 @@ class BulkInputFieldDelete(APIView):
 
         return Response({"message": "InputFields deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
+from django.db import connection
+
 class SaveZakatHistoryView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get_dynamic_columns(self):
+        """Fetch all column names in api_zakathistory except default ones."""
+        with connection.cursor() as cursor:
+            cursor.execute("SHOW COLUMNS FROM api_zakathistory;")
+            columns = [row[0] for row in cursor.fetchall()]
+        
+        # Exclude predefined columns
+        default_columns = {
+            "id", "user_id", "liquidites", "investissements", "bien_location", 
+            "creances_clients", "bien_usage_interne", "fonds_non_dispo", 
+            "stocks_invendable", "stocks", "created_at", "nisab", "zakat_amount"
+        }
+        return [col for col in columns if col not in default_columns]
+
     def post(self, request):
-        required_fields = [
-            "liquidites", "investissements", "bien_location", 
-            "creances_clients", "bien_usage_interne", 
-            "fonds_non_dispo", "stocks_invendable", "stocks", 
-            "created_at", "nisab"  # ✅ Ensuring nisab is required
-        ]
-
-        # Ensure all required fields exist
-        missing_fields = [field for field in required_fields if field not in request.data]
-        if missing_fields:
-            return Response({field: "This field is required." for field in missing_fields}, status=status.HTTP_400_BAD_REQUEST)
-
         data = request.data.copy()
-        data["user"] = request.user.id  
+        data["user_id"] = request.user.id  # ✅ Assign authenticated user
 
         # Ensure valid date format
         try:
-            data["created_at"] = datetime.strptime(data["created_at"], "%Y-%m-%d").date()  
+            data["created_at"] = datetime.strptime(data["created_at"], "%Y-%m-%d").date()
         except ValueError:
             return Response({"created_at": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Ensure zakat_amount is optional
-        if "zakat_amount" not in data:
-            data["zakat_amount"] = None  # ✅ Defaults to None
+        # ✅ Get dynamically added columns
+        dynamic_columns = self.get_dynamic_columns()
 
-        serializer = ZakatHistorySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # ✅ Ensure only existing columns are inserted
+        allowed_columns = set(dynamic_columns + [
+            "user_id", "liquidites", "investissements", "bien_location", 
+            "creances_clients", "bien_usage_interne", "fonds_non_dispo", 
+            "stocks_invendable", "stocks", "created_at", "nisab", "zakat_amount"
+        ])
+        filtered_data = {k: v for k, v in data.items() if k in allowed_columns}
+
+        # ✅ Construct the SQL query dynamically
+        columns = ", ".join(filtered_data.keys())
+        values = ", ".join(["%s"] * len(filtered_data))
+        sql = f"INSERT INTO api_zakathistory ({columns}) VALUES ({values})"
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, list(filtered_data.values()))
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({"message": "Zakat history saved successfully"}, status=status.HTTP_201_CREATED)
 class AdminDeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -352,6 +410,17 @@ class WaqfProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WaqfProjectSerializer
     permission_classes = [IsStaffUser]  # Only staff users can edit/delete
 
+# New Read-Only Views for users/visitors
+class WaqfProjectReadOnlyListView(generics.ListAPIView):
+    queryset = WaqfProject.objects.all()
+    serializer_class = WaqfProjectSerializer
+    permission_classes = [AllowAny]  # Anyone can access
+
+class WaqfProjectReadOnlyDetailView(generics.RetrieveAPIView):
+    queryset = WaqfProject.objects.all()
+    serializer_class = WaqfProjectSerializer
+    permission_classes = [AllowAny]  # Anyone can access
+
 
 from django.core.mail import send_mail
 from django.http import JsonResponse
@@ -392,7 +461,7 @@ def send_contact_email(request):
             Message:
             {message}
             """
-            receiver_email = "aminecheikh17@gmail.com"  # Replace with actual email
+            receiver_email = "amine.dizo123@gmail.com"  # Replace with actual email
 
             send_mail(subject, full_message, sender_email, [receiver_email])
 
@@ -405,3 +474,91 @@ def send_contact_email(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]  # ✅ Make sure anyone can access this
+
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            if default_token_generator.check_token(user, token):
+                user.is_active = True
+                user.save()
+                return JsonResponse({"message": "Email verified successfully!"})
+            else:
+                return JsonResponse({"error": "Invalid or expired token."}, status=400)
+
+        except (User.DoesNotExist, ValueError, TypeError):
+            return JsonResponse({"error": "Invalid verification link."}, status=400)
+class RequestPasswordResetView(APIView):
+    permission_classes = [AllowAny]  # ✅ Publicly accessible
+
+    def post(self, request):
+        email = request.data.get("email")
+        try:
+            user = User.objects.get(email=email)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            reset_link = f"http://127.0.0.1:8000/apif/user/reset-password/{uid}/{token}/"
+
+            # ✅ Send Email
+            send_mail(
+                subject="Password Reset Request",
+                message=f"Click the link to reset your password: {reset_link}",
+                from_email="noreply@yourdomain.com",
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            return Response({"message": "Password reset email sent!"})
+
+        except User.DoesNotExist:
+            return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]  # ✅ Allow all users to access this endpoint (no auth required)
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            if not default_token_generator.check_token(user, token):
+                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+
+            new_password = request.data.get("password")
+            if not new_password:
+                return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.set_password(new_password)
+            user.save()
+
+            # ✅ Send email notification
+            send_mail(
+                subject="Password Changed Successfully",
+                message="Your password has been changed successfully. If you did not request this change, please contact support immediately.",
+                from_email="noreply@yourdomain.com",
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return Response({"message": "Password reset successful. A confirmation email has been sent."}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh_token")
+            if not refresh_token:
+                return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()  # ✅ Blacklist the token
+
+            return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

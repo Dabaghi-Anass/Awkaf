@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,   WaqfProjectListCreateView, WaqfProjectDetailView,send_contact_email
+from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,   WaqfProjectListCreateView, WaqfProjectDetailView,send_contact_email,RequestPasswordResetView, ResetPasswordView, WaqfProjectReadOnlyListView,WaqfProjectReadOnlyDetailView
 
 urlpatterns = [
     # InputField URLs
@@ -11,6 +11,10 @@ urlpatterns = [
     path('admin/manage-zakat/', ManageZakatHistoryAPIView.as_view(), name='manage-zakat'),
     path("waqf-projects/", WaqfProjectListCreateView.as_view(), name="waqfproject-list-create"),
     path("waqf-projects/<int:pk>/", WaqfProjectDetailView.as_view(), name="waqfproject-detail"),
-    path("send-email/", send_contact_email, name="send_email")
+    path("send-email/", send_contact_email, name="send_email"),
+    path("user/request-password-reset/", RequestPasswordResetView.as_view(), name="request-password-reset"),
+    path("user/reset-password/<str:uidb64>/<str:token>/", ResetPasswordView.as_view(), name="reset-password"),
+    path("public/waqf-projects/", WaqfProjectReadOnlyListView.as_view(), name="public-waqfproject-list"),
+    path("public/waqf-projects/<int:pk>/", WaqfProjectReadOnlyDetailView.as_view(), name="public-waqfproject-detail"),
     
 ]
