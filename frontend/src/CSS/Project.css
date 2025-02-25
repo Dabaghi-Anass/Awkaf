@@ -1,27 +1,32 @@
-*{
-  /*  font-family: 'Noto Kufi Arabic';
-    direction: rtl;
-    text-align: right;*/
-}
 
 
 .project-container{
 margin-top: 2rem;
-padding: 0px;
-width: 380px;
-background: #fff;
+padding: 0.5em;
+width: 21em;
+height: 30em;
+background: #169c07;
+border-radius: 1em;
+
 }
 
 .project-pic{
-width: 380px;
-height: 263px;
+width: 100%;
+height:40%;
 background: url('../assets/images/ZkatPics/plant.png');
 background-position: center;
 background-repeat: no-repeat;
 background-size: cover;
 cursor: pointer;
+border-radius: 1em;
+}
+.project-text{
+    padding: 0 0.5em 0 0;
+    margin-top: 10px;
+    height: 50%;
 }
 .project-text h1{
+text-align: right;
 font-style: normal;
 font-weight: 700;
 font-size: 42px;
@@ -29,20 +34,29 @@ line-height: 30px;
 color: #1E1E1E;
 }
 .project-text p{
+    text-align: right;
+    margin-top: 1em;
 font-style: normal;
 font-weight: 400;
 font-size: 15px;
 line-height: 25px;
 color: #000000;
 margin-bottom: 2rem;
+overflow: hidden;
+word-wrap: break-word;  /* Ensures words wrap instead of overflowing */
+    overflow-wrap: break-word; /* Ensures long words break properly */
+    white-space: normal; 
+background-color: red;
+height: 60%;
+
 }
 .join-button-container{
     text-align: right;
 }
 .join-button{
     font-weight: 300;
-    font-size: 15.3991px;
-    line-height: 19px;
+    font-size: 1em;
+    line-height: 1.3em;
     color: #FFFFFF;
     padding:0.5rem 2.5rem ;
     background-color:#035116 ;
@@ -50,4 +64,5 @@ margin-bottom: 2rem;
     border: none;
     cursor: pointer;
     margin-bottom: 0.2rem;
+    border-radius: 5px;
 }
