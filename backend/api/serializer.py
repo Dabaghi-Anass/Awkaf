@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import InputField,ZakatHistory,WaqfProject
+from .models import InputField,ZakatHistory,WaqfProject,Employee
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.core.mail import send_mail
@@ -31,16 +31,25 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        company = validated_data.pop('company', None)
+        company_name = validated_data.pop('company', None)
         is_staff = validated_data.pop('is_staff', False)
 
+    # If the user is not an admin (is_staff=False) and has no company, reject registration
+        if not is_staff and not company_name:
+           raise serializers.ValidationError({"company": "A company name is required for non-admin users."})
+
+    # Create user
         user = User.objects.create_user(**validated_data)
-        user.is_active = False  # User must verify email
+        user.is_active = False  # Email verification required
         user.is_staff = is_staff  
         user.save()
 
-        self.send_verification_email(user)  # Send email verification
+    # Save company info in Employee model (only if provided)
+        if company_name:
+         Employee.objects.create(user=user, company=company_name)
 
+        self.send_verification_email(user)  # Send email verification
+ 
         return user
 
     def update(self, instance, validated_data):
