@@ -564,3 +564,8 @@ class LogoutView(APIView):
             return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class AdminNonStaffUserListView(generics.ListAPIView):
+    """ ✅ Allows only admins to see a list of non-staff users """
+    queryset = User.objects.filter(is_staff=False)  # 🔥 Only non-staff users
+    serializer_class = UserSerializer
+    permission_classes = [IsStaffUser]  # ✅ Only staff users can access

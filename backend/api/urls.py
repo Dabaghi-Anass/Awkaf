@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,   WaqfProjectListCreateView, WaqfProjectDetailView,send_contact_email,RequestPasswordResetView, ResetPasswordView, WaqfProjectReadOnlyListView,WaqfProjectReadOnlyDetailView
+from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,AdminNonStaffUserListView,   WaqfProjectListCreateView, WaqfProjectDetailView,send_contact_email,RequestPasswordResetView, ResetPasswordView, WaqfProjectReadOnlyListView,WaqfProjectReadOnlyDetailView
 
 urlpatterns = [
     # InputField URLs
@@ -16,5 +16,6 @@ urlpatterns = [
     path("user/reset-password/<str:uidb64>/<str:token>/", ResetPasswordView.as_view(), name="reset-password"),
     path("public/waqf-projects/", WaqfProjectReadOnlyListView.as_view(), name="public-waqfproject-list"),
     path("public/waqf-projects/<int:pk>/", WaqfProjectReadOnlyDetailView.as_view(), name="public-waqfproject-detail"),
+    path('admin/non-staff-users/', AdminNonStaffUserListView.as_view(), name='admin-non-staff-user-list'),  # get users  
     
 ]
