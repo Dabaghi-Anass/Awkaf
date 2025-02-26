@@ -15,48 +15,50 @@ from django.db import connection
 class UserSerializer(serializers.ModelSerializer):
     company = serializers.CharField(write_only=True, required=False)
     is_staff = serializers.BooleanField(write_only=True, required=False)
-    is_verified = serializers.BooleanField(source='is_active', read_only=True)  # Track verification via is_active
+    is_verified = serializers.BooleanField(source="is_active", read_only=True)  # Track verification via is_active
+    
+    email = serializers.EmailField(required=True)  # ✅ Use EmailField to enforce validation
 
     class Meta:
         model = User
         fields = ["id", "username", "first_name", "last_name", "email", "password", "company", "is_staff", "is_verified"]
         extra_kwargs = {
             "password": {"write_only": True},
-            "email": {"required": True, "allow_blank": False},  
-            "is_staff": {"read_only": True},  
+            "is_staff": {"read_only": True},
         }
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
-        return value
+     if User.objects.filter(email=value).exists():
+        raise serializers.ValidationError("A user with this email already exists.")
+     return value
 
     def create(self, validated_data):
-        company_name = validated_data.pop('company', None)
-        is_staff = validated_data.pop('is_staff', False)
+        company_name = validated_data.pop("company", None)
+        is_staff = validated_data.pop("is_staff", False)
 
-    # If the user is not an admin (is_staff=False) and has no company, reject registration
+        # 🔥 Ensure non-admin users provide a company name
         if not is_staff and not company_name:
-           raise serializers.ValidationError({"company": "A company name is required for non-admin users."})
+            raise serializers.ValidationError({"company": "A company name is required for non-admin users."})
 
-    # Create user
+        # ✅ Create user
         user = User.objects.create_user(**validated_data)
         user.is_active = False  # Email verification required
-        user.is_staff = is_staff  
+        user.is_staff = is_staff
         user.save()
 
-    # Save company info in Employee model (only if provided)
+        # ✅ Save company info in Employee model (if provided)
         if company_name:
-         Employee.objects.create(user=user, company=company_name)
+            Employee.objects.create(user=user, company=company_name)
 
-        self.send_verification_email(user)  # Send email verification
- 
-        return user
+        # ✅ Send verification email
+        self.send_verification_email(user)
+
+        return user  # 🔥 Return the created user
 
     def update(self, instance, validated_data):
-        company = validated_data.pop('company', None)
-        password = validated_data.pop('password', None)
-        is_staff = validated_data.pop('is_staff', None)
+        company = validated_data.pop("company", None)
+        password = validated_data.pop("password", None)
+        is_staff = validated_data.pop("is_staff", None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -70,7 +72,6 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
     def send_verification_email(self, user):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -83,7 +84,6 @@ class UserSerializer(serializers.ModelSerializer):
             recipient_list=[user.email],
             fail_silently=False,
         )
-
 
 class InputFieldSerializer(serializers.ModelSerializer):
     class Meta:

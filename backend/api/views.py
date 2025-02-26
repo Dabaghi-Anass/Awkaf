@@ -49,13 +49,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]  # Public registration
 
     def perform_create(self, serializer):
+        print("Incoming Data:", self.request.data)  # 🔥 Debug incoming data
         user = serializer.save()
-        user.is_active = False  # Deactivate account until email is verified
+        user.is_active = False
         user.save()
-        # Send email verification logic here
 
 class UpdateDeleteUserView(APIView):
     permission_classes = [IsAuthenticated]  # Only logged-in users
