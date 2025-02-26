@@ -1,4 +1,4 @@
-import { useState ,useEffect} from 'react'
+import { useState ,useEffect,useNavigate} from 'react'
 import '../CSS/Awkaf.css'
 import { Header } from '../Components/Header'
 import Project from '../Components/Project'
@@ -7,7 +7,7 @@ import WakfPic  from '../Components/WakfPic'
 export default function Awkaf(){
 
 
-
+  
   const [projects, setProjects] = useState([]); // Array to store fetched data
     // Function to fetch projects from the backend
     const fetchProjects = async () => {
@@ -46,7 +46,7 @@ export default function Awkaf(){
         
         <div className="project-container-grid">
           {projects.map((project,id)=>(
-            <Project key={id} project={project}></Project>
+            <Project key={id} project={project}> </Project>
           ))}
         </div>
         <div className="line-yellow-cont">
