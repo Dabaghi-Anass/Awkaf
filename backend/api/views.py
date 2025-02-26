@@ -409,6 +409,7 @@ class WaqfProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WaqfProject.objects.all()
     serializer_class = WaqfProjectSerializer
     permission_classes = [IsStaffUser]  # Only staff users can edit/delete
+    
 
 # New Read-Only Views for users/visitors
 class WaqfProjectReadOnlyListView(generics.ListAPIView):
@@ -420,6 +421,7 @@ class WaqfProjectReadOnlyDetailView(generics.RetrieveAPIView):
     queryset = WaqfProject.objects.all()
     serializer_class = WaqfProjectSerializer
     permission_classes = [AllowAny]  # Anyone can access
+
 
 
 from django.core.mail import send_mail
