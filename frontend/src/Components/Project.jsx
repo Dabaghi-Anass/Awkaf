@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import '../CSS/project.css'
 
+
 export default function  Project ({project}){
+    const navigate = useNavigate();
     return(
        <div className="project-container">
                 <div className="project-pic" ></div>
@@ -9,7 +12,7 @@ export default function  Project ({project}){
                      <p>{project.introduction}</p>
                 </div>
                 <div className="join-button-container">
-                    <button className="join-button">تعرف أكثر</button>
+                    <button className="join-button" onClick={() => navigate(`/wakf/${project.id}`)}>تعرف أكثر</button>
                 </div>
        </div>
     )

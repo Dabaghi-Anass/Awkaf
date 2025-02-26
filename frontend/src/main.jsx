@@ -32,57 +32,62 @@ import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home></Home>,
+    element: <Home />,
   },
   {
     path: "About/",
-    element: <About></About>,
+    element: <About />,
   },
   {
     path: "Contact/",
-    element: <Contact></Contact>,
+    element: <Contact />,
   },
   {
     path: "Awkaf/",
-    element: <Awkaf></Awkaf>,
+    element: <Awkaf />,
   },
   {
     path: "ZakatCalculator/",
-    element: <ZakatCal></ZakatCal>,
+    element: <ZakatCal />,
   },
   {
     path: "Login/",
-    element: <LoginPage></LoginPage>,
+    element: <LoginPage />,
   },
   {
     path: "Register/",
-    element: <RegisterPage></RegisterPage>,
+    element: <RegisterPage />,
   },
   {
     path: "Form/",
-    element: <TestForm></TestForm>,
+    element: <TestForm />,
   },
   {
     path: "test/",
-    element: <ManageAwkaf></ManageAwkaf>,
+    element: <ManageAwkaf />,
   },
   {
     path: "Admin/",
-    element: <Admin></Admin>,
+    element: <Admin />,
   },
   {
     path: "wakf/",
-    element: <WakfP></WakfP>,
+    element: <WakfP />,
+  },
+  {
+    path: "wakf/:id",  // ✅ Dynamic route to handle specific project ID
+    element: <WakfP />,
   },
   {
     path: "AdminRegister/",
-    element: <AdminRegister></AdminRegister>,
+    element: <AdminRegister />,
   },
   {
     path: "AdminLogin/",
-    element: <AdminLogin></AdminLogin>,
+    element: <AdminLogin />,
   },
 ]);
+
 
 
 
