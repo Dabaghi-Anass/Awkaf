@@ -71,10 +71,6 @@ const router = createBrowserRouter([
     element: <Admin />,
   },
   {
-    path: "wakf/",
-    element: <WakfP />,
-  },
-  {
     path: "wakf/:id",  // ✅ Dynamic route to handle specific project ID
     element: <WakfP />,
   },
@@ -92,8 +88,8 @@ const router = createBrowserRouter([
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  
     <ZakatProvider>  {/* 🔥 Now, all pages inside the router have access to ZakatContext */}
       <RouterProvider router={router} />
     </ZakatProvider>
-  </StrictMode>)
+  )

@@ -5,7 +5,7 @@ import '../CSS/Login.css';
 
 export const LoginPage = () => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [data, setData] = useState({
     username: "",
     password: ""

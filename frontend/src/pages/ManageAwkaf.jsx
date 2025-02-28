@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../CSS/ManageAwkaf.css";
+
+import { ManageProjects } from "../Components/ManageProjects";
+import { ManageUsers } from "../Components/ManageUsers";
 
 export const ManageAwkaf = () => {
     const defaultProject = {
@@ -118,6 +121,8 @@ export const ManageAwkaf = () => {
                     </div>
                     <button onClick={sendData}>Submit</button>
                 </form>
+
+                <ManageUsers></ManageUsers>
 
                 
             </div>

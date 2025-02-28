@@ -2,14 +2,17 @@ import React from 'react'
 import '../CSS/Register.css'
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
+
 export const RegisterPage = () => {
   const navigate = useNavigate();
     const userData={
-        company_name:'',
+       
         username:'',
-        email:'',
         password:'',
+        email:'',
         confirm_password:'',
+        company:'',
     }
     const [formData,setFormData]=useState(userData);
     const [formErrors,setFormErrors]=useState({});
@@ -24,71 +27,73 @@ export const RegisterPage = () => {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const errors = validate(formData);
-        setFormErrors(errors);
-    
-        if (Object.keys(errors).length === 0) {
-          // Perform the fetch after successful validation
+      e.preventDefault();
+      const errors = validate(formData);
+      setFormErrors(errors);
+  
+      if (Object.keys(errors).length === 0) {
           try {
-            const response = await fetch("http://127.0.0.1:8000/apif/user/register/", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formData), // Send the form data
-            });
-    
-            const data = await response.json();
-    
-            if (response.ok) {
-              navigate('/');
-              // Success notification
-                console.log("Fetch Succeced",data)
-              setFormData(userData);  // Reset form after successful submission
-              
-            } else {
-              // Error handling from backend
-             console.log('Somthing went wrong');
-            }
+              // Remove confirm_password before sending to backend
+              const { confirm_password, ...submitData } = formData;
+  
+              const response = await fetch("http://127.0.0.1:8000/apif/user/register/", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(submitData),  // ✅ Send only required fields
+              });
+  
+              const data = await response.json();
+              console.log("Response Status:", response.status);
+              console.log("Response Data:", data);
+
+  
+              if (response.ok) {
+                  navigate('/');
+                  console.log("Fetch Succeeded", data);
+                  setFormData(userData);
+              } else {
+                  console.error("Backend validation error:", data);
+                  setFormErrors(data);  // ✅ Show backend validation errors
+              }
           } catch (error) {
-            console.error("Error during form submission:", error);
-            
+              console.error("Error during form submission:", error);
           }
-        }
-      };
-    const validate = (values) => {
+      }
+  };
+  
+      const validate = (values) => {
         const errors = {};
-        const regex =
-          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     
-        if (!values.company_name.trim()) {
-          errors.company_name = "اسم الشركة مطلوب!";
+        if (!values.company?.trim()) {  // ✅ Using optional chaining to avoid "undefined" error
+            errors.company = "اسم الشركة مطلوب!";
         }
-
-        if (!values.username.trim()) {
-          errors.username = "اسم المستخدم مطلوب!";
+    
+        if (!values.username?.trim()) {
+            errors.username = "اسم المستخدم مطلوب!";
         }
-        
-       
-        if (!values.email.trim()) {
-          errors.email = "البريد الإلكتروني مطلوب!";
+    
+        if (!values.email?.trim()) {
+            errors.email = "البريد الإلكتروني مطلوب!";
         } else if (!regex.test(values.email)) {
-          errors.email = "البريد الإلكتروني غير صالح!";
+            errors.email = "البريد الإلكتروني غير صالح!";
         }
-
-        if (!values.password.trim()) {
-          errors.password = "كلمة المرور مطلوبة!";
+    
+        if (!values.password?.trim()) {
+            errors.password = "كلمة المرور مطلوبة!";
         } else if (values.password.length < 4) {
-          errors.password = "يجب أن تكون كلمة المرور أكثر من 4 أحرف!";
-        } 
-
-        if (values.password !== values.confirm_password) {
-          errors.confirm_password = "كلمتا المرور غير متطابقتين!";
+            errors.password = "يجب أن تكون كلمة المرور أكثر من 4 أحرف!";
         }
-
+    
+        if (values.password !== values.confirm_password) {
+            errors.confirm_password = "كلمتا المرور غير متطابقتين!";
+        }
+    
         return errors;
-      };
+    };
+    
      
           /* {errors.password && <p className="error">{errors.password}</p>}*/
     
@@ -107,11 +112,11 @@ export const RegisterPage = () => {
                       <form  onSubmit={handleSubmit}>
                           <div className="input-container-register">
                                 <input  placeholder='إسم الشركة'
-                                  name="company_name"
+                                  name="company"
                                   onChange={handleChange}
-                                  value={formData.company_name}
+                                  value={formData.company}
                                 />
-                                <span className="error">{formErrors.company_name}</span>
+                                <span className="error">{formErrors.company}</span>
                           </div>
 
                           <div className="input-container-register">
@@ -159,7 +164,7 @@ export const RegisterPage = () => {
                             </div>
                           
                         
-                          <button className=' login-btn signup-btn ' type="submit">إنشاء حساب</button>
+                          <button className=' login-btn signup-btn ' type='submit'>إنشاء حساب</button>
                           <div className="no-account center">
                           لديك حساب مسبقًا؟<Link className='signup-login' to={'/Login'} >تسجيل الدخول</Link>
                       </div>
