@@ -463,7 +463,7 @@ def send_contact_email(request):
             Message:
             {message}
             """
-            receiver_email = "amine.dizo123@gmail.com"  # Replace with actual email
+            receiver_email = "aminecheikh180@gmail.com"  # Replace with actual email
 
             send_mail(subject, full_message, sender_email, [receiver_email])
 
