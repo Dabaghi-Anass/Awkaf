@@ -21,6 +21,7 @@ export const ZakatProvider = ({ children }) => {
     // State to store zakat form information
     const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
 
+
     return (
         <ZakatContext.Provider value={{ zakatFormInfos, setZakatFormInfos }}>
             {children}
