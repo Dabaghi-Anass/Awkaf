@@ -2,12 +2,12 @@ import React from 'react'
 import '../CSS/Register.css'
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Register } from '../Components/Register';
 
 
 export const RegisterPage = () => {
-  const navigate = useNavigate();
+
     const userData={
-       
         username:'',
         password:'',
         email:'',
@@ -100,78 +100,8 @@ export const RegisterPage = () => {
   return (
    <>
       <div className="sign-up-container center">
-            <div className="register-container">
-            <div className="top center register-top">
-                  <div className='welcome register-w'>
-                      <h2>إنشاء حساب جديد</h2>
-                      <p>يرجى تقديم بياناتك لإنشاء حساب جديد</p>
-                  </div>  
-                   
-                </div>
-                <div className="middle">
-                      <form  onSubmit={handleSubmit}>
-                          <div className="input-container-register">
-                                <input  placeholder='إسم الشركة'
-                                  name="company"
-                                  onChange={handleChange}
-                                  value={formData.company}
-                                />
-                                <span className="error">{formErrors.company}</span>
-                          </div>
-
-                          <div className="input-container-register">
-                                <input  placeholder='إسم المستخدم'
-                                  name="username"
-                                  onChange={handleChange}
-                                  value={formData.username}
-                                />
-                                <span className="error">{formErrors.username}</span>
-                          </div>
-
-
-                           <div className="input-container-register"> 
-                              <input  placeholder='البريد الالكتروني '
-                                name="email" 
-                                onChange={handleChange}
-                                value={formData.email}
-
-                              />
-                              <span className="error">{formErrors.email}</span>
-
-                           </div>
-                            
-                           
-                           <div className="input-container-register">
-                              <input type="password" 
-                                placeholder='كلمة المرور'
-                                name="password"
-                                onChange={handleChange}
-                                value={formData.password}
-                              />
-                                <span className="error">{formErrors.password}</span>
-                           </div>
-                            
-
-                            <div className="input-container-register" >
-                                  <input type="password"
-                                placeholder='تأكيد كلمة المرور '
-                                  name="confirm_password"
-                                  onChange={handleChange}
-                                  value={formData.confirm_password}
-                                />
-                                <span className="error">{formErrors.confirm_password}</span>
-
-                            </div>
-                          
-                        
-                          <button className=' login-btn signup-btn ' type='submit'>إنشاء حساب</button>
-                          <div className="no-account center">
-                          لديك حساب مسبقًا؟<Link className='signup-login' to={'/Login'} >تسجيل الدخول</Link>
-                      </div>
-                      </form>
-                      
-                    </div>
-            </div>
+        <Register formData={formData} handleChange={handleChange}></Register>
+            
       </div>
    </>
   )

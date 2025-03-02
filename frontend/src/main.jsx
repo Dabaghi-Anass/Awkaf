@@ -26,7 +26,7 @@ import { AdminLogin } from './pages/AdminLogin.jsx';
 import { Contact } from './pages/Contact.jsx';
 import { WakfP } from './pages/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
-
+import { Login  } from '../src/Login/Login.jsx'
 
 
 const router = createBrowserRouter([
@@ -53,6 +53,10 @@ const router = createBrowserRouter([
   {
     path: "Login/",
     element: <LoginPage />,
+  },
+  {
+    path: "kol/",
+    element: <Login />,
   },
   {
     path: "Register/",
@@ -83,6 +87,7 @@ const router = createBrowserRouter([
     element: <AdminLogin />,
   },
 ]);
+ 
 
 
 
