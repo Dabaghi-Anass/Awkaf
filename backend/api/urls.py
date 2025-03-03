@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,AdminNonStaffUserListView,   WaqfProjectListCreateView, WaqfProjectDetailView,send_contact_email,RequestPasswordResetView, ResetPasswordView, WaqfProjectReadOnlyListView,WaqfProjectReadOnlyDetailView
 
 urlpatterns = [
@@ -19,3 +21,5 @@ urlpatterns = [
     path('admin/non-staff-users/', AdminNonStaffUserListView.as_view(), name='admin-non-staff-user-list'),  # get users  
     
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

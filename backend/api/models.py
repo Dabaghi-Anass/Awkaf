@@ -64,6 +64,7 @@ class WaqfProject(models.Model):
     team_members = models.TextField()  # Team Members
     partners_supporters = models.TextField()  # Partners and Supporters
     conclusion = models.TextField()  # Conclusion
+    image = models.ImageField(upload_to='waqf_images/', null=True, blank=True)  # Image Field
     created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when created
     updated_at = models.DateTimeField(auto_now=True)  # Timestamp when updated
 
