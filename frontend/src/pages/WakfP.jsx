@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 
 export const WakfP = () => {
-  const { id } = useParams();  // ✅ Get the project ID from the URL
+  const { id } = useParams();  
   const [project, setProject] = useState(null);
 
 
@@ -45,6 +45,10 @@ export const WakfP = () => {
 
             <div className="comp intro ">
                 <h3>{project.introduction}</h3>
+            </div>
+
+            <div className="comp intro ">
+                <h3>{project.background}</h3>
             </div>
             
            

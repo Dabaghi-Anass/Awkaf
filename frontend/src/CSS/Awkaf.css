@@ -6,7 +6,6 @@
     grid-template-columns: repeat(3, 1fr); /* 3 columns per row */
     gap: 20px; /* Space between cards */
     padding: 0 6rem;
-    background-color: #F2CB05;
     width: 80em;
 
 }

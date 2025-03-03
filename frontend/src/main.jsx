@@ -26,8 +26,8 @@ import { AdminLogin } from './pages/AdminLogin.jsx';
 import { Contact } from './pages/Contact.jsx';
 import { WakfP } from './pages/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
-
-
+import { Login  } from '../src/Login/Login.jsx'
+import App from './App.jsx';
 
 const router = createBrowserRouter([
   {
@@ -55,6 +55,10 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
+    path: "kol/",
+    element: <Login />,
+  },
+  {
     path: "Register/",
     element: <RegisterPage />,
   },
@@ -71,10 +75,6 @@ const router = createBrowserRouter([
     element: <Admin />,
   },
   {
-    path: "wakf/",
-    element: <WakfP />,
-  },
-  {
     path: "wakf/:id",  // ✅ Dynamic route to handle specific project ID
     element: <WakfP />,
   },
@@ -86,14 +86,19 @@ const router = createBrowserRouter([
     path: "AdminLogin/",
     element: <AdminLogin />,
   },
+  {
+    path: "app/",
+    element: <App />,
+  },
 ]);
+ 
 
 
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  
     <ZakatProvider>  {/* 🔥 Now, all pages inside the router have access to ZakatContext */}
       <RouterProvider router={router} />
     </ZakatProvider>
-  </StrictMode>)
+  )

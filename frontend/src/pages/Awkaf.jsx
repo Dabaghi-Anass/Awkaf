@@ -1,14 +1,30 @@
-import { useState ,useEffect,useNavigate} from 'react'
+import { useState ,useEffect} from 'react'
 import '../CSS/Awkaf.css'
 import { Header } from '../Components/Header'
 import Project from '../Components/Project'
-
 import WakfPic  from '../Components/WakfPic'
+import ReactPaginate from "react-paginate";
+import '../App.css'
 export default function Awkaf(){
+
+  const [projects, setProjects] = useState([]); 
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const projectPerPage = 6;
+  const pagesVisited = pageNumber * projectPerPage;
+
+  const displayUsers = projects
+    .slice(pagesVisited, pagesVisited + projectPerPage)
+    
+  const pageCount = Math.ceil(projects.length / projectPerPage);
+
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
 
 
   
-  const [projects, setProjects] = useState([]); // Array to store fetched data
+ // Array to store fetched data
     // Function to fetch projects from the backend
     const fetchProjects = async () => {
    
@@ -45,10 +61,22 @@ export default function Awkaf(){
           <WakfPic></WakfPic> 
         
         <div className="project-container-grid">
-          {projects.map((project,id)=>(
+          {displayUsers.map((project,id)=>(
             <Project key={id} project={project}> </Project>
           ))}
+          
         </div>
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={"paginationBttns center"}
+          previousLinkClassName={"previousBttn"}
+          nextLinkClassName={"nextBttn"}
+          disabledClassName={"paginationDisabled"}
+          activeClassName={"paginationActive"}
+      />
         <div className="line-yellow-cont">
         <div className="line-yellow"></div>
         </div>
