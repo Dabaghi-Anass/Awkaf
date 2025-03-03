@@ -19,20 +19,63 @@ export const ManageAwkaf = () => {
         team_members: "",
         partners_supporters: "",
         conclusion: "",
+        
     };
 
     const [projectInfos, setProjectInfos] = useState(defaultProject);
-   
+    const [preview, setPreview] = useState(null); // For image preview
 
+    // Handle text input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setProjectInfos((p) => ({ ...p, [name]: value }));
     };
 
+    // Handle image selection
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProjectInfos((p) => ({ ...p, image: file }));
+            setPreview(URL.createObjectURL(file));
+        }
+    };
+
+    // Upload image to the server
+    const uploadImage = async () => {
+        if (!projectInfos.image) return null;
+
+        const formData = new FormData();
+        formData.append("image", projectInfos.image);
+
+        try {
+            const response = await fetch("http://localhost:8000/api/upload-image/", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return data.image_url; // Return uploaded image URL
+            } else {
+                console.error("Image upload failed");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            return null;
+        }
+    };
+
+    // Submit form data including image
     const sendData = async (e) => {
+        e.preventDefault();
         const token = localStorage.getItem("accessToken");
 
-        e.preventDefault();
+        // Upload image first
+        const imageUrl = await uploadImage();
+
+        // Send project data with image URL
+        const projectData = { ...projectInfos, image: imageUrl };
 
         try {
             const response = await fetch("http://localhost:8000/apif/waqf-projects/", {
@@ -41,7 +84,7 @@ export const ManageAwkaf = () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(projectInfos),
+                body: JSON.stringify(projectData),
             });
 
             const data = await response.json();
@@ -54,21 +97,20 @@ export const ManageAwkaf = () => {
             console.log("Project added:", data);
             alert("Project Added");
             setProjectInfos(defaultProject);
-           
+            setPreview(null); // Clear preview
+
         } catch (error) {
             console.error("Error:", error);
             alert(error.message);
         }
     };
 
-    
-
     return (
         <>
             <div className="manage-awkaf">
                 <form className="project-details-cont">
                     <div>
-                        <label>Project Name</label> <br />
+                    <label>Project Name</label> <br />
                         <input type="text" name="name" value={projectInfos.name} onChange={handleChange} />
                     </div>
                     <div>
@@ -119,12 +161,21 @@ export const ManageAwkaf = () => {
                         <label>Conclusion</label> <br />
                         <textarea name="conclusion" value={projectInfos.conclusion} onChange={handleChange}></textarea>
                     </div>
+                    {/* Image Upload Section */}
+                    <div>
+                        <label>Project Image</label> <br />
+                        <input type="file" accept="image/*" onChange={handleImageChange} />
+                        {preview && (
+                            <div className="image-preview">
+                                <img src={preview} alt="Project Preview" />
+                            </div>
+                        )}
+                    </div>
+
                     <button onClick={sendData}>Submit</button>
                 </form>
 
                 <ManageUsers></ManageUsers>
-
-                
             </div>
         </>
     );

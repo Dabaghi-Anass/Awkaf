@@ -27,7 +27,7 @@ import { Contact } from './pages/Contact.jsx';
 import { WakfP } from './pages/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 import { Login  } from '../src/Login/Login.jsx'
-
+import App from './App.jsx';
 
 const router = createBrowserRouter([
   {
@@ -85,6 +85,10 @@ const router = createBrowserRouter([
   {
     path: "AdminLogin/",
     element: <AdminLogin />,
+  },
+  {
+    path: "app/",
+    element: <App />,
   },
 ]);
  

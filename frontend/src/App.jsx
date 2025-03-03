@@ -1,70 +1,61 @@
-import { useState,useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import './style.css'
+const App = ({ onImageUpload }) => {
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
 
-function App() {
-  const [books, setBooks] = useState([])
-  const [title, setTitle] = useState("");
-  const [releaseYear, setReleaseYear] = useState("");
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
 
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
-  useEffect(()=>{
-    fetchBooks();
-  },[])
-  const fetchBooks = async()=>{
-    try{
-      const response = await fetch("http://127.0.0.1:8000/api/books/");
-      if(!response.ok){
-        console.log("Error fetching")
-      }else{
-        const data= await response.json();
-        setBooks(data);
+  const handleRemoveImage = () => {
+    setImage(null);
+    setPreview(null);
+  };
+
+  const handleUpload = async () => {
+    if (!image) return;
+
+    const formData = new FormData();
+    formData.append("image", image);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/upload-image/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        onImageUpload(data.image_url); // Pass the image URL to parent
+        alert("Image uploaded successfully!");
+      } else {
+        alert("Upload failed!");
       }
-
-    }catch(err){
-      console.log(err);
+    } catch (error) {
+      console.error("Upload error:", error);
     }
-
-    
-  }
-  const addBook = async()=>{
-    const bookData={
-      title,
-      release_year:releaseYear,
-    }
-    const response = await fetch("http://127.0.0.1:8000/api/books/create/",{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-      },
-      body:JSON.stringify(bookData)
-
-    })
-    const data = await response.json();
-    console.log(data);
-    setBooks(b=>[...b,data]);
-    setTitle('')
-    setReleaseYear('');
-  }
-  
+  };
 
   return (
-    <>
-      <h1>Book Website</h1>
-      <div>
-        <input type="text" placeholder='book title..' value={title} onChange={(e) => setTitle(e.target.value)} />
-        <input type="number" placeholder='release year...' value={releaseYear} onChange={(e) => setReleaseYear(Number(e.target.value))}/>
-        <button onClick={addBook}>Add Book</button>
-      </div>
-      {books.map((book)=>
-        <div key={book.id}>
-          <p>Title:{book.title}</p>
-          <p>releaseYear:{book.release_year}</p>
+    <div className="image-upload-container">
+      <input type="file" accept="image/*" onChange={handleFileChange} />
+      {preview && (
+        <div className="preview-container">
+          <img src={preview} alt="Preview" className="preview-image" />
+          <button onClick={handleRemoveImage}>Remove</button>
         </div>
       )}
-    </>
-  )
-}
+      <button onClick={handleUpload} disabled={!image}>
+        Upload Image
+      </button>
+    </div>
+  );
+};
 
-export default App
+export default App;

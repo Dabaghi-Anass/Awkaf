@@ -11,8 +11,8 @@ export default function  Project ({project}){
                      <h1>{project.name}</h1>
                      <p>{project.introduction}</p>
                 </div>
-                <div className="join-button-container">
-                    <button className="join-button" onClick={() => navigate(`/wakf/${project.id}`)}>تعرف أكثر</button>
+                <div >
+                    <button className="more-details" onClick={() => navigate(`/wakf/${project.id}`)}>تعرف أكثر</button>
                 </div>
        </div>
     )
