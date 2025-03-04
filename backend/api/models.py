@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django_otp.models import Device
+import random
+from django.utils.timezone import now,timedelta
+from django.core.mail import send_mail
 
 # Ensure email is unique in the User model
 User._meta.get_field('email')._unique = True  
@@ -7,6 +11,7 @@ User._meta.get_field('email')._unique = True
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company = models.CharField(max_length=100)
+
 
     def __str__(self):
         return f"{self.user.username} works at {self.company}"
@@ -70,3 +75,12 @@ class WaqfProject(models.Model):
 
     def __str__(self):
         return self.name
+    
+class OTPCode(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)  # 6-digit OTP
+    created_at = models.DateTimeField(default=now)  # Timestamp
+
+    def is_valid(self):
+        """Check if OTP is still valid (expires after 5 minutes)."""
+        return (now() - self.created_at) < timedelta(minutes=5)
