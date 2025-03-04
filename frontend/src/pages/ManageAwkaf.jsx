@@ -19,7 +19,7 @@ export const ManageAwkaf = () => {
         team_members: "",
         partners_supporters: "",
         conclusion: "",
-        
+        image:null,
     };
 
     const [projectInfos, setProjectInfos] = useState(defaultProject);
@@ -41,69 +41,47 @@ export const ManageAwkaf = () => {
     };
 
     // Upload image to the server
-    const uploadImage = async () => {
-        if (!projectInfos.image) return null;
-
-        const formData = new FormData();
-        formData.append("image", projectInfos.image);
-
-        try {
-            const response = await fetch("http://localhost:8000/api/upload-image/", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                return data.image_url; // Return uploaded image URL
-            } else {
-                console.error("Image upload failed");
-                return null;
-            }
-        } catch (error) {
-            console.error("Error uploading image:", error);
-            return null;
-        }
-    };
+  
 
     // Submit form data including image
     const sendData = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem("accessToken");
-
-        // Upload image first
-        const imageUrl = await uploadImage();
-
-        // Send project data with image URL
-        const projectData = { ...projectInfos, image: imageUrl };
-
+    
+        const formData = new FormData(); // Use FormData to handle text + image
+        Object.keys(projectInfos).forEach((key) => {
+            if (projectInfos[key]) {
+                formData.append(key, projectInfos[key]);
+            }
+        });
+    
         try {
             const response = await fetch("http://localhost:8000/apif/waqf-projects/", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`, // Don't set Content-Type, browser will handle it
                 },
-                body: JSON.stringify(projectData),
+                body: formData, // Send form data directly
             });
-
+    
             const data = await response.json();
-
+    
             if (!response.ok) {
                 console.error("Backend error:", data);
                 throw new Error(data.error || "Failed to save project");
             }
-
+    
             console.log("Project added:", data);
             alert("Project Added");
             setProjectInfos(defaultProject);
-            setPreview(null); // Clear preview
-
+            setPreview(null);
+    
         } catch (error) {
             console.error("Error:", error);
             alert(error.message);
         }
     };
+    
 
     return (
         <>

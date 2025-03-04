@@ -15,16 +15,5 @@
     object-fit: cover; /* Ensure it maintains aspect ratio */
     border-radius: 5px;
   }
-  button {
-    background-color: #035116;
-    color: white;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  button:hover {
-    background-color: #048123;
-  }
+
   

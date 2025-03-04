@@ -59,11 +59,14 @@ export default function Awkaf(){
         <>
           <Header></Header>
           <WakfPic></WakfPic> 
+        <div style={{backgroundColor:"grey"}}>
+          <div className="project-container-grid">
+            {displayUsers.map((project,id)=>(
+              <Project key={id} project={project}> </Project>
+            ))}
+        </div>
         
-        <div className="project-container-grid">
-          {displayUsers.map((project,id)=>(
-            <Project key={id} project={project}> </Project>
-          ))}
+
           
         </div>
         <ReactPaginate

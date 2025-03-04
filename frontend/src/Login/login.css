@@ -80,6 +80,7 @@
 .input-area .error-icon{
   right: 15px;
   color: #dc3545;
+  
 }
 .login-form input:focus ~ .icon,
 .login-form .field.valid .icon{
