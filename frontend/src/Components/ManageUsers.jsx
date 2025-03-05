@@ -59,7 +59,7 @@ export const ManageUsers = () => {
           console.error("Error deleting User:", error);
         }
       };
-
+      
     return (
         <div className="manage-users center">
             <h2>List of Users:</h2>
