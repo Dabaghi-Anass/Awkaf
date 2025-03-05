@@ -77,6 +77,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'backend.urls'
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",  # Default Django authentication
+]
 
 TEMPLATES = [
     {
@@ -168,5 +171,8 @@ EMAIL_HOST_USER = "aminecheikh17@gmail.com"  # Replace with your Gmail
 EMAIL_HOST_PASSWORD = "gsab dwhu wvti vzes"  # Use the App Password from step 1
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+import os
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

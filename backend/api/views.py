@@ -40,6 +40,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import random
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
+from .models import OTPCode
+
+from django.utils.timezone import now 
+from datetime import timedelta
 #from rest_framework.request import Request
 
 
@@ -56,7 +66,153 @@ class CreateUserView(generics.CreateAPIView):
         user = serializer.save()
         user.is_active = False
         user.save()
+class UserLoginRequestOTP(APIView):
+    permission_classes = [AllowAny]
 
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        # First, check if the user exists
+        user = User.objects.filter(username=username).first()
+        
+        if not user:
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the user's email is verified (active account)
+        if not user.is_active:
+            return Response({"error": "Email not verified. Please verify your email."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Authenticate after checking if the user is active
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Send OTP email
+        send_otp_email(user)
+        return Response({"message": "OTP sent to your email. Enter OTP to proceed."})
+
+class UserVerifyOTP(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        otp = request.data.get("otp")
+
+        # Check if user exists
+        user = User.objects.filter(username=username).first()
+        if not user:
+            return Response({"error": "Invalid username"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if OTP exists for the user
+        otp_obj = OTPCode.objects.filter(user=user).first()
+        if not otp_obj:
+            return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if OTP is expired
+        if (now() - otp_obj.created_at) > timedelta(minutes=5):
+            otp_obj.delete()  # Delete expired OTP
+            return Response({"error": "OTP has expired. Request a new one."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if OTP matches
+        if otp_obj.otp != otp:
+            return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Activate user and delete OTP
+        user.is_active = True
+        user.save()
+        otp_obj.delete()
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh)
+        })
+
+class AdminRegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        data = request.data
+        data["is_staff"] = True  # Ensure only admin accounts are created
+
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            user = serializer.save()
+            user.is_active = False  # Require verification before activation
+            user.save()
+            
+            send_otp_email(user)  # Send OTP for admin verification
+            return Response({"message": "Admin account created. Verify email with OTP."}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class AdminLoginRequestOTP(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        secret_key = request.data.get("secret_key")
+
+        # First, check if the user exists
+        user = User.objects.filter(username=username).first()
+        
+        if not user or not user.is_staff:
+            return Response({"error": "Invalid admin credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the user's email is verified (active account)
+        if not user.is_active:
+            return Response({"error": "User is not verified. Please verify your email first."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Authenticate after checking if the user is active
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify the secret key
+        if secret_key != settings.ADMIN_SECRET_KEY:
+            return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
+
+        send_otp_email(user)  # Send OTP email
+        return Response({"message": "OTP sent to your email. Enter OTP to proceed."})
+class AdminVerifyOTP(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        otp = request.data.get("otp")
+
+        # Check if admin exists
+        user = User.objects.filter(username=username, is_staff=True).first()
+        if not user:
+            return Response({"error": "Invalid username"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if OTP exists for the admin
+        otp_obj = OTPCode.objects.filter(user=user).first()
+        if not otp_obj:
+            return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if OTP is expired
+        if (now() - otp_obj.created_at) > timedelta(minutes=5):
+            otp_obj.delete()  # Delete expired OTP
+            return Response({"error": "OTP has expired. Request a new one."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if OTP matches
+        if otp_obj.otp != otp:
+            return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Activate admin and delete OTP
+        user.is_active = True
+        user.save()
+        otp_obj.delete()
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh)
+        })
+        
 class UpdateDeleteUserView(APIView):
     permission_classes = [IsAuthenticated]  # Only logged-in users
 
@@ -569,3 +725,55 @@ class AdminNonStaffUserListView(generics.ListAPIView):
     queryset = User.objects.filter(is_staff=False)  # 🔥 Only non-staff users
     serializer_class = UserSerializer
     permission_classes = [IsStaffUser]  # ✅ Only staff users can access
+    
+#User = get_user_model()
+
+def send_otp_email(user):
+    otp = str(random.randint(100000, 999999))  # Generate a 6-digit OTP
+
+    # Try to update existing OTP or create a new one
+    otp_obj, created = OTPCode.objects.update_or_create(
+        user=user, defaults={"otp": otp, "created_at": now()}
+    )
+
+    # 🔥 Debugging: Print to console/logs
+    print(f"OTP for {user.username}: {otp}, Stored: {created}")
+
+    # Check if OTP was successfully saved
+    saved_otp = OTPCode.objects.filter(user=user).first()
+    if not saved_otp:
+        print("❌ ERROR: OTP not saved in the database!")
+
+    # Send OTP email
+    send_mail(
+        subject="Your OTP Code",
+        message=f"Your OTP code is {otp}. It expires in 10 minutes.",
+        from_email="your@email.com",  # Change this to your sender email
+        recipient_list=[user.email],
+        fail_silently=False,
+    )
+def verify_otp(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get("username")
+        otp = data.get("otp")
+
+        user = User.objects.filter(username=username).first()
+        otp_obj = OTPCode.objects.filter(user=user).first()
+
+        if not user or not otp_obj:
+            return JsonResponse({"error": "Invalid username or OTP"}, status=400)
+
+        if otp_obj.otp == otp:
+            otp_obj.delete()  # Delete OTP after successful verification
+
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            return JsonResponse({
+                "access_token": access_token,
+                "refresh_token": str(refresh),
+            })
+
+        return JsonResponse({"error": "Invalid or expired OTP"}, status=400)

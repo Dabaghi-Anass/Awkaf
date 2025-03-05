@@ -16,24 +16,30 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView,AdminRegisterView,AdminLoginView,CustomTokenObtainPairView,VerifyEmailView,UpdateDeleteUserView,LogoutView
+from api.views import CreateUserView,AdminRegisterView,AdminLoginView,CustomTokenObtainPairView,VerifyEmailView,UpdateDeleteUserView,LogoutView,UserLoginRequestOTP, UserVerifyOTP,AdminLoginRequestOTP,AdminVerifyOTP
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("apif/user/register/", CreateUserView.as_view(), name="register"),
-    path("apif/token/", CustomTokenObtainPairView.as_view(), name="get_token"),  # Use the custom view
-    path("apif/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("apif/token/", UserLoginRequestOTP.as_view(), name="user_login"),    path("apif/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("apif/token/verify/", UserVerifyOTP.as_view(), name="user_verify_otp"),
     path("apif-auth/", include("rest_framework.urls")),
     path("apif/", include("api.urls")), 
     path('apif/user/update/', UpdateDeleteUserView.as_view(), name='user-update'),
     path('apif/admin/register/', AdminRegisterView.as_view(), name='admin-register'),
-    path('apif/admin/login/', AdminLoginView.as_view(), name='admin-login'),  # Admin login
+    path("apif/admin/login/", AdminLoginRequestOTP.as_view(), name="admin_login"),
+    path("apif/admin/verify/", AdminVerifyOTP.as_view(), name="admin_verify_otp"),
     path("apif/user/verify-email/<uidb64>/<token>/", VerifyEmailView.as_view(), name="verify-email"),  # ✅ Email verification endpoint
     path("apif/logout/", LogoutView.as_view(), name="logout"),  # Single logout endpoint for all users
     
+    
      
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
