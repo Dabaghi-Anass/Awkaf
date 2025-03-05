@@ -19,6 +19,8 @@ from django.urls import path, include
 from api.views import CreateUserView,AdminRegisterView,AdminLoginView,CustomTokenObtainPairView,VerifyEmailView,UpdateDeleteUserView,LogoutView,UserLoginRequestOTP, UserVerifyOTP,AdminLoginRequestOTP,AdminVerifyOTP
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -35,6 +37,9 @@ urlpatterns = [
     path("apif/user/verify-email/<uidb64>/<token>/", VerifyEmailView.as_view(), name="verify-email"),  # ✅ Email verification endpoint
     path("apif/logout/", LogoutView.as_view(), name="logout"),  # Single logout endpoint for all users
     
+    
      
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
