@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/non-staff-users/', AdminNonStaffUserListView.as_view(), name='admin-non-staff-user-list'),  # get users  
     
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -172,4 +172,5 @@ EMAIL_HOST_PASSWORD = "gsab dwhu wvti vzes"  # Use the App Password from step 1
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, "media"))
+
