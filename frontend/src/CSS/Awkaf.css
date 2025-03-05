@@ -4,10 +4,7 @@
     margin: 1em auto ;
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 columns per row */
-    gap: 20px; /* Space between cards */
-    padding: 0 6rem;
-    width: 80em;
-    background-color: grey;
+    gap: 2em; /* Space between cards */
 }
 .line-yellow-cont{
     display: flex;

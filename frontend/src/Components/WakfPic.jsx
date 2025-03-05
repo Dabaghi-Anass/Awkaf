@@ -2,7 +2,7 @@ import '../CSS/WakfPic.css'
 import '../index.css'
 export  default function WakfPic(){
     return(
-        <div className="pic-container">
+        <div className="pic-container Container">
              <div className='green'></div>
 
          <div className="text">

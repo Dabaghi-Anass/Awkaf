@@ -9,9 +9,9 @@ export default function Project({ project }) {
     console.log("Project Image URL:", imageUrl);
     return (
         <div className="project-container">
-            <img src="../assets/images/ZkatPics/kids.png" alt="" />
+            
             <div className="project-pic">
-                <img src={imageUrl} alt={project.name} onError={(e) => e.target.style.display = 'none'} />
+                <img src={imageUrl} alt={project.name}  />
             </div>
             <div className="project-text">
                 <h1>{project.name}</h1>

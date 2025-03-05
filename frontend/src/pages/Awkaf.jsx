@@ -59,16 +59,16 @@ export default function Awkaf(){
         <>
           <Header></Header>
           <WakfPic></WakfPic> 
-        <div style={{backgroundColor:"grey"}}>
-          <div className="project-container-grid">
+        <div style={{backgroundColor:"#bbb9b9",marginTop:"1em",paddingBottom:"0.5em"}}>
+          <div className="Container center">
+            <div className="project-container-grid">
             {displayUsers.map((project,id)=>(
               <Project key={id} project={project}> </Project>
             ))}
+            </div>
+            
         </div>
         
-
-          
-        </div>
         <ReactPaginate
           previousLabel={"Previous"}
           nextLabel={"Next"}
@@ -80,6 +80,9 @@ export default function Awkaf(){
           disabledClassName={"paginationDisabled"}
           activeClassName={"paginationActive"}
       />
+          
+        </div>
+       
         <div className="line-yellow-cont">
         <div className="line-yellow"></div>
         </div>
