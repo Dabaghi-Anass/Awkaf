@@ -2,6 +2,7 @@ import React, {useState,useEffect} from 'react'
 import '../CSS/WakfP.css'
 import { useParams,Link } from 'react-router-dom';
 import { Header } from '../Components/Header';
+import Footer from '../Components/Footer';
 
 
 export const WakfP = () => {
@@ -113,7 +114,7 @@ export const WakfP = () => {
             </div>
             </div>
            
-
+            <Footer></Footer>
             
            
         

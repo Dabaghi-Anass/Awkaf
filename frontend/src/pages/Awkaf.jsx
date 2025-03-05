@@ -5,6 +5,8 @@ import Project from '../Components/Project'
 import WakfPic  from '../Components/WakfPic'
 import ReactPaginate from "react-paginate";
 import '../App.css'
+import Footer from '../Components/Footer'
+
 export default function Awkaf(){
 
   const [projects, setProjects] = useState([]); 
@@ -87,7 +89,7 @@ export default function Awkaf(){
         <div className="line-yellow"></div>
         </div>
         
-        
+        <Footer></Footer>
         </>
     )
 }

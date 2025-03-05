@@ -3,6 +3,7 @@ body{
 }
 *{
   font-family: 'Inter';
+  font-family: 'El Messiri';
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -24,4 +25,11 @@ body{
   padding: 0 3em;
   max-width: 90em;
   margin: 0 auto;
+}
+li{
+  list-style: none;
+  text-decoration: none;
+}
+a{
+  text-decoration: none;
 }
