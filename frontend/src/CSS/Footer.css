@@ -1,0 +1,116 @@
+.top-footer{
+height: 13.75em;
+background-image: url('../assets/images/ZkatPics/footer.png');
+position: relative;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;
+color: #fff;
+}
+.footer{
+    direction: rtl;
+    background-color: #eee;
+    position: relative;
+    bottom: 0;
+    margin-top: 2em;
+    
+}
+.top-footer::before{
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    height: 0.8em;
+    width: 100%;
+    background-color: #F2CB05;
+}
+.our-partners-cont{
+    margin: auto;
+    width: 100%;
+    display: flex;
+    direction: rtl;
+    gap: 4em;
+    
+
+}
+.our-partners-cont h1{
+    margin: auto 0;
+    
+}
+.partners h1{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+.partners span{
+    height: 2em;
+    width: 2em;
+    background-color: #fff;
+    border-radius: 10px;
+    display: inline-block;
+    margin: auto 0;
+}
+.bottom-footer{
+    background-color: #eee;
+  
+}
+.bottom-footer .Platforme{
+    color: #035116;
+    position: relative;
+    display: inline-block;
+}
+.bottom-footer .Platforme::after{
+    position: absolute;
+    content: '';
+    bottom: -0.3em;
+    right: 0;
+    height: 4px;
+    width: 15em;
+    background-color: #035116;
+    border-radius: 10px;
+}
+.cordonnee{
+    width: 100%;
+   
+  
+    margin-top:1.8em ;
+}
+.contact {
+  
+}
+.links {
+    display: flex;
+    gap: 4em;
+   
+}
+.links li{
+    margin-bottom: 1em;
+    font-size: 1em;
+    font-weight: 600;
+}
+.links  a{
+    color: #181717;
+}
+.contact-links{
+    display: flex;
+}
+.contact-links div{
+    width:20em;
+    position: relative;
+    margin-bottom: 1em;
+     
+}
+.contact-links div p span{
+    position: absolute;
+    left: 1em;
+    height: 2em;
+    width: 2em;
+    border-radius: 10px;
+    background-color: #fff;
+   
+}
+.contact-links div p {
+    position: relative;
+    width: 60%;
+    margin-right: 7em;
+}
