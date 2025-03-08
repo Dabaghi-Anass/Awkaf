@@ -720,13 +720,34 @@ class LogoutView(APIView):
             return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from rest_framework import generics
+from rest_framework.pagination import PageNumberPagination
+from api.models import User
+from api.serializer import UserSerializer
+from api.permissions import IsStaffUser
+
+# ✅ Custom Pagination Class
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10  
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
+# ✅ Admin Non-Staff User List View with Permissions, Pagination & Caching
 class AdminNonStaffUserListView(generics.ListAPIView):
-    """ ✅ Allows only admins to see a list of non-staff users """
-    queryset = User.objects.filter(is_staff=False)  # 🔥 Only non-staff users
-    serializer_class = UserSerializer
-    permission_classes = [IsStaffUser]  # ✅ Only staff users can access
+    """ ✅ Allows only staff users to see non-staff users with pagination & caching """
     
-#User = get_user_model()
+    queryset = User.objects.filter(is_staff=False)
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsStaffUser]  # ✅ Ensure only authenticated staff users access
+    pagination_class = StandardResultsSetPagination
+
+    @method_decorator(cache_page(60 * 10))  # ✅ Cache for 10 minutes
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 def send_otp_email(user):
     otp = str(random.randint(100000, 999999))  # Generate a 6-digit OTP
