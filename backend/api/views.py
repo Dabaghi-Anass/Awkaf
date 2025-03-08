@@ -731,19 +731,23 @@ from api.permissions import IsStaffUser
 
 # ✅ Custom Pagination Class
 
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10  
-    page_size_query_param = 'page_size'
+class ArrayPagination(PageNumberPagination):
+    """ ✅ Returns only the list of users instead of an object """
+    page_size = 10
+    page_size_query_param = "page_size"
     max_page_size = 50
 
-# ✅ Admin Non-Staff User List View with Permissions, Pagination & Caching
+    def get_paginated_response(self, data):
+        return Response(data)  # ✅ Only return the array (not an object)
+
+# ✅ Admin Non-Staff User List View
 class AdminNonStaffUserListView(generics.ListAPIView):
     """ ✅ Allows only staff users to see non-staff users with pagination & caching """
-    
-    queryset = User.objects.filter(is_staff=False)
+
+    queryset = User.objects.filter(is_staff=False).only("id", "username", "email")  # ✅ Optimize query
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsStaffUser]  # ✅ Ensure only authenticated staff users access
-    pagination_class = StandardResultsSetPagination
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    pagination_class = ArrayPagination  # ✅ Use custom pagination
 
     @method_decorator(cache_page(60 * 10))  # ✅ Cache for 10 minutes
     def dispatch(self, *args, **kwargs):
