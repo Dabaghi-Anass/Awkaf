@@ -50,7 +50,16 @@ from .models import OTPCode
 
 from django.utils.timezone import now 
 from datetime import timedelta
+from rest_framework.decorators import api_view, permission_classes
 #from rest_framework.request import Request
+from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from rest_framework import generics
+from rest_framework.pagination import PageNumberPagination
+from api.models import User
+from api.serializer import UserSerializer
+from api.permissions import IsStaffUser
 
 
 
@@ -720,14 +729,6 @@ class LogoutView(APIView):
             return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-from django.core.cache import cache
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from rest_framework import generics
-from rest_framework.pagination import PageNumberPagination
-from api.models import User
-from api.serializer import UserSerializer
-from api.permissions import IsStaffUser
 
 # ✅ Custom Pagination Class
 
@@ -802,3 +803,55 @@ def verify_otp(request):
             })
 
         return JsonResponse({"error": "Invalid or expired OTP"}, status=400)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access
+def create_table(request):
+    user = request.user
+    if not user.is_staff:  # Only admins can create tables
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    data = request.data
+    type_value = data.get('type', '').strip()  # Get 'type' value and remove extra spaces
+    attributes = data.get('attributes', [])
+
+    if not type_value or not attributes:
+        return JsonResponse({'error': 'Invalid data'}, status=400)
+
+    table_name = f"type de {type_value}"  # Format the table name with spaces
+    table_name = f"`{table_name}`"  # Wrap it in backticks for MySQL compatibility
+
+    # Build SQL query for table creation
+    columns_sql = ", ".join([f"{attr['name']} {attr['type']}" for attr in attributes])
+    sql_query = f"CREATE TABLE {table_name} (id INT AUTO_INCREMENT PRIMARY KEY, {columns_sql});"
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query)
+        return JsonResponse({'message': f'Table {table_name} created successfully'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Require authentication
+def get_table_data(request, table_name):
+    user = request.user
+    if not user.is_staff:  # Check if the user is an admin
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    table_name = f"type de {table_name}"  # Format the table name
+    table_name = f"`{table_name}`"  # Wrap in backticks for MySQL compatibility
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM {table_name};")
+            columns = [col[0] for col in cursor.description]  # Get column names
+            rows = cursor.fetchall()  # Fetch all rows
+
+        data = [dict(zip(columns, row)) for row in rows]
+        return JsonResponse({'table_name': table_name, 'data': data})
+    
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

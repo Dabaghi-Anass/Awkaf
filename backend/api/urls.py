@@ -1,7 +1,14 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import InputFieldListCreate,BulkInputFieldUpdate, BulkInputFieldDelete,SaveZakatHistoryView,AdminDeleteUserView,ManageZakatHistoryAPIView,AdminNonStaffUserListView,   WaqfProjectListCreateView, WaqfProjectDetailView,send_contact_email,RequestPasswordResetView, ResetPasswordView, WaqfProjectReadOnlyListView,WaqfProjectReadOnlyDetailView
+from .views import (
+    InputFieldListCreate, BulkInputFieldUpdate, BulkInputFieldDelete,
+    SaveZakatHistoryView, AdminDeleteUserView, ManageZakatHistoryAPIView,
+    AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,
+    send_contact_email, RequestPasswordResetView, ResetPasswordView,
+    WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
+    create_table,  get_table_data # ✅ Import create_table view
+)
 
 urlpatterns = [
     # InputField URLs
@@ -19,7 +26,10 @@ urlpatterns = [
     path("public/waqf-projects/", WaqfProjectReadOnlyListView.as_view(), name="public-waqfproject-list"),
     path("public/waqf-projects/<int:pk>/", WaqfProjectReadOnlyDetailView.as_view(), name="public-waqfproject-detail"),
     path('admin/non-staff-users/', AdminNonStaffUserListView.as_view(), name='admin-non-staff-user-list'),  # get users  
-    
+   
+    # ✅ Add your new endpoint
+    path("admin/create-table/", create_table, name="create-table"),
+    path("admin/get-table/<str:table_name>/", get_table_data, name="get-table"),
 ]
 
 if settings.DEBUG:
