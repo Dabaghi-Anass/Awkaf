@@ -34,59 +34,6 @@ export const ZakactCal = () => {
     };
 
     // Handles form submission (Sends selected data to the backend)
-    const saveZakatHistory = async () => {
-        const token = localStorage.getItem("accessToken");
-    
-        const zakatData = {
-            liquidites: zakatFormInfos.liquidites || -1,
-            investissements: zakatFormInfos.investissements || -1,
-            bien_location: zakatFormInfos.bienLocation || -1,
-            creances_clients: zakatFormInfos.creancesClients || -1,
-            bien_usage_interne: zakatFormInfos.bienUsageInterne || -1,
-            fonds_non_dispo: zakatFormInfos.fondsNonDispo || -1,
-            stocks_invendable: zakatFormInfos.stocksInvendable || -1,
-            stocks: zakatFormInfos.stocks || -1,
-            created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-            nisab:zakatFormInfos.nisab,
-            zakat_amount:zakatFormInfos.zakatAmount,
-        };
-    
-        try {
-            const response = await fetch("http://localhost:8000/apif/save-zakat-history/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify(zakatData),
-            });
-    
-            const data = await response.json();
-            if (!response.ok) {
-                console.error("Backend error:", data);
-                throw new Error("Failed to save Zakat history");
-            }
-    
-            console.log("Zakat history saved successfully:", data);
-            alert("Zakat history saved successfully!");
-    
-            // Reset form after successful save
-            setZakatFormInfos(initialZakatData);
-            setIsLiquidites(false);
-            setIsStocks(false);
-            setIsInvestissements(false);
-            setIsBienLocation(false);
-            setIsCreancesClients(false);
-            setIsBienUsageInterne(false);
-            setIsFondsNonDispo(false);
-            setIsStocksInvendable(false);
-            setShowInputs(false); // Hide input fields again
-    
-        } catch (error) {
-            console.error("Error:", error);
-            alert(error.message);
-        }
-    };
     
     
     

@@ -1,13 +1,27 @@
+@import "tailwindcss";
+
 body{
   overflow-x: hidden;
 }
+@layer components{
+  .cal-input{
+    background: hsl(0, 0%, 100%);
+    outline: none;
+    font-size: 18px;
+   
+  }
+  .cal-button{
+    padding: 10px 15px;
+    border-radius: 5px;
+    
+  }
+}
 *{
-  font-family: 'Inter';
-  font-family: 'El Messiri';
-  margin: 0;
-  padding: 0;
+  font-family: 'El Messiri', sans-serif;
+ 
+ 
   box-sizing: border-box;
-  /*direction: rtl;*/
+  direction: rtl;
 }
 .center{
   display: flex;
@@ -15,7 +29,11 @@ body{
   align-items: center;
 
 }
+button{
+  cursor: pointer;
+}
 .button{
+  background-color: white;
   outline: none;
   border: none;
   border-radius: 8px;
@@ -33,3 +51,4 @@ li{
 a{
   text-decoration: none;
 }
+

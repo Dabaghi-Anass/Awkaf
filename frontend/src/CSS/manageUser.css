@@ -1,0 +1,86 @@
+.confirm-delete{
+       width: 25em;
+       height: 15em;
+       background-color: #fff;
+       border-radius: 10px;
+       padding: 10px 15px;
+      
+}
+.confirm-delete h3 {
+    position: relative;
+    font-size: 1.5em;
+}
+.confirm-delete p{
+    position: relative;
+    padding: 1.8em 0;
+    margin-bottom: 2.5em;
+}
+.confirm-delete-btns{
+    text-align: center;
+}
+.confirm-delete-btns button{
+    width: 8em;
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: none;
+    margin: 0 0.5em;
+    font-weight: 600;
+    font-size: 17px;
+    cursor: pointer;
+    border: 2px solid #000;
+}
+.confirm-delete-btns .delete-btn{
+   
+    background-color: #ff0000;
+    color: #fff;
+}
+.confirm-delete h3::after, .confirm-delete p::after{
+    position: absolute;
+    content: '';
+    height: 2px;
+    width: 100%;
+    bottom: -5px;
+    left: 0;
+    background-color: #ff0000;
+}
+
+table {
+    max-height: 50em;
+    width: 60em;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  th,
+  td {
+    border: 2px solid #000;
+    padding: 10px 20px;
+    background-color: #fff;
+    color: #000;
+    height: 4em;
+  
+  }
+  th {
+    
+    text-align: left;
+  }
+  thead th {
+    background-color: #55608f;
+  }
+  tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  tbody td {
+    position: relative;
+  }
+  tbody td:hover:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -9999px;
+    bottom: -9999px;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: -1;
+  }
+  
