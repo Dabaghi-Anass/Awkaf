@@ -743,17 +743,41 @@ class ArrayPagination(PageNumberPagination):
 
 # ✅ Admin Non-Staff User List View
 class AdminNonStaffUserListView(generics.ListAPIView):
-    """ ✅ Allows only staff users to see non-staff users with pagination & caching """
+    """ ✅ Allows only staff users to see non-staff users with optional pagination """
 
-    queryset = User.objects.filter(is_staff=False).only("id", "username", "email")  # ✅ Optimize query
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsStaffUser]
-    pagination_class = ArrayPagination  # ✅ Use custom pagination
+    pagination_class = None  # ✅ Default: No pagination
+
+    def get_queryset(self):
+        return User.objects.filter(is_staff=False).only("id", "username", "email")
+
+    def get_paginated_response(self, data):
+        """ ✅ Ensure serialized data before applying pagination """
+        paginator = ArrayPagination()
+        paginated_data = paginator.paginate_queryset(data, self.request, view=self)
+        return paginator.get_paginated_response(paginated_data)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        # ✅ Serialize the queryset before paginating
+        serializer = self.get_serializer(queryset, many=True)
+        serialized_data = serializer.data  
+
+        # ✅ Check if pagination is requested
+        page = request.GET.get("page")
+        page_size = request.GET.get("page_size")
+
+        if page and page_size:
+            return self.get_paginated_response(serialized_data)
+
+        # ✅ Default: Return all serialized users (no pagination)
+        return Response(serialized_data)
 
     @method_decorator(cache_page(60 * 10))  # ✅ Cache for 10 minutes
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
 def send_otp_email(user):
     otp = str(random.randint(100000, 999999))  # Generate a 6-digit OTP
 
