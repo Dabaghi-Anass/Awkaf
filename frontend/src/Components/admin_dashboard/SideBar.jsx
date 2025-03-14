@@ -1,34 +1,56 @@
-import React from 'react'
+import React, { useState } from "react";
 
 export const SideBar = () => {
+  const [activeItem, setActiveItem] = useState(""); // Track selected item
+
   return (
-    <>
-        <div className="sidebar-container reletive left-0
-        top-0 bg-white h-screen w-[20em] border-r-[#118218]
-        border-r-2">
-            
-           
-                <ul className='side-bar-list mt-5 px-2 w-8/9 border-[#118218] border-2 ml-6 rounded-[5px] h-100 ' >
-                    <li className=''>
-                        <p className='text-[16px] font-[600]  w-full  py-2 border-b-1'>Main</p>
-                        <div className='side-bar-item my-5 border-l-3 py-2 pl-2 text-[20px] font-medium rounded-r-lg cursor-pointer border-[#000] text-[#118218] hover:text-amber-50 '>Dashboard</div>
-                    </li>
+    <div className="sidebar-container relative left-0 top-0 bg-white h-screen w-[20em] border-r-2 border-gray-400 mt-5">
+      <ul className="side-bar-list px-2 w-8/9 border-black border ml-6 rounded-md">
+        <li>
+          <p className="text-[16px] font-semibold w-full py-2 border-b">Main</p>
+          <div
+            className={`side-bar-item my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
+              ${
+                activeItem === "Dashboard"
+                  ? "border-green-700 text-green-700 font-semibold"
+                  : "border-black text-[#118218] hover:text-green-700"
+              }`}
+            onClick={() => setActiveItem("Dashboard")}
+          >
+            Dashboard
+          </div>
+        </li>
 
-                    <li className=''>
-                        <p className='text-[16px] font-[600]  w-full  py-2 border-b-1'>User Details</p>
-                        <div className='side-bar-item my-5 border-l-3 py-2 pl-2 text-[20px] font-medium rounded-r-lg cursor-pointer border-[#000] text-[#118218] hover:text-amber-50  '>Users</div>
-                    </li>
+        <li>
+          <p className="text-[16px] font-semibold w-full py-2 border-b">User Details</p>
+          <div
+            className={`side-bar-item my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
+              ${
+                activeItem === "Users"
+                  ? "border-green-700 text-green-700 font-semibold"
+                  : "border-black text-[#118218] hover:text-green-700"
+              }`}
+            onClick={() => setActiveItem("Users")}
+          >
+            Users
+          </div>
+        </li>
 
-                    <li className=''>
-                        <p className=' text-[16px] font-[600]  w-full  py-2 border-b-1'>Project details</p>
-                        <div className='side-bar-item my-5 border-l-3 py-2 pl-2 text-[20px] font-medium rounded-r-lg cursor-pointer border-[#000] text-[#118218] hover:text-amber-50'>Awkaf-projects</div>
-                    </li>
-                      
-                </ul>
-          
-        </div>
-        
-
-    </>
-  )
-}
+        <li>
+          <p className="text-[16px] font-semibold w-full py-2 border-b">Project Details</p>
+          <div
+            className={`side-bar-item my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
+              ${
+                activeItem === "Awkaf-projects"
+                  ? "border-green-700 text-green-700 font-semibold"
+                  : "border-black text-[#118218] hover:text-green-700"
+              }`}
+            onClick={() => setActiveItem("Awkaf-projects")}
+          >
+            Awkaf-projects
+          </div>
+        </li>
+      </ul>
+    </div>
+  );
+};

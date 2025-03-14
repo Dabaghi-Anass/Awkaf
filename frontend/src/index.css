@@ -2,7 +2,7 @@
 
 body{
   overflow-x: hidden;
-  background-color: #41437d;
+ 
 }
 @layer utilities {
   /* Scrollbar Track */
@@ -45,11 +45,7 @@ body{
   .side-bar-item{
     transition: 300ms;
   }
-  .side-bar-item:hover{
-    background-color: #118218;
-    color: #fff;
-    transition: 300ms;
-  }
+ 
 }
 *{
   font-family: 'Inter', sans-serif;

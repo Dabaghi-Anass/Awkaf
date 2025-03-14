@@ -69,11 +69,17 @@ export const DashboardAdmin = () => {
   return (
     <>
         <TopBar></TopBar>
-        <div className='flex  gap-10 '>
+        <div className='flex  gap-5 '>
         <SideBar></SideBar> 
-            <div className='w-3/4 '>
-            <h1 className='font-bold text-[18px] text-[#000] my-5'>Users</h1>
-            <ManageUsers ></ManageUsers>
+            <div className='w-3/4 pr-4 '>
+            <div className='bg-[#eeeeee] py-4 pl-3.5 rounded-lg mt-5 mb-8 relative after:absolute after:-bottom-4 after:left-0 after:h-0.5  after:bg-[#999999] after:w-full after:rounded-4xl text-[#118218] font-[600] text-lg'>Home-Users</div>
+            <div className='flex items-center  mb-5 gap-8'>
+                <h1  className='font-bold text-[25px] text-[#000]  '>
+                    Users
+                </h1>
+                <button className='bg-[#118218] py-2 px-5 rounded-[5px] font-light text-white'>+Add New</button>
+            </div>
+                <ManageUsers ></ManageUsers>
             </div>
         </div>
         
