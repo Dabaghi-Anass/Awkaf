@@ -8,11 +8,11 @@ background-size: cover;
 color: #fff;
 }
 .footer{
-    direction: rtl;
+    margin-top: 10em;
     background-color: #eee;
-    position: relative;
-    height: 100vh;
-    
+   
+    width: 100%;
+    bottom: 0;
 }
 .top-footer::before{
     position: absolute;
