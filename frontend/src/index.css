@@ -2,7 +2,7 @@
 
 body{
   overflow-x: hidden;
-  background-color: rgb(48, 184, 96);
+  background-color: #41437d;
 }
 @layer utilities {
   /* Scrollbar Track */
@@ -42,13 +42,19 @@ body{
     border-radius: 5px;
     
   }
+  .side-bar-item{
+    transition: 300ms;
+  }
+  .side-bar-item:hover{
+    background-color: #118218;
+    color: #fff;
+    transition: 300ms;
+  }
 }
 *{
-  font-family: 'El Messiri', sans-serif;
- 
- 
+  font-family: 'Inter', sans-serif;
   box-sizing: border-box;
-  direction: rtl;
+  
 }
 .center{
   display: flex;

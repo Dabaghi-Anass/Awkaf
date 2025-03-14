@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import '../CSS/DashboardAdmin.css'
 import { ManageAwkaf } from './ManageAwkaf';
+import { TopBar } from '../Components/admin_dashboard/TopBar';
+import { SideBar } from '../Components/admin_dashboard/SideBar';
+import { ManageUsers } from '../Components/ManageUsers';
+ManageUsers
 export const DashboardAdmin = () => {
 
     const [column,setColumn]=useState({
@@ -64,7 +68,23 @@ export const DashboardAdmin = () => {
     }
   return (
     <>
-        <div className="class center ">
+        <TopBar></TopBar>
+        <div className='flex  gap-10 '>
+        <SideBar></SideBar> 
+            <div className='w-3/4 '>
+            <h1 className='font-bold text-[18px] text-[#000] my-5'>Users</h1>
+            <ManageUsers ></ManageUsers>
+            </div>
+        </div>
+        
+        
+       
+     
+    </>
+  )
+}
+{/*
+    <div className="class center ">
             <div className="holder">
                 <label htmlFor="">Add Column in data base</label> <br />
                 <input type="text" placeholder='column name' name='column_name' value={column.column_name} onChange={handleChange} />
@@ -77,13 +97,10 @@ export const DashboardAdmin = () => {
                     <div>colm type:{element.type}</div>
                     <button onClick={()=>{deleteCol(element)}}>delete</button>
                 </div>
-            ))} */}
+            ))} */}{/*}
             </div>
 
             <ManageAwkaf></ManageAwkaf>
             
 
-        </div>
-    </>
-  )
-}
+        </div> */}
