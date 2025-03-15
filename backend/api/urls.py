@@ -7,7 +7,7 @@ from .views import (
     AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,
     send_contact_email, RequestPasswordResetView, ResetPasswordView,
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
-    create_table,  get_table_data # ✅ Import create_table view
+    create_table,  get_table_data ,rename_table, modify_table, delete_table  # ✅ Import create_table view
 )
 
 urlpatterns = [
@@ -30,6 +30,10 @@ urlpatterns = [
     # ✅ Add your new endpoint
     path("admin/create-table/", create_table, name="create-table"),
     path("admin/get-table/<str:table_name>/", get_table_data, name="get-table"),
+    
+    path("admin/rename-table/", rename_table, name="rename-table"),
+    path("admin/modify-table/", modify_table, name="modify-table"),
+    path("admin/delete-table/<str:table_name>/", delete_table, name="delete-table"),
 ]
 
 if settings.DEBUG:

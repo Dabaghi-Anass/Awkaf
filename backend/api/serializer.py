@@ -16,16 +16,24 @@ class UserSerializer(serializers.ModelSerializer):
     company = serializers.CharField(write_only=True, required=False)
     is_staff = serializers.BooleanField(write_only=True, required=False)
     is_verified = serializers.BooleanField(source="is_active", read_only=True)  # Track verification via is_active
-    
     email = serializers.EmailField(required=True)  # ✅ Use EmailField to enforce validation
+
+    date_joined = serializers.SerializerMethodField()  # ✅ Custom field to return only the date
 
     class Meta:
         model = User
-        fields = ["id", "username", "first_name", "last_name", "email", "password", "company", "is_staff", "is_verified"]
+        fields = [
+            "id", "username", "first_name", "last_name", "email", "password",
+            "company", "is_staff", "is_verified", "date_joined"  # ✅ Include formatted date
+        ]
         extra_kwargs = {
             "password": {"write_only": True},
             "is_staff": {"read_only": True},
         }
+
+    def get_date_joined(self, obj):
+        """ ✅ Convert datetime to date (YYYY-MM-DD) """
+        return obj.date_joined.date()  # ✅ Extracts only the date part
 
     def validate_email(self, value):
      if User.objects.filter(email=value).exists():
