@@ -845,9 +845,14 @@ def create_table(request):
     table_name = f"type de {type_value}"  # Format the table name with spaces
     table_name = f"`{table_name}`"  # Wrap it in backticks for MySQL compatibility
 
+    # Prevent 'id' from being passed in attributes
+    for attr in attributes:
+        if attr['name'].lower() == 'id':
+            return JsonResponse({'error': "You cannot define 'id' as a custom attribute."}, status=400)
+
     # Build SQL query for table creation
-    columns_sql = ", ".join([f"{attr['name']} {attr['type']}" for attr in attributes])
-    sql_query = f"CREATE TABLE {table_name} (id INT AUTO_INCREMENT PRIMARY KEY, {columns_sql});"
+    columns_sql = ", ".join([f"`{attr['name']}` {attr['type']}" for attr in attributes])
+    sql_query = f"CREATE TABLE {table_name} (`id` INT AUTO_INCREMENT PRIMARY KEY, {columns_sql});"
 
     try:
         with connection.cursor() as cursor:
@@ -877,5 +882,90 @@ def get_table_data(request, table_name):
         data = [dict(zip(columns, row)) for row in rows]
         return JsonResponse({'table_name': table_name, 'data': data})
     
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def rename_table(request):
+    user = request.user
+    if not user.is_staff:  
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    data = request.data
+    old_name = f"type de {data.get('old_name', '').strip()}"
+    new_name = f"type de {data.get('new_name', '').strip()}"
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(f"ALTER TABLE `{old_name}` RENAME TO `{new_name}`;")
+        return JsonResponse({'message': f'Table renamed to {new_name} successfully'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+
+
+
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def modify_table(request):
+    user = request.user
+    if not user.is_staff:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    data = request.data
+    table_name = f"type de {data.get('table_name', '').strip()}"
+    add_columns = data.get('add_columns', [])
+    remove_columns = data.get('remove_columns', [])
+
+    # 🚨 Prevent deletion of the 'id' column
+    if "id" in remove_columns:
+        return JsonResponse({'error': "Cannot delete primary key column 'id'."}, status=400)
+
+    alter_queries = []
+
+    # Adding new columns
+    for col in add_columns:
+        alter_queries.append(f"ADD COLUMN `{col['name']}` {col['type']}")
+
+    # Removing columns (excluding 'id')
+    for col in remove_columns:
+        alter_queries.append(f"DROP COLUMN `{col}`")
+
+    if not alter_queries:
+        return JsonResponse({'error': 'No modifications specified'}, status=400)
+
+    alter_sql = f"ALTER TABLE `{table_name}` " + ", ".join(alter_queries) + ";"
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(alter_sql)
+        return JsonResponse({'message': f'Table {table_name} modified successfully'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+    
+    
+    
+    
+    
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_table(request, table_name):
+    user = request.user
+    if not user.is_staff:  
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    full_table_name = f"type de {table_name}"
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(f"DROP TABLE `{full_table_name}`;")
+        return JsonResponse({'message': f'Table {full_table_name} deleted successfully'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
