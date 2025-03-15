@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "../CSS/ManageAwkaf.css";
+
 
 import { ManageProjects } from "../Components/ManageProjects";
-import { ManageUsers } from "../Components/ManageUsers";
+
 
 export const ManageAwkaf = () => {
     const defaultProject = {
@@ -85,75 +85,96 @@ export const ManageAwkaf = () => {
 
     return (
         <>
-            <div className="manage-awkaf">
-                <form className="project-details-cont">
-                    <div>
-                    <label>Project Name</label> <br />
-                        <input type="text" name="name" value={projectInfos.name} onChange={handleChange} />
+            <div className="manage-awkaf  bg-[#eeeeee] p-4 rounded-lg">
+                <form className="project-details-cont overflow-hidden h-90 overflow-y-scroll scrollbar">
+                    <div className="flex  flex-col gap-2 mb-4  ">
+                    <label className="text-[#118218] text-lg ">Project Name:</label> 
+                        <input type="text" name="name" value={projectInfos.name} onChange={handleChange} className="border text-[17px] py-2 px-4 rounded-md w-6/7
+                        focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"
+                         />
                     </div>
-                    <div>
-                        <label>Introduction</label> <br />
-                        <textarea name="introduction" value={projectInfos.introduction} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 " >
+                    <label className="text-[#118218] text-lg ">Introduction:</label> 
+                        <textarea name="introduction" value={projectInfos.introduction} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none" 
+                        ></textarea>
                     </div>
-                    <div>
-                        <label>Background</label> <br />
-                        <textarea name="background" value={projectInfos.background} onChange={handleChange}></textarea>
+                    <div  className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Background</label> 
+                        <textarea name="background" value={projectInfos.background} onChange={handleChange}
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none" ></textarea>
                     </div>
-                    <div>
-                        <label>Objectives</label> <br />
-                        <textarea name="objectives" value={projectInfos.objectives} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Objectives</label> 
+                        <textarea name="objectives" value={projectInfos.objectives} onChange={handleChange} 
+                         className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Key Stages</label> <br />
-                        <textarea name="key_stages" value={projectInfos.key_stages} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 " >
+                        <label className="text-[#118218] text-lg ">Key Stages</label> 
+                        <textarea name="key_stages" value={projectInfos.key_stages} onChange={handleChange}
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Expected Outcomes</label> <br />
-                        <textarea name="expected_outcomes" value={projectInfos.expected_outcomes} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Expected Outcomes</label> 
+                        <textarea name="expected_outcomes" value={projectInfos.expected_outcomes} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Challenges</label> <br />
-                        <textarea name="challenges_solutions" value={projectInfos.challenges_solutions} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Challenges</label> 
+                        <textarea name="challenges_solutions" value={projectInfos.challenges_solutions} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Required Resources</label> <br />
-                        <textarea name="required_resources" value={projectInfos.required_resources} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Required Resources</label> 
+                        <textarea name="required_resources" value={projectInfos.required_resources} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Timeline</label> <br />
-                        <textarea name="timeline" value={projectInfos.timeline} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Timeline</label> 
+                        <textarea name="timeline" value={projectInfos.timeline} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Team Members</label> <br />
-                        <textarea name="team_members" value={projectInfos.team_members} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Team Members</label> 
+                        <textarea name="team_members" value={projectInfos.team_members} onChange={handleChange}
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Tools & Technologies</label> <br />
-                        <textarea name="tools_technologies" value={projectInfos.tools_technologies} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Tools & Technologies</label> 
+                        <textarea name="tools_technologies" value={projectInfos.tools_technologies} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Partners & Supporters</label> <br />
-                        <textarea name="partners_supporters" value={projectInfos.partners_supporters} onChange={handleChange}></textarea>
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Partners & Supporters</label> 
+                        <textarea name="partners_supporters" value={projectInfos.partners_supporters} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
                     </div>
-                    <div>
-                        <label>Conclusion</label> <br />
-                        <textarea name="conclusion" value={projectInfos.conclusion} onChange={handleChange}></textarea>
-                    </div>
-                    {/* Image Upload Section */}
-                    <div>
-                        <label>Project Image</label> <br />
-                        <input type="file" accept="image/*" onChange={handleImageChange} />
+                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
+                        <label className="text-[#118218] text-lg ">Conclusion</label> 
+                        <textarea name="conclusion" value={projectInfos.conclusion} onChange={handleChange} 
+                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
+                    </div> 
+                     <div className="flex  flex-col hh-20  gap-2 mb-4  ">
+                     <label className="text-[#118218] text-lg " for="file_input">Upload file</label>
+                     <input className="block w-1/3 h-10 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none
+                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" accept="image/*" type="file"
+                      onChange={handleImageChange}/>
                         {preview && (
                             <div className="image-preview">
                                 <img src={preview} alt="Project Preview" />
                             </div>
                         )}
                     </div>
+                    {/* 
+                    
+                    */}
+                    {/* Image Upload Section */}
+                   
 
-                    <button onClick={sendData}>Submit</button>
+                    <button onClick={sendData} className="bg-[#118218] py-2 w-35 px-5 rounded-sm font-bold text-white">Add Project</button>
                 </form>
 
-                <ManageUsers></ManageUsers>
+                
             </div>
         </>
     );

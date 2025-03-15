@@ -9,11 +9,11 @@ export const SideBar = () => {
         <li>
           <p className="text-[16px] font-semibold w-full py-2 border-b">Main</p>
           <div
-            className={`side-bar-item my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
+            className={`side-bar-item hover:bg-[#118218] hover:text-white border-black my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
               ${
                 activeItem === "Dashboard"
-                  ? "border-green-700 text-green-700 font-semibold"
-                  : "border-black text-[#118218] hover:text-green-700"
+                  ? " text-white font-semibold bg-[#118218] "
+                  : " text-[#118218] hover:text-green-700"
               }`}
             onClick={() => setActiveItem("Dashboard")}
           >
@@ -24,11 +24,11 @@ export const SideBar = () => {
         <li>
           <p className="text-[16px] font-semibold w-full py-2 border-b">User Details</p>
           <div
-            className={`side-bar-item my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
+            className={`side-bar-item hover:bg-[#118218] hover:text-white border-black my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
               ${
                 activeItem === "Users"
-                  ? "border-green-700 text-green-700 font-semibold"
-                  : "border-black text-[#118218] hover:text-green-700"
+                  ? " text-white font-semibold bg-[#118218]"
+                  : " text-[#118218] hover:text-green-700"
               }`}
             onClick={() => setActiveItem("Users")}
           >
@@ -39,11 +39,11 @@ export const SideBar = () => {
         <li>
           <p className="text-[16px] font-semibold w-full py-2 border-b">Project Details</p>
           <div
-            className={`side-bar-item my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
+            className={`side-bar-item hover:bg-[#118218] hover:text-white border-black my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
               ${
                 activeItem === "Awkaf-projects"
-                  ? "border-green-700 text-green-700 font-semibold"
-                  : "border-black text-[#118218] hover:text-green-700"
+                  ? " text-white font-semibold bg-[#118218]"
+                  : " text-[#118218] hover:text-green-700"
               }`}
             onClick={() => setActiveItem("Awkaf-projects")}
           >

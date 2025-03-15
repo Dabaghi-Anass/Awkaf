@@ -3,8 +3,10 @@ import '../CSS/DashboardAdmin.css'
 import { ManageAwkaf } from './ManageAwkaf';
 import { TopBar } from '../Components/admin_dashboard/TopBar';
 import { SideBar } from '../Components/admin_dashboard/SideBar';
-import { ManageUsers } from '../Components/ManageUsers';
-ManageUsers
+import {ManageUsers} from '../Components/ManageUsers'
+import { ProjectsTable } from '../Components/ProjectsTable';
+
+
 export const DashboardAdmin = () => {
 
     const [column,setColumn]=useState({
@@ -79,7 +81,7 @@ export const DashboardAdmin = () => {
                 </h1>
                 <button className='bg-[#118218] py-2 px-5 rounded-[5px] font-light text-white'>+Add New</button>
             </div>
-                <ManageUsers ></ManageUsers>
+                <ProjectsTable></ProjectsTable>
             </div>
         </div>
         

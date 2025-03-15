@@ -68,7 +68,7 @@ const router = createBrowserRouter([
   },
   {
     path: "DashboardAdmin/",
-    element: <DashboardAdmin />,
+    element: <DashboardAdmin/>,
   },
   {
     path: "test/",
