@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import '../CSS/DashboardAdmin.css'
 import { ManageAwkaf } from './ManageAwkaf';
+import { TopBar } from '../Components/admin_dashboard/TopBar';
+import { SideBar } from '../Components/admin_dashboard/SideBar';
+import { ManageUsers } from '../Components/ManageUsers';
+ManageUsers
 export const DashboardAdmin = () => {
 
     const [column,setColumn]=useState({
@@ -64,7 +68,29 @@ export const DashboardAdmin = () => {
     }
   return (
     <>
-        <div className="class center ">
+        <TopBar></TopBar>
+        <div className='flex  gap-5 '>
+        <SideBar></SideBar> 
+            <div className='w-3/4 pr-4 '>
+            <div className='bg-[#eeeeee] py-4 pl-3.5 rounded-lg mt-5 mb-8 relative after:absolute after:-bottom-4 after:left-0 after:h-0.5  after:bg-[#999999] after:w-full after:rounded-4xl text-[#118218] font-[600] text-lg'>Home-Users</div>
+            <div className='flex items-center  mb-5 gap-8'>
+                <h1  className='font-bold text-[25px] text-[#000]  '>
+                    Users
+                </h1>
+                <button className='bg-[#118218] py-2 px-5 rounded-[5px] font-light text-white'>+Add New</button>
+            </div>
+                <ManageUsers ></ManageUsers>
+            </div>
+        </div>
+        
+        
+       
+     
+    </>
+  )
+}
+{/*
+    <div className="class center ">
             <div className="holder">
                 <label htmlFor="">Add Column in data base</label> <br />
                 <input type="text" placeholder='column name' name='column_name' value={column.column_name} onChange={handleChange} />
@@ -77,13 +103,10 @@ export const DashboardAdmin = () => {
                     <div>colm type:{element.type}</div>
                     <button onClick={()=>{deleteCol(element)}}>delete</button>
                 </div>
-            ))} */}
+            ))} */}{/*}
             </div>
 
             <ManageAwkaf></ManageAwkaf>
             
 
-        </div>
-    </>
-  )
-}
+        </div> */}

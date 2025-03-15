@@ -32,7 +32,7 @@ import HorizontalLinearStepper from './Components/HorizontalLinearStepper.jsx';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HorizontalLinearStepper />,
+    element: <Home />,
   },
   {
     path: "About/",
@@ -65,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: "Form/",
     element: <TestForm />,
+  },
+  {
+    path: "DashboardAdmin/",
+    element: <DashboardAdmin />,
   },
   {
     path: "test/",

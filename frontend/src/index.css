@@ -2,7 +2,34 @@
 
 body{
   overflow-x: hidden;
+ 
 }
+@layer utilities {
+  /* Scrollbar Track */
+  .scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 100em;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+
+     /* Light gray background */
+  }
+
+  /* Scrollbar Handle */
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #fff; /* Your primary color */
+    border-radius: 4px;
+  
+  }
+
+  /* Scrollbar Handle on Hover */
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #F2CB05; /* Darker green */
+  }
+}
+
 @layer components{
   .cal-input{
     background: hsl(0, 0%, 100%);
@@ -15,13 +42,15 @@ body{
     border-radius: 5px;
     
   }
+  .side-bar-item{
+    transition: 300ms;
+  }
+ 
 }
 *{
-  font-family: 'El Messiri', sans-serif;
- 
- 
+  font-family: 'Inter', sans-serif;
   box-sizing: border-box;
-  direction: rtl;
+  
 }
 .center{
   display: flex;

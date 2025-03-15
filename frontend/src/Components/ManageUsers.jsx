@@ -1,35 +1,25 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
+import React, { useEffect, useState } from "react";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 
 export const ManageUsers = () => {
   const [users, setUsers] = useState([]);
-  const [page, setPage] = useState(1); // Track current page
-  const [pageSize] = useState(10); // Fixed page size
-  const [totalPages, setTotalPages] = useState(1); // Track total number of pages
- 
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     fetchUsers(page, pageSize);
-  }, [page]); // Re-fetch users when page changes
+  }, [page]);
 
   useEffect(() => {
     fetchTotalPages();
   }, []);
 
-
   const fetchTotalPages = async () => {
     try {
-      const token = localStorage.getItem("accessToken"); 
-      const response = await fetch(`http://127.0.0.1:8000/apif/admin/non-staff-users/`, {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch("http://127.0.0.1:8000/apif/admin/non-staff-users/", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -38,80 +28,72 @@ export const ManageUsers = () => {
       });
 
       const data = await response.json();
-      console.log("Fetched users:", data);
       if (Array.isArray(data)) {
-        const totalUsers = data.length; // Get total number of users
-        const pages = Math.ceil(totalUsers / 10); // Calculate total pages
-        setTotalPages(pages);
+        setTotalPages(Math.ceil(data.length / pageSize));
       }
     } catch (error) {
-      console.error('Error fetching total pages:', error);
+      console.error("Error fetching total pages:", error);
       setTotalPages(1);
     }
   };
+
   const fetchUsers = async (pageNumber, pageSize) => {
     try {
-      const token = localStorage.getItem("accessToken"); // Get token from storage
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         console.error("No authentication token found!");
         return;
       }
-  
+
       const response = await fetch(
         `http://127.0.0.1:8000/apif/admin/non-staff-users/?page=${pageNumber}&page_size=${pageSize}`,
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`, // Attach token in headers
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
-  
+
       if (!response.ok) {
         console.error("Failed to fetch users:", response.status);
         return;
       }
-  
+
       const data = await response.json();
-      console.log("Fetched users:", data);
-      
-      if (Array.isArray(data)) {
-        setUsers(data);
-        
-      } else {
-        setUsers([]);
-      }
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching users:", error);
       setUsers([]);
     }
   };
-  
-  const deleteUser = async (id) => {
+  console.log(users)
+
+  const deleteUser = async (userId) => {
     try {
-      const token = localStorage.getItem("accessToken"); // Ensure token is included
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         console.error("No authentication token found!");
         return;
       }
   
-      const response = await fetch(
-        `http://127.0.0.1:8000/apif/admin/delete-user/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach token
-          },
-        }
-      );
+      const url = `http://127.0.0.1:8000/apif/admin/delete-user/${userId}/`;
+      console.log("DELETE request URL:", url); // Debugging line
+  
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
   
       if (!response.ok) {
         console.error("Failed to delete user:", response.status);
         return;
       }
   
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -119,53 +101,51 @@ export const ManageUsers = () => {
   
 
   return (
-    <div className="flex flex-col items-center">
-      <TableContainer component={Paper} className="rounded-lg shadow-md w-[80em]">
-        <Table className="min-w-full">
-          <TableHead>
-            <TableRow className="bg-green-700 text-white">
-              <TableCell className="text-white font-bold">ID</TableCell>
-              <TableCell className="text-white font-bold">Name</TableCell>
-              <TableCell className="text-white font-bold">Email</TableCell>
-              <TableCell className="text-white font-bold">Role</TableCell>
-              <TableCell className="text-white font-bold">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.length > 0 ? (
-              users.map((user) => (
-                <TableRow key={user.id} className="hover:bg-gray-100 transition duration-300">
-                  <TableCell className="border p-0">{user.id}</TableCell>
-                  <TableCell className="border p-0">{user.username}</TableCell>
-                  <TableCell className="border p-0">{user.email}</TableCell>
-                  <TableCell className="border p-0">{user.role}</TableCell>
-                  <TableCell className="border p-0">
-                    <Button variant="contained" color="error" onClick={() => deleteUser(user.id)}>
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center p-4">
-                  No users found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <>
+      <div className="relative overflow-x-auto flex flex-col items-center text-left shadow-md sm:rounded-lg">
+    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" className="px-6 py-3">ID</th>
+          <th scope="col" className="px-6 py-3">Username</th>
+          <th scope="col" className="px-6 py-3">Email</th>
+          <th scope="col" className="px-6 py-3">Created date</th>
+          <th scope="col" className="px-6 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.length > 0 ? (
+          users.map((user) => (
+            <tr key={user.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <td className="px-6 py-4">{user.id}</td>
+              <td className="px-6 py-4">{user.username}</td>
+              <td className="px-6 py-4">{user.email}</td>
+              <td className="px-6 py-4">{user.date_joined}</td>
+              <td className="px-6 py-4">
+                <button
+                  onClick={(e) =>{ e.preventDefault() ; deleteUser(user.id)}}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={5} className="text-center py-4">No users found</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
 
-      {/* Pagination */}
-      <Stack spacing={2} className="mt-4">
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(_, value) => setPage(value)}
-          color="primary"
-        />
-      </Stack>
-    </div>
+    {/* Pagination */}
+    
+  </div>
+  <Stack spacing={2} className="mt-4">
+  <Pagination count={totalPages} page={page} onChange={(_, value) => setPage(value)} color="primary" className="mx-auto text-center"  />
+</Stack>
+    </>
+    
   );
 };
