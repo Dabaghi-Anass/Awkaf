@@ -481,6 +481,10 @@ class AdminDeleteUserView(APIView):
             return Response({"error": "You cannot delete another admin."}, status=status.HTTP_403_FORBIDDEN)
         
         user.delete()
+
+        # ✅ Clear the cached non-staff users list after deletion
+        cache.delete("non_staff_users_list")
+
         return Response({"message": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 class ManageZakatHistoryAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -746,38 +750,34 @@ class AdminNonStaffUserListView(generics.ListAPIView):
     """ ✅ Allows only staff users to see non-staff users with optional pagination """
 
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsStaffUser]
-    pagination_class = None  # ✅ Default: No pagination
+    permission_classes = [IsAuthenticated]
+    pagination_class = None  # Default: No pagination
+    CACHE_KEY = "non_staff_users_list"
 
     def get_queryset(self):
-        return User.objects.filter(is_staff=False).only("id", "username", "email")
-
-    def get_paginated_response(self, data):
-        """ ✅ Ensure serialized data before applying pagination """
-        paginator = ArrayPagination()
-        paginated_data = paginator.paginate_queryset(data, self.request, view=self)
-        return paginator.get_paginated_response(paginated_data)
+        """ ✅ Fetch non-staff users """
+        return User.objects.filter(is_staff=False).only("id", "username", "email", "date_joined")
 
     def list(self, request, *args, **kwargs):
+        """ ✅ Return paginated or full user list based on request """
         queryset = self.get_queryset()
 
-        # ✅ Serialize the queryset before paginating
+        # ✅ Serialize data and format `date_joined`
         serializer = self.get_serializer(queryset, many=True)
-        serialized_data = serializer.data  
+        serialized_data = serializer.data
+        for user in serialized_data:
+            user["date_joined"] = user["date_joined"].strftime("%Y-%m-%d")  # Format date properly
 
-        # ✅ Check if pagination is requested
-        page = request.GET.get("page")
-        page_size = request.GET.get("page_size")
+        # ✅ Apply pagination if requested
+        if "page" in request.GET and "page_size" in request.GET:
+            paginator = ArrayPagination()
+            paginated_data = paginator.paginate_queryset(serialized_data, request, view=self)
+            return paginator.get_paginated_response(paginated_data)
 
-        if page and page_size:
-            return self.get_paginated_response(serialized_data)
-
-        # ✅ Default: Return all serialized users (no pagination)
+        # ✅ Default: Return all users (no pagination)
         return Response(serialized_data)
 
-    @method_decorator(cache_page(60 * 10))  # ✅ Cache for 10 minutes
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    
 def send_otp_email(user):
     otp = str(random.randint(100000, 999999))  # Generate a 6-digit OTP
 
