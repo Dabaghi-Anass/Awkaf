@@ -6,7 +6,7 @@ export const ZakatPrice = () => {
     const { zakatFormInfos, setShowResault,saveZakatHistory } = useContext(ZakatContext);
 
     return (
-        <div className="bg-[#035116] w-1/ mx-auto  h-fit rounded-2xl pb-10 mt-10 p-5">
+        <div className="bg-green-600 w-1/ mx-auto  h-fit rounded-2xl pb-10 mt-10 p-5">
             <h1 className="relative text-center pt-10 text-3xl font-extrabold text-white after:content-[''] after:h-1 after:w-3/4 after:bg-amber-300 after:absolute after:-bottom-5 after:left-1/2 after:-translate-x-1/2 after:rounded-3xl">
                 قيمة الزكاة الواجبة على شركتكم
             </h1>

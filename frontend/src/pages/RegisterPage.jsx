@@ -99,7 +99,7 @@ export const RegisterPage = () => {
     
   return (
    <>
-      <div className="sign-up-container center">
+      <div>
         <Register formData={formData} handleChange={handleChange}></Register>
             
       </div>

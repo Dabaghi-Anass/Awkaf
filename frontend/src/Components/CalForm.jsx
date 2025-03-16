@@ -18,9 +18,10 @@ export const CalForm = () => {
 
     return (
         <div dir='rtl' className="flex flex-col mt-15">
-            <div className="p-10 bg-[#035116] w-fit mx-auto rounded-3xl"> 
-            <h1 className="text-center py-3 mb-5 text-5xl font-bold text-white">حاسبة الزكاة</h1>
-                <form className=" mx-auto h-[35em] w-[40em] bg-[#035116]   py-5 px-10 truncate overflow-y-auto 
+            <div className="p-10 bg-green-600 w-fit mx-auto rounded-3xl"> 
+            <h1 className="text-center py-3 mb-5 text-2xl font-bold text-white">أدخل بياناتك لمعرفة مقدار الزكاة المستحق</h1>
+                <div className='bg-white p-5 rounded-lg'>
+                <form className=" mx-auto h-[35em] w-[40em] bg-[#fff]   py-5 px-10 truncate overflow-y-auto 
                 scrollbar"
                     onSubmit={(e) => { e.preventDefault(); calculateZakat(); }}>
                     
@@ -36,11 +37,11 @@ export const CalForm = () => {
                         { label: "الأموال غير المتاحة", name: "fondsNonDispo" },
                         { label: "المخزون غير القابل للبيع", name: "stocksInvendable" }
                     ].map(({ label, name }) => (
-                        <div className="flex flex-col gap-1 mb-5" key={name}>
-                            <label className="text-yellow-400 text-[1em]">{label}</label>
+                        <div className=" bg-whiteflex flex-col gap-1 mb-5" key={name}>
+                            <label className="text-gray-700 text-[1em] font-semibold">{label}</label>
                             <div className="relative w-full">
                                 <input
-                                    className="cal-input w-full p-2 border border-gray-500 rounded-md pr-10 text-right"
+                                    className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right"
                                     type="text"
                                     name={name}
                                     min={0}
@@ -55,9 +56,9 @@ export const CalForm = () => {
 
                     {/* Select Dropdown */}
                     <div className="flex flex-col gap-1 mb-5">
-                        <label className="text-yellow-400 text-[1em]">نوع الحول</label>
+                        <label className="text-gray-700  font-semibold text-[1em]">نوع الحول</label>
                         <select
-                            className="cal-input w-full p-2 border border-gray-500 rounded-md mt-1"
+                            className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
                             onChange={(e) => setIsUnnaire(e.target.value === "هجري")}
                         >
                             <option value="ميلادي">ميلادي</option>
@@ -66,12 +67,13 @@ export const CalForm = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <button className="text-center py-2 px-6 w-1/2 rounded-md mx-auto mt-8 block bg-amber-400 text-2xl font-bold"
+                    <button className="w-full py-3 mt-6 bg-[#FBBF24] text-[#035116] text-xl font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-[#FACC15] hover:scale-105 active:scale-95"
                         type="submit"  onClick={(e) => { e.preventDefault(); calculateZakat(); }}>
                         
                         حساب الزكاة
                     </button>
                 </form>
+                </div>
             </div>
             
 

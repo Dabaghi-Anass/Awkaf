@@ -19,7 +19,7 @@ body{
 
   /* Scrollbar Handle */
   .scrollbar::-webkit-scrollbar-thumb {
-    background: #fff; /* Your primary color */
+    background: #6a7282; /* Your primary color */
     border-radius: 4px;
   
   }

@@ -1,29 +1,44 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import '../CSS/Header.css';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export const Header = () => {
   const location = useLocation(); // Get the current path
 
   return (
-    <>
-      <div dir='rtl' className="header-container">
-        <div className="header-top">
-          <Link className='logo' to={"/"}>
-            منصة حساب زكاة الشركات وتوجيهها للوقف والتنمية
-          </Link>
-        </div>
-        
-        <div className="header-bottom">
-          <div className='pages'>
-            <Link to={"/"} className={`page ${location.pathname === "/" ? "activee" : ""}`}>الرئيسية</Link>
-            <Link to={"/About"} className={`page ${location.pathname === "/About" ? "activee" : ""}`}>عن الزكاة</Link>
-            <Link to={"/ZakatCalculator"} className={`page ${location.pathname === "/ZakatCalculator" ? "activee" : ""}`}>حاسبة الزكاة</Link>
-            <Link to={"/Awkaf"} className={`page ${location.pathname === "/Awkaf" ? "activee" : ""}`}>مشاريع الوقف</Link>
-            <Link to={"/Contact"} className={`page ${location.pathname === "/Contact" ? "activee" : ""}`}>تواصل مباشرة معنا</Link>
-          </div>
-        </div>
+    <header dir="rtl" className="bg-green-900 text-white shadow-md">
+      {/* Top Section - Logo */}
+      <div className="container mx-auto py-4 text-center md:text-right">
+        <Link to="/" className="text-lg md:text-2xl font-bold tracking-wide hover:text-green-300 transition duration-300">
+          منصة حساب زكاة الشركات وتوجيهها للوقف والتنمية
+        </Link>
       </div>
-    </>
+
+      {/* Bottom Section - Navigation */}
+      <nav className="bg-green-800 py-3">
+        <div className="container mx-auto flex flex-wrap justify-center md:justify-start gap-6 text-lg">
+          {[
+            { path: "/", label: "الرئيسية" },
+            { path: "/About", label: "عن الزكاة" },
+            { path: "/ZakatCalculator", label: "حاسبة الزكاة" },
+            { path: "/Awkaf", label: "مشاريع الوقف" },
+            { path: "/Contact", label: "تواصل مباشرة معنا" },
+          ].map(({ path, label }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`relative px-3 py-1 hover:text-green-300 transition duration-300 ${
+                location.pathname === path ? "text-green-300 font-semibold" : ""
+              }`}
+            >
+              {label}
+              {location.pathname === path && (
+                <span className="absolute bottom-0 left-0 w-full h-1 bg-green-300"></span>
+              )}
+            </Link>
+          ))}
+        </div>
+      </nav>
+    </header>
   );
 };
+
