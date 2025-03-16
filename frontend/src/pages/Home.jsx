@@ -1,15 +1,38 @@
-import React from 'react'
-import { Header } from '../Components/Header'
-import Footer from '../Components/Footer'
+import BacEffect from './CircleEffect.jsx';
+import Weclome from './WelcomePart.jsx';
+import { Header } from "../Components/Header";
+import Footer from "../Components/Footer";
 
-export default function Home() {
+
+import "./Home.css" 
+
+function Home() {
+
+
   return (
-    <>
-        <Header></Header>
-        <h1>HOme Page</h1>
 
-        <Footer></Footer>
-    </>
-   
-  )
+    <div className="App my-0 mx-auto ">
+
+        <Header />
+
+        <Weclome 
+          
+          isRTL={true}
+          title={('welcome')} 
+          detail={('welcome')}
+        />
+      
+          <div className="w-full h-[11px] top-[997px] bg-[#F2CB05]"></div>
+          
+          <BacEffect />
+
+          <div className="w-full h-[11px] top-[997px] bg-[#F2CB05]"></div>
+
+        <Footer />
+
+
+    </div>
+  );
 }
+
+export default Home;
