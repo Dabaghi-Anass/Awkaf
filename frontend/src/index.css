@@ -71,7 +71,7 @@ body{
 *{
   font-family: 'Alexandria', sans-serif;
   box-sizing: border-box;
-  
+  outline: none;
 }
 .center{
   display: flex;

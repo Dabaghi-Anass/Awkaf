@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 
-
-import { ManageProjects } from "../Components/ManageProjects";
-
-
 export const ManageAwkaf = () => {
     const defaultProject = {
         name: "",
@@ -19,7 +15,7 @@ export const ManageAwkaf = () => {
         team_members: "",
         partners_supporters: "",
         conclusion: "",
-        image:null,
+        image: null,
     };
 
     const [projectInfos, setProjectInfos] = useState(defaultProject);
@@ -40,142 +36,89 @@ export const ManageAwkaf = () => {
         }
     };
 
-    // Upload image to the server
-  
-
-    // Submit form data including image
+    // Submit form data
     const sendData = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem("accessToken");
-    
-        const formData = new FormData(); // Use FormData to handle text + image
+
+        const formData = new FormData();
         Object.keys(projectInfos).forEach((key) => {
             if (projectInfos[key]) {
                 formData.append(key, projectInfos[key]);
             }
         });
-    
+
         try {
             const response = await fetch("http://localhost:8000/apif/waqf-projects/", {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${token}`, // Don't set Content-Type, browser will handle it
+                    Authorization: `Bearer ${token}`,
                 },
-                body: formData, // Send form data directly
+                body: formData,
             });
-    
+
             const data = await response.json();
-    
+
             if (!response.ok) {
                 console.error("Backend error:", data);
                 throw new Error(data.error || "Failed to save project");
             }
-    
-            console.log("Project added:", data);
+
             alert("Project Added");
             setProjectInfos(defaultProject);
             setPreview(null);
-    
         } catch (error) {
             console.error("Error:", error);
             alert(error.message);
         }
     };
-    
 
     return (
-        <>
-            <div className="manage-awkaf  bg-[#eeeeee] p-4 rounded-lg">
-                <form className="project-details-cont overflow-hidden h-90 overflow-y-scroll scrollbar">
-                    <div className="flex  flex-col gap-2 mb-4  ">
-                    <label className="text-[#118218] text-lg ">Project Name:</label> 
-                        <input type="text" name="name" value={projectInfos.name} onChange={handleChange} className="border text-[17px] py-2 px-4 rounded-md w-6/7
-                        focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"
-                         />
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 " >
-                    <label className="text-[#118218] text-lg ">Introduction:</label> 
-                        <textarea name="introduction" value={projectInfos.introduction} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none" 
-                        ></textarea>
-                    </div>
-                    <div  className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Background</label> 
-                        <textarea name="background" value={projectInfos.background} onChange={handleChange}
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none" ></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Objectives</label> 
-                        <textarea name="objectives" value={projectInfos.objectives} onChange={handleChange} 
-                         className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 " >
-                        <label className="text-[#118218] text-lg ">Key Stages</label> 
-                        <textarea name="key_stages" value={projectInfos.key_stages} onChange={handleChange}
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Expected Outcomes</label> 
-                        <textarea name="expected_outcomes" value={projectInfos.expected_outcomes} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Challenges</label> 
-                        <textarea name="challenges_solutions" value={projectInfos.challenges_solutions} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Required Resources</label> 
-                        <textarea name="required_resources" value={projectInfos.required_resources} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Timeline</label> 
-                        <textarea name="timeline" value={projectInfos.timeline} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Team Members</label> 
-                        <textarea name="team_members" value={projectInfos.team_members} onChange={handleChange}
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Tools & Technologies</label> 
-                        <textarea name="tools_technologies" value={projectInfos.tools_technologies} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Partners & Supporters</label> 
-                        <textarea name="partners_supporters" value={projectInfos.partners_supporters} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div>
-                    <div className="flex  flex-col h-35  gap-2 mb-4 ">
-                        <label className="text-[#118218] text-lg ">Conclusion</label> 
-                        <textarea name="conclusion" value={projectInfos.conclusion} onChange={handleChange} 
-                        className="border text-[17px] py-2 px-4 rounded-md w-6/7 h-full resize-none focus:border-[#118218] focus:ring focus:ring-blue-200 outline-none"></textarea>
-                    </div> 
-                     <div className="flex  flex-col hh-20  gap-2 mb-4  ">
-                     <label className="text-[#118218] text-lg " for="file_input">Upload file</label>
-                     <input className="block w-1/3 h-10 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none
-                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" accept="image/*" type="file"
-                      onChange={handleImageChange}/>
+        <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+            <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-3xl">
+                <h2 className="text-2xl font-semibold text-[#118218] mb-4 text-center">Manage Awkaf Project</h2>
+
+                <form className="space-y-4" onSubmit={sendData}>
+                    {Object.keys(defaultProject).map((key) =>
+                        key !== "image" ? (
+                            <div key={key} className="flex flex-col">
+                                <label className="text-lg font-medium text-gray-700 capitalize">{key.replace("_", " ")}</label>
+                                <textarea
+                                    name={key}
+                                    value={projectInfos[key]}
+                                    onChange={handleChange}
+                                    className="border border-gray-300 p-2 rounded-md focus:border-[#118218] focus:ring focus:ring-green-200 outline-none resize-none"
+                                    rows={key === "name" ? 1 : 3}
+                                />
+                            </div>
+                        ) : null
+                    )}
+
+                    {/* Image Upload Section */}
+                    <div className="flex flex-col">
+                        <label className="text-lg font-medium text-gray-700">Upload Image</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="file:bg-[#118218] file:text-white file:border-none file:py-2 file:px-4 file:rounded-md file:cursor-pointer hover:file:bg-green-700 transition"
+                        />
                         {preview && (
-                            <div className="image-preview">
-                                <img src={preview} alt="Project Preview" />
+                            <div className="mt-3">
+                                <img src={preview} alt="Preview" className="w-full max-h-40 object-cover rounded-md shadow-md" />
                             </div>
                         )}
                     </div>
-                    {/* 
-                    
-                    */}
-                    {/* Image Upload Section */}
-                   
 
-                    <button onClick={sendData} className="bg-[#118218] py-2 w-35 px-5 rounded-sm font-bold text-white">Add Project</button>
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-[#118218] text-white py-3 rounded-md font-semibold hover:bg-green-700 transition"
+                    >
+                        Add Project
+                    </button>
                 </form>
-
-                
             </div>
-        </>
+        </div>
     );
 };

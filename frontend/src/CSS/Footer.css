@@ -10,7 +10,6 @@ color: #fff;
 .footer{
     margin-top: 10em;
     background-color: #eee;
-   
     width: 100%;
     bottom: 0;
 }
@@ -74,9 +73,7 @@ color: #fff;
   
     margin-top:1.8em ;
 }
-.contact {
-  
-}
+
 .links {
     display: flex;
     gap: 4em;

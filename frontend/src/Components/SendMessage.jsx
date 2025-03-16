@@ -1,10 +1,9 @@
 import React from 'react';
-import '../CSS/sendMessage.css';
 
-export const SendMessage = ({ userMessage, handleChange,defaultValue,setUserMessage }) => {
+export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMessage }) => {
     
     const sendMessage = async (event) => {
-        event.preventDefault(); // ✅ Prevent form submission
+        event.preventDefault();
 
         try {
             const response = await fetch("http://127.0.0.1:8000/apif/send-email/", {
@@ -16,13 +15,13 @@ export const SendMessage = ({ userMessage, handleChange,defaultValue,setUserMess
             });
 
             const data = await response.json();
-            console.log("Response data:", data); // ✅ Log response
+            console.log("Response data:", data);
 
             if (response.ok) {
-                alert("Message sent successfully!");
+                alert("تم إرسال الرسالة بنجاح!");
                 setUserMessage(defaultValue);
             } else {
-                alert("Something went wrong: " + JSON.stringify(data));
+                alert("حدث خطأ: " + JSON.stringify(data));
             }
         } catch (error) {
             console.error("Error during form submission:", error);
@@ -30,28 +29,64 @@ export const SendMessage = ({ userMessage, handleChange,defaultValue,setUserMess
     };
 
     return (
-        <div className="send-msg-container">
-            <h2>Send a message</h2>
-            <form onSubmit={sendMessage}>
-                <div className="send-msg-input-container">
-                    <input type="text" placeholder="First Name" name="first_name" value={userMessage.first_name} onChange={handleChange} />
-                    <input type="text" placeholder="Last Name" name="last_name" value={userMessage.last_name} onChange={handleChange} />
+        <div dir='rtl' className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">إرسال رسالة</h2>
+            <form onSubmit={sendMessage} className="space-y-4">
+                <div className="flex gap-4">
+                    <input 
+                        type="text" 
+                        placeholder="الاسم الأول" 
+                        name="first_name" 
+                        value={userMessage.first_name} 
+                        onChange={handleChange} 
+                        className="w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    />
+                    <input 
+                        type="text" 
+                        placeholder="اسم العائلة" 
+                        name="last_name" 
+                        value={userMessage.last_name} 
+                        onChange={handleChange} 
+                        className="w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    />
                 </div>
 
-                <div className="send-msg-input-container full">
-                    <input type="text" placeholder="Email" name="sender_email" value={userMessage.sender_email} onChange={handleChange} />
-                </div>
+                <input 
+                    type="email" 
+                    placeholder="البريد الإلكتروني" 
+                    name="sender_email" 
+                    value={userMessage.sender_email} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                />
 
-                <div className="send-msg-input-container full">
-                    <input type="text" placeholder="Phone Number" name="phone" value={userMessage.phone} onChange={handleChange} />
-                </div>
+                <input 
+                    type="text" 
+                    placeholder="رقم الهاتف" 
+                    name="phone" 
+                    value={userMessage.phone} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                />
 
-                <textarea placeholder="How can we help you?" name="message" value={userMessage.message} onChange={handleChange}></textarea>
+                <textarea 
+                    placeholder="كيف يمكننا مساعدتك؟" 
+                    name="message" 
+                    value={userMessage.message} 
+                    onChange={handleChange} 
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 resize-none min-h-[120px] outline-none"
+                ></textarea>
 
-                <div className="send-msg-btn-container">
-                    <button  className="send-msg button">Send</button>
-                </div>
-                <p>بالاتصال بنا، فإنك توافق على شروط الخدمة و سياسة الخصوصية الخاصة بنا.</p>
+                <button 
+                    type="submit" 
+                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-200"
+                >
+                    إرسال
+                </button>
+
+                <p className="text-gray-600 text-sm text-center">
+                    بالاتصال بنا، فإنك توافق على <span className="text-green-600 font-semibold cursor-pointer">شروط الخدمة</span> و <span className="text-green-600 font-semibold cursor-pointer">سياسة الخصوصية</span> الخاصة بنا.
+                </p>
             </form>
         </div>
     );

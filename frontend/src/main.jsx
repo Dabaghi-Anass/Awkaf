@@ -22,11 +22,10 @@ import { AdminLogin } from './pages/AdminLogin.jsx';
 import { Contact } from './pages/Contact.jsx';
 import { WakfP } from './pages/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
-
 import App from './App.jsx';
 
 import { CalForm } from './Components/CalForm.jsx';
-import HorizontalLinearStepper from './Components/HorizontalLinearStepper.jsx';
+import { ProtectedRoute } from './ProtectedRoutes.jsx';
 
 
 const router = createBrowserRouter([
@@ -68,8 +67,13 @@ const router = createBrowserRouter([
   },
   {
     path: "DashboardAdmin/",
-    element: <DashboardAdmin/>,
+    element: (
+      <ProtectedRoute>
+        <DashboardAdmin />
+      </ProtectedRoute>
+    ),
   },
+  
   {
     path: "test/",
     element: <ManageAwkaf />,

@@ -17,12 +17,11 @@
 }
 .logo{
     display: inline-block;
-    width: 12em;
+    width: 14em;
     font-size: 1em;
     text-decoration: none;
     color: #F2CB05;
-    font-family: 'El Messiri';
-    font-style: normal;
+ 
     font-weight: 700;
 }
 
@@ -35,16 +34,26 @@ align-items: center;
 }
 
 .page{
-    
     display: inline-block;
-    font-family: 'El Messiri';
     text-decoration: none;
     color: #035116;
     font-size:1em ;
     font-weight: 700;
     margin: 0 0 0 2.1em;
+    transition: all 0.3s ease-in-out;
 }
 
 
 
+
+
+.page:hover {
+    color: #F2CB05;
+}
+
+.activee {
+    color: #F2CB05; /* Yellow when active */
+    font-weight: bold;
+    border-bottom: 2px solid #F2CB05; /* Optional underline */
+}
 

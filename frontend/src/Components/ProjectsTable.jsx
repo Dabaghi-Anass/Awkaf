@@ -46,6 +46,39 @@ export const ProjectsTable = () => {
     }
   };
 
+  const deleteProject = async (projectId) => {
+    try {
+      const token = localStorage.getItem("accessToken"); // Fetch auth token
+      if (!token) {
+        console.error("No authentication token found!");
+        return;
+      }
+  
+      const response = await fetch(
+        `http://127.0.0.1:8000/apif/waqf-projects/${projectId}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass the token
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        console.error("Failed to delete project:", response.status);
+        return;
+      }
+  
+      setProjects((prevProjects) =>
+        prevProjects.filter((project) => project.id !== projectId)
+      );
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
+  };
+  
+
   return (
     <>
       <div className="relative overflow-x-auto flex flex-col items-center text-left shadow-md sm:rounded-lg">
@@ -56,6 +89,7 @@ export const ProjectsTable = () => {
               <th scope="col" className="px-6 py-3">Project Name</th>
               <th scope="col" className="px-6 py-3">Introduction</th>
               <th scope="col" className="px-6 py-3">Created Date</th>
+              <th scope="col" className="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -69,11 +103,19 @@ export const ProjectsTable = () => {
                   <td className="px-6 py-4">{project.name}</td>
                   <td className="px-6 py-4">{project.introduction}</td>
                   <td className="px-6 py-4">{project.date_created}</td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => deleteProject(project.id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="text-center py-4">
+                <td colSpan={5} className="text-center py-4">
                   No projects found
                 </td>
               </tr>

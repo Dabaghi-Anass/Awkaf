@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 export default function Footer() {
   return (
     <>
-      <div className="footer ">
+      <div dir='rtl' className="footer ">
         <div className="top-footer Container center">
           <div className="our-partners-cont">
             <h1 style={{fontSize:'3.5em'}}>شركاؤنا</h1>
