@@ -33,7 +33,7 @@ export const Login = ({ handleChange, data }) => {
                 console.log("You are logged in!");
                 navigate('/');
             } else {
-                setLoginError(result.detail || "Invalid username or password.");
+                setLoginError(result.detail || "إسم المستخدم او كلمة المرور غير صحيحة");
             }
         } catch (error) {
             console.error("Login failed:", error);
@@ -84,35 +84,51 @@ export const Login = ({ handleChange, data }) => {
     };
 
     return (
-        <div className="wrapper">
-            <header>Login Form</header>
-            {loginError && <div className="error-message">{loginError}</div>}
-            <form ref={formRef} onSubmit={otpSent ? handleOtpSubmit : handleSubmit} className='login-form'>
+        <>
+            <div className='h-screen flex items-center justify-center'>
+            <div className="wrapper bg-[#035116] w-[30em] pb-15 my-auto rounded-3xl">
+            <header className='login-header relative text-center text-4xl text-[#F2CB05] font-bold py-5 mb-15'>تسجيل الدخول</header>
+            
+            <form dir="rtl" ref={formRef} onSubmit={otpSent ? handleOtpSubmit : handleSubmit} className='login-form  text-center'>
                 {!otpSent ? (
                     <>
-                        <div className="field username">
-                            <div className="input-area">
-                                <input ref={usernameRef} type="text" placeholder="Username" name='username' value={data.username} onChange={handleChange} />
-                            </div>
+
+                        <div className=' my-7'>
+                            
+                               
+                                <input className={`bg-white py-3 px-2 transition-all duration-300 focus:ring-2 focus:ring-amber-300 outline-none rounded-sm w-4/5 ${loginError ? 'border-red-500 ring-red-500' : 'focus:border-[#F2CB05]'}`} ref={usernameRef} type="text" placeholder="إسم المستخدم" name='username' value={data.username} onChange={handleChange} />
+                      
+                  
                         </div>
-                        <div className="field password">
-                            <div className="input-area">
-                                <input ref={passwordRef} type="password" placeholder="Password" name='password' value={data.password} onChange={handleChange} />
-                            </div>
+                        <div className=' mb-10'>
+                        
+                        
+                                <input className='bg-white py-3 px-2 w-4/5 transition-all duration-300
+                                 focus:border-[#F2CB05]  focus:ring-2 focus:ring-amber-300 outline-none
+                                rounded-sm    '  ref={passwordRef} type="password" name='password' placeholder="كلمة المرور"  value={data.password} onChange={handleChange}/>  
+                                
+                                <Link className='inline-block w-4/5 text-right text-sm text-[#F2CB05] font-light hover:underline' to='/'>نسيت كلمة المرور</Link>
+                                {loginError && <div className="error-message inline-block w-4/5 text-center text-sm text-red-500 mt-5">{loginError}</div>}
                         </div>
-                        <input type="submit" value="Login" />
+                        
+                        <button className='bg-[#F2CB05]  py-2 w-[40%] text-[#035116] rounded-sm font-bold' type="submit" value="Login" >تسجيل</button> <br />
+                        <p className='mt-10 text-white'>لا تملك حساب؟ <Link className='inline-block  text-sm text-[#F2CB05] font-light hover:underline' to='/register'>انشاء حساب</Link></p>
                     </>
                 ) : (
                     <>
-                        <div className="field otp">
-                            <div className="input-area">
-                                <input type="text" placeholder="Enter OTP" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} />
-                            </div>
+                        <div className="field otp mb-5">
+                          
+                                <input className='bg-white py-3 px-2 w-1/2 transition-all duration-300
+                                 focus:border-green-700  focus:ring-2 focus:ring-green-500 outline-none
+                                rounded-sm    ' type="text" placeholder="Enter OTP" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} />
+                            
                         </div>
-                        <button type="submit">Verify OTP</button>
+                        <button className='bg-[#F2CB05]  py-2 w-[30%] text-[#035116] rounded-sm font-bold' type="submit">Verify OTP</button>
                     </>
                 )}
             </form>
         </div>
+            </div>
+        </>
     );
 };

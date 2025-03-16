@@ -81,7 +81,8 @@ export const DashboardAdmin = () => {
                 </h1>
                 <button className='bg-[#118218] py-2 px-5 rounded-[5px] font-light text-white'>+Add New</button>
             </div>
-                <ProjectsTable></ProjectsTable>
+              
+                <ManageUsers></ManageUsers>
             </div>
         </div>
         

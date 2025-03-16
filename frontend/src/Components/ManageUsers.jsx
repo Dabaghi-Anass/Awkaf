@@ -142,9 +142,11 @@ export const ManageUsers = () => {
     {/* Pagination */}
     
   </div>
-  <Stack spacing={2} className="mt-4">
-  <Pagination count={totalPages} page={page} onChange={(_, value) => setPage(value)} color="primary" className="mx-auto text-center"  />
-</Stack>
+        <div className="flex justify-center">
+        <Stack spacing={2} className="mt-4 ">
+          <Pagination count={totalPages} page={page} onChange={(_, value) => setPage(value)} color="primary" className="mx-auto text-center"  />
+        </Stack>
+        </div>
     </>
     
   );

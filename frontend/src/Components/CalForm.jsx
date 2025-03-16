@@ -17,7 +17,7 @@ export const CalForm = () => {
     const formatNumber = (num) => (!num ? "" : num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
     return (
-        <div className="flex flex-col mt-15">
+        <div dir='rtl' className="flex flex-col mt-15">
             <div className="p-10 bg-[#035116] w-fit mx-auto rounded-3xl"> 
             <h1 className="text-center py-3 mb-5 text-5xl font-bold text-white">حاسبة الزكاة</h1>
                 <form className=" mx-auto h-[35em] w-[40em] bg-[#035116]   py-5 px-10 truncate overflow-y-auto 
