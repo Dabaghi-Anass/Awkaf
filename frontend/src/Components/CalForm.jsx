@@ -18,11 +18,11 @@ export const CalForm = () => {
 
     return (
         <div dir='rtl' className="flex flex-col mt-15">
-            <div className="p-10 bg-green-600 w-fit mx-auto rounded-3xl"> 
+            <div className="p-10 bg-green-800 w-fit mx-auto rounded-3xl"> 
             <h1 className="text-center py-3 mb-5 text-2xl font-bold text-white">أدخل بياناتك لمعرفة مقدار الزكاة المستحق</h1>
                 <div className='bg-white p-5 rounded-lg'>
-                <form className=" mx-auto h-[35em] w-[40em] bg-[#fff]   py-5 px-10 truncate overflow-y-auto 
-                scrollbar"
+                <form className=" mx-auto  w-[40em] bg-[#fff]   py-5 px-10 truncate  
+                "
                     onSubmit={(e) => { e.preventDefault(); calculateZakat(); }}>
                     
 

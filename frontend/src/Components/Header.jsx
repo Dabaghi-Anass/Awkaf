@@ -5,9 +5,9 @@ export const Header = () => {
   const location = useLocation(); // Get the current path
 
   return (
-    <header dir="rtl" className="bg-green-900 text-white shadow-md">
+    <header dir="rtl" className="bg-green-900 text-white shadow-md mb-8">
       {/* Top Section - Logo */}
-      <div className="container mx-auto py-4 text-center md:text-right">
+      <div className="container mx-auto py-4 text-center bg-red md:text-right">
         <Link to="/" className="text-lg md:text-2xl font-bold tracking-wide hover:text-green-300 transition duration-300">
           منصة حساب زكاة الشركات وتوجيهها للوقف والتنمية
         </Link>

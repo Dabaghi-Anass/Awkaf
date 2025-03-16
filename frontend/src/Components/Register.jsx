@@ -85,7 +85,7 @@ export const Register = ({ handleChange, formData }) => {
                     {['username', 'email', 'password', 'confirm_password', 'company'].map((field, index) => (
                         <div key={index} className='my-5'>
                             <input 
-                                className={` py-3 px-4 w-full rounded-lg border-1 border-gray-300 ${errors[field] ? 'border-red-500 ring-2 ring-red-400' : 'focus:border-green-600 focus:ring-2 focus:ring-green-400'}`}
+                                className={` py-3 px-4 w-full rounded-lg border border-gray-300 ${errors[field] ? 'border-red-500 ring-2 ring-red-400' : 'focus:border-green-600 focus:ring-2 focus:ring-green-400'}`}
                                 type={field.includes('password') ? 'password' : 'text'} 
                                 placeholder={field === 'username' ? "إسم المستخدم" : field === 'email' ? "البريد الإلكتروني" : field === 'password' ? "كلمة المرور" : field === 'confirm_password' ? "تأكيد كلمة المرور" : "إسم الشركة"} 
                                 name={field} 
