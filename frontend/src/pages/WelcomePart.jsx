@@ -4,6 +4,14 @@ function Welcome() {
     return (
         <>
             <div className="flex flex-row justify-between items-center flex-grow flex-shrink w-full center-padding max-w-[80rem] center-zoom  mx-auto p-4 my-28">
+            <div className="text-right ">
+                    <div className="font-bold text-primary mb-4 text-right text-4xl leading-15 text-green-800">
+                        <h1>المنصة الموثوقة والمخصصة لمساعدة الشركات في حساب زكاتها المستحقة بسهولة ودقة.</h1>                    
+                    </div>
+                    <div className="font-normal text-gray-800 leading-relaxed text-right text-2xl pt-10">
+                        <p>نهدف إلى تسهيل عملية احتساب الزكاة للشركات وفقًا لأحكام الشريعة الإسلامية، وذلك لدعم التكافل الاجتماعي والمساهمة في التنمية المستدامة للمجتمع.</p>
+                    </div>
+                </div>
                 <div className="flex flex-col z-10 flex-shrink w-1/2 relative">
                     <svg
                         width="500"
@@ -30,14 +38,7 @@ function Welcome() {
                     </svg>
                 </div>
 
-                <div className="text-right ">
-                    <div className="font-bold text-primary mb-4 text-right text-4xl text-green-800">
-                        <h1>المنصة الموثوقة والمخصصة لمساعدة الشركات في حساب زكاتها المستحقة بسهولة ودقة.</h1>                    
-                    </div>
-                    <div className="font-normal text-gray-800 leading-relaxed text-right text-2xl pt-10">
-                        <p>نهدف إلى تسهيل عملية احتساب الزكاة للشركات وفقًا لأحكام الشريعة الإسلامية، وذلك لدعم التكافل الاجتماعي والمساهمة في التنمية المستدامة للمجتمع.</p>
-                    </div>
-                </div>
+                
             </div>
         </>
     );

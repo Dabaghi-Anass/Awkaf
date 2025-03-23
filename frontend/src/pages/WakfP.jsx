@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link,useNavigate } from "react-router-dom";
 import { Header } from "../Components/Header";
 import Footer from "../Components/Footer";
 
 export const WakfP = () => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -83,7 +83,7 @@ export const WakfP = () => {
 
         {/* CTA (اختياري) */}
         <div className="text-center mt-10">
-          <button className="bg-amber-400 text-green-900 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-500 transition">
+          <button  className="bg-amber-400 text-green-900 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-500 transition"  onClick={() => navigate('/contribution')}>
             دعم المشروع
           </button>
         </div>

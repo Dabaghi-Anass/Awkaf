@@ -2,7 +2,7 @@ import '../CSS/WakfPic.css'
 import '../index.css'
 export  default function WakfPic(){
     return(
-        <div className="pic-container Container">
+        <div dir='rtl' className="pic-container Container">
              <div className='green'></div>
 
          <div className="text">
@@ -12,10 +12,10 @@ export  default function WakfPic(){
             <h1 className='title'>المشاريع المجتمعية والتنمية القطاعية</h1>
             <p className='paragraph'>تشمل إدارة الصندوق الاستثمار في مشاريع مجتمعية تهدف إلى دعم التعليم، والصحة، والبيئة،<br /> والبنية التحتية. كما نركز على تطوير قطاعات محددة مثل الزراعة، والتكنولوجيا، والصناعة لخلق <br />  فرص عمل جديدة وتعزيز النمو الاقتصادي. كل مشروع يتم اختياره وفقاً لدراسة جدوى تضمن  <br />الفائدة العائدة على المجتمع واستمرارية الأثر الإيجابي.</p>
 
-            <div className='line-btn'>
-            <div className="join-btn"><button>شارك الأن!</button></div>
+          
+            
             <div className="line-container"><div className="line"></div></div>
-            </div>
+           
             
          </div>
         
