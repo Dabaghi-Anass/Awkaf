@@ -3,7 +3,7 @@ import { ZakatContext } from "./ZakatProvider";
 import ZakatDetails from "./ZakatDetails"; // Import the new component
 
 export const ZakatPrice = () => {
-    const { zakatFormInfos, setShowResault, saveZakatHistory } = useContext(ZakatContext);
+    const { zakatFormInfos, setShowResault, saveZakatHistory,totalAmount } = useContext(ZakatContext);
     const [showDetails, setShowDetails] = useState(false);
 
     return (
@@ -33,7 +33,7 @@ export const ZakatPrice = () => {
             </div>
 
             {/* Show Details Modal */}
-            {showDetails && <ZakatDetails zakatFormInfos={zakatFormInfos} onClose={() => setShowDetails(false)} />}
+            {showDetails && <ZakatDetails totalAmount={totalAmount} zakatFormInfos={zakatFormInfos} onClose={() => setShowDetails(false)} />}
         </div>
     );
 };

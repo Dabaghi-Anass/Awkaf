@@ -1,124 +1,182 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ZakatContext } from "../Components/ZakatProvider";
 
 export const ManageAwkaf = () => {
-    const defaultProject = {
-        name: "",
-        introduction: "",
-        background: "",
-        objectives: "",
-        key_stages: "",
-        expected_outcomes: "",
-        challenges_solutions: "",
-        required_resources: "",
-        timeline: "",
-        tools_technologies: "",
-        team_members: "",
-        partners_supporters: "",
-        conclusion: "",
-        image: null,
-    };
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { isEditing, setIsEditing} = useContext(ZakatContext);
+  const defaultProject = {
+    name: "",
+    introduction: "",
+    background: "",
+    objectives: "",
+    key_stages: "",
+    expected_outcomes: "",
+    challenges_solutions: "",
+    required_resources: "",
+    timeline: "",
+    tools_technologies: "",
+    team_members: "",
+    partners_supporters: "",
+    conclusion: "",
+    image: null,
+  };
 
-    const [projectInfos, setProjectInfos] = useState(defaultProject);
-    const [preview, setPreview] = useState(null); // For image preview
+  const [projectData, setProjectData] = useState(defaultProject);
+  const [projectId, setProjectId] = useState(null);
 
-    // Handle text input changes
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setProjectInfos((p) => ({ ...p, [name]: value }));
-    };
+  useEffect(() => {
+    if (location.state?.project) {
+      setProjectData(location.state.project);
+      setIsEditing(true);
+      setProjectId(location.state.project.id);
+    }
+  }, [location.state]);
 
-    // Handle image selection
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setProjectInfos((p) => ({ ...p, image: file }));
-            setPreview(URL.createObjectURL(file));
-        }
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProjectData({ ...projectData, [name]: value });
+  };
 
-    // Submit form data
-    const sendData = async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem("accessToken");
+  const handleImageChange = (e) => {
+    setProjectData({ ...projectData, image: e.target.files[0] });
+  };
 
-        const formData = new FormData();
-        Object.keys(projectInfos).forEach((key) => {
-            if (projectInfos[key]) {
-                formData.append(key, projectInfos[key]);
-            }
-        });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("accessToken");
+  
+    if (!token) {
+      alert("Unauthorized! Please log in.");
+      return;
+    }
+  
+    const formData = new FormData();
+    Object.entries(projectData).forEach(([key, value]) => {
+      if (key === "image" && value instanceof File) {
+        formData.append(key, value);
+      } else if (key !== "image") {
+        formData.append(key, value);
+      }
+    });
+  
+    const url = isEditing
+      ? `http://127.0.0.1:8000/apif/waqf-projects/${projectId}/`
+      : "http://127.0.0.1:8000/apif/waqf-projects/";
+    const method = isEditing ? "PUT" : "POST";
+  
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+  
+      if (response.ok) {
+        alert(isEditing ? "Project Updated Successfully!" : "Project Added!");
+        setIsEditing(false);
+        setActiveTab("Projects"); // Return to the table after submission
+      } else {
+        const responseData = await response.json();
+        console.error("Error:", responseData);
+        alert("Error submitting project: " + JSON.stringify(responseData));
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  
 
-        try {
-            const response = await fetch("http://localhost:8000/apif/waqf-projects/", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: formData,
-            });
+  return (
+    <div className="max-w-4xl  bg-white p-8 shadow-lg rounded-lg">
+      <h2 className="text-3xl font-bold text-center text-[#035116] mb-6">
+        {isEditing ? "Edit Project" : "Add New Project"}
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {[
+          { label: "Project Name", name: "name", type: "text" },
+          { label: "Introduction", name: "introduction", type: "textarea" },
+          { label: "Background", name: "background", type: "textarea" },
+          { label: "Objectives", name: "objectives", type: "textarea" },
+          { label: "Key Stages", name: "key_stages", type: "textarea" },
+          { label: "Expected Outcomes", name: "expected_outcomes", type: "textarea" },
+          { label: "Challenges & Solutions", name: "challenges_solutions", type: "textarea" },
+          { label: "Required Resources", name: "required_resources", type: "textarea" },
+          { label: "Timeline", name: "timeline", type: "textarea" },
+          { label: "Tools & Technologies", name: "tools_technologies", type: "textarea" },
+          { label: "Team Members", name: "team_members", type: "textarea" },
+          { label: "Partners & Supporters", name: "partners_supporters", type: "textarea" },
+          { label: "Conclusion", name: "conclusion", type: "textarea" },
+        ].map(({ label, name, type }) => (
+          <div key={name}>
+            <label className="block text-gray-700 font-medium">{label}</label>
+            {type === "text" ? (
+              <input
+                type="text"
+                name={name}
+                value={projectData[name]}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218]"
+              />
+            ) : (
+              <textarea
+                name={name}
+                value={projectData[name]}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218] resize-y"
+              />
+            )}
+          </div>
+        ))}
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                console.error("Backend error:", data);
-                throw new Error(data.error || "Failed to save project");
-            }
-
-            alert("Project Added");
-            setProjectInfos(defaultProject);
-            setPreview(null);
-        } catch (error) {
-            console.error("Error:", error);
-            alert(error.message);
-        }
-    };
-
-    return (
-        <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
-            <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-3xl">
-                <h2 className="text-2xl font-semibold text-[#118218] mb-4 text-center">Manage Awkaf Project</h2>
-
-                <form className="space-y-4" onSubmit={sendData}>
-                    {Object.keys(defaultProject).map((key) =>
-                        key !== "image" ? (
-                            <div key={key} className="flex flex-col">
-                                <label className="text-lg font-medium text-gray-700 capitalize">{key.replace("_", " ")}</label>
-                                <textarea
-                                    name={key}
-                                    value={projectInfos[key]}
-                                    onChange={handleChange}
-                                    className="border border-gray-300 p-2 rounded-md focus:border-[#118218] focus:ring focus:ring-green-200 outline-none resize-none"
-                                    rows={key === "name" ? 1 : 3}
-                                />
-                            </div>
-                        ) : null
-                    )}
-
-                    {/* Image Upload Section */}
-                    <div className="flex flex-col">
-                        <label className="text-lg font-medium text-gray-700">Upload Image</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="file:bg-[#118218] file:text-white file:border-none file:py-2 file:px-4 file:rounded-md file:cursor-pointer hover:file:bg-green-700 transition"
-                        />
-                        {preview && (
-                            <div className="mt-3">
-                                <img src={preview} alt="Preview" className="w-full max-h-40 object-cover rounded-md shadow-md" />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        className="w-full bg-[#118218] text-white py-3 rounded-md font-semibold hover:bg-green-700 transition"
-                    >
-                        Add Project
-                    </button>
-                </form>
-            </div>
+        {/* Image Upload */}
+        <div>
+          <label className="block text-gray-700 font-medium">Project Image</label>
+          <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-[#118218] transition">
+            <input
+              type="file"
+              name="image"
+              id="fileInput"
+              onChange={handleImageChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              accept="image/*"
+            />
+            {projectData.image ? (
+              <img
+                src={projectData.image instanceof File ? URL.createObjectURL(projectData.image) : projectData.image}
+                alt="Preview"
+                className="w-32 h-32 object-cover rounded-lg shadow-md"
+              />
+            ) : (
+              <>
+                <svg
+                  className="w-12 h-12 text-gray-400 mb-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h14m-10-4v8" />
+                </svg>
+                <span className="text-gray-500 text-sm">Click or Drag & Drop to upload</span>
+              </>
+            )}
+          </div>
         </div>
-    );
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-[#118218] text-white py-3 rounded-md font-semibold hover:bg-[#0d6d13] transition"
+        >
+          {isEditing ? "Update Project" : "Add Project"}
+        </button>
+      </form>
+    </div>
+  );
 };
+
+export default ManageAwkaf;

@@ -1,55 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 
-export const SideBar = () => {
-  const [activeItem, setActiveItem] = useState(""); // Track selected item
+export const SideBar = ({ activeTab, setActiveTab }) => {
+  const menuItems = [
+    { name: "Users", label: "Manage Users" },
+    { name: "Projects", label: "Manage Projects" },
+    { name: "Reports", label: "Generate Reports" },
+    { name: "Settings", label: "Settings" },
+  ];
 
   return (
-    <div className="sidebar-container relative left-0 top-0 bg-white h-screen w-[20em] border-r-2 border-gray-400 mt-5">
-      <ul className="side-bar-list px-2 w-8/9 border-black border ml-6 rounded-md">
-        <li>
-          <p className="text-[16px] font-semibold w-full py-2 border-b">Main</p>
-          <div
-            className={`side-bar-item hover:bg-[#118218] hover:text-white border-black my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
-              ${
-                activeItem === "Dashboard"
-                  ? " text-white font-semibold bg-[#118218] "
-                  : " text-[#118218] hover:text-green-700"
-              }`}
-            onClick={() => setActiveItem("Dashboard")}
+    <div className="w-[20em] bg-gray-100 p-4 shadow-lg fixed top-0 left-0 h-full">
+      <h2 className="text-lg font-bold text-gray-800 mb-4">Admin Panel</h2>
+      <ul className="space-y-2">
+        {menuItems.map((item) => (
+          <li
+            key={item.name}
+            className={`cursor-pointer p-2 rounded-md ${
+              activeTab === item.name ? "bg-[#118218] text-white" : "text-gray-800 hover:bg-gray-200"
+            }`}
+            onClick={() => setActiveTab(item.name)}
           >
-            Dashboard
-          </div>
-        </li>
-
-        <li>
-          <p className="text-[16px] font-semibold w-full py-2 border-b">User Details</p>
-          <div
-            className={`side-bar-item hover:bg-[#118218] hover:text-white border-black my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
-              ${
-                activeItem === "Users"
-                  ? " text-white font-semibold bg-[#118218]"
-                  : " text-[#118218] hover:text-green-700"
-              }`}
-            onClick={() => setActiveItem("Users")}
-          >
-            Users
-          </div>
-        </li>
-
-        <li>
-          <p className="text-[16px] font-semibold w-full py-2 border-b">Project Details</p>
-          <div
-            className={`side-bar-item hover:bg-[#118218] hover:text-white border-black my-5 border-l-4 py-3 pl-2 text-[20px] font-light rounded-r-lg cursor-pointer
-              ${
-                activeItem === "Awkaf-projects"
-                  ? " text-white font-semibold bg-[#118218]"
-                  : " text-[#118218] hover:text-green-700"
-              }`}
-            onClick={() => setActiveItem("Awkaf-projects")}
-          >
-            Awkaf-projects
-          </div>
-        </li>
+            {item.label}
+          </li>
+        ))}
       </ul>
     </div>
   );

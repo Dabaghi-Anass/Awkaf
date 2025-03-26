@@ -28,9 +28,9 @@ export const CalForm = () => {
 
                     {/* Input Fields */}
                     {[
-                        { label: "السيولة النقدية", name: "liquidites" },
-                        { label: "المخزون المعد للبيع", name: "stocks" },
-                        { label: "الاستثمارات", name: "investissements" },
+                        { label: "النقدية (صندوق، بنك)", name: "liquidites" },
+                        { label: "المخزون المعد للبيع (بسعر البيع)", name: "stocks" },
+                        { label: "الاستثمارات المعدة للتنازل عنها", name: "investissements" },
                         { label: "الممتلكات للاستخدام الداخلي", name: "bienUsageInterne" },
                         { label: "الأصول المؤجرة", name: "bienLocation" },
                         { label: "الديون المستحقة على العملاء", name: "creancesClients" },

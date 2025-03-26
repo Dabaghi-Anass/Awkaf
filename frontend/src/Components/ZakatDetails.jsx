@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ZakatDetails({ zakatFormInfos, onClose }) {
+export default function ZakatDetails({ zakatFormInfos, onClose,totalAmount }) {
   const formatNumber = (num) => (!num ? "0" : num.toLocaleString("fr-FR"));
 
   const handlePrint = () => {
@@ -20,8 +20,8 @@ export default function ZakatDetails({ zakatFormInfos, onClose }) {
         </div>
 
         <div className="flex justify-between">
-          <span>إجمالي المبلغ:</span>
-          <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
+          <span>الوعاء الزكوي:</span>
+          <span className="font-bold">{formatNumber(totalAmount)} د.ج</span>
         </div>
 
         <div className="flex justify-between text-green-800 font-bold">

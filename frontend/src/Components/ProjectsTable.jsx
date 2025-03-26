@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { ZakatContext } from './ZakatProvider';
 
 export const ProjectsTable = () => {
+  
   const [projects, setProjects] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
+  const navigate = useNavigate(); // ✅ To navigate to the edit form
 
   useEffect(() => {
     fetchProjects(page, pageSize);
@@ -48,28 +52,28 @@ export const ProjectsTable = () => {
 
   const deleteProject = async (projectId) => {
     try {
-      const token = localStorage.getItem("accessToken"); // Fetch auth token
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         console.error("No authentication token found!");
         return;
       }
-  
+
       const response = await fetch(
         `http://127.0.0.1:8000/apif/waqf-projects/${projectId}/`,
         {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${token}`, // Pass the token
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
-  
+
       if (!response.ok) {
         console.error("Failed to delete project:", response.status);
         return;
       }
-  
+
       setProjects((prevProjects) =>
         prevProjects.filter((project) => project.id !== projectId)
       );
@@ -77,7 +81,12 @@ export const ProjectsTable = () => {
       console.error("Error deleting project:", error);
     }
   };
-  
+
+  const handleEdit = (project) => {
+    navigate("/DashboardAdmin", { state: { project }, replace: true });
+    setActiveTab("ManageProject");
+
+  };
 
   return (
     <>
@@ -103,7 +112,15 @@ export const ProjectsTable = () => {
                   <td className="px-6 py-4">{project.name}</td>
                   <td className="px-6 py-4">{project.introduction}</td>
                   <td className="px-6 py-4">{project.date_created}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 space-x-2">
+                    {/* ✅ Edit Button */}
+                    <button
+                      onClick={() => handleEdit(project)}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded"
+                    >
+                      Edit
+                    </button>
+                    {/* 🗑 Delete Button */}
                     <button
                       onClick={() => deleteProject(project.id)}
                       className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
