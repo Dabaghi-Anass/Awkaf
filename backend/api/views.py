@@ -570,26 +570,27 @@ class ManageZakatHistoryAPIView(APIView):
         return Response({"message": f"Column '{column_name}' deleted from api_zakathistory"}, status=status.HTTP_200_OK)
     
 class WaqfProjectListCreateView(generics.ListCreateAPIView):
-    queryset = WaqfProject.objects.all()
+    queryset = WaqfProject.objects.all().order_by('-created_at')  # Order by newest first
     serializer_class = WaqfProjectSerializer
     permission_classes = [IsStaffUser]  # Only staff users can add
 
+# Retrieve, Update & Delete View (Only Staff Users can modify)
 class WaqfProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WaqfProject.objects.all()
     serializer_class = WaqfProjectSerializer
     permission_classes = [IsStaffUser]  # Only staff users can edit/delete
-    
 
-# New Read-Only Views for users/visitors
+# Read-Only List View (Anyone can access)
 class WaqfProjectReadOnlyListView(generics.ListAPIView):
-    queryset = WaqfProject.objects.all()
+    queryset = WaqfProject.objects.all().order_by('-created_at')  # Order by newest first
     serializer_class = WaqfProjectSerializer
-    permission_classes = [AllowAny]  # Anyone can access
+    permission_classes = [AllowAny]  # Public access
 
+# Read-Only Detail View (Anyone can access)
 class WaqfProjectReadOnlyDetailView(generics.RetrieveAPIView):
     queryset = WaqfProject.objects.all()
     serializer_class = WaqfProjectSerializer
-    permission_classes = [AllowAny]  # Anyone can access
+    permission_classes = [AllowAny]  # Public access
 
 
 
@@ -969,3 +970,36 @@ def delete_table(request, table_name):
         return JsonResponse({'message': f'Table {full_table_name} deleted successfully'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+class WaqfProjectListView(generics.ListAPIView):
+    """ ✅ Returns all Waqf projects (paginated or full list) as an array """
+
+    serializer_class = WaqfProjectSerializer
+    permission_classes = [AllowAny]  # ✅ Anyone can access
+    pagination_class = None  # ✅ Default: No pagination
+
+    def get_queryset(self):
+        """ ✅ Fetch all Waqf projects """
+        return WaqfProject.objects.all().only(
+            "id", "name", "domain", "objectives", "partners", "image", "created_at", "updated_at"
+        )
+
+    def list(self, request, *args, **kwargs):
+        """ ✅ Return paginated or full list based on request """
+        queryset = self.get_queryset()
+
+        # ✅ Serialize data and format dates
+        serializer = self.get_serializer(queryset, many=True)
+        serialized_data = serializer.data
+        for project in serialized_data:
+            project["created_at"] = project["created_at"].split("T")[0]  # ✅ Keep only YYYY-MM-DD
+            project["updated_at"] = project["updated_at"].split("T")[0]  # ✅ Keep only YYYY-MM-DD
+
+        # ✅ Apply pagination if requested
+        if "page" in request.GET and "page_size" in request.GET:
+            paginator = ArrayPagination()
+            paginated_data = paginator.paginate_queryset(serialized_data, request, view=self)
+            return paginator.get_paginated_response(paginated_data)
+
+        # ✅ Default: Return all projects (no pagination)
+        return Response(serialized_data)

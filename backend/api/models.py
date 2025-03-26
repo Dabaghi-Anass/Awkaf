@@ -55,22 +55,28 @@ class ZakatHistory(models.Model):
     def __str__(self):
         return f"ZakatHistory({self.user.username} - {self.created_at})"
 
+from django.db import models
+from django.utils.timezone import now
+
+from django.db import models
+from django.utils.timezone import now
+
+from django.db import models
+from django.utils.timezone import now
+
 class WaqfProject(models.Model):
-    from django.db import models
-
-class Wakf(models.Model):
-    name = models.CharField(max_length=255)  # Project Name
-    domain = models.CharField(max_length=255)  # Project Domain
-    objectives = models.TextField()  # Project Objectives
-    timeline = models.DateField()  # Project Timeline
-    partners = models.TextField()  # Project Partners
-
-    def __str__(self):
-        return self.name
-
+    name = models.CharField(max_length=255, default="Unnamed Project")  
+    domain = models.CharField(max_length=255, default="General")  
+    objectives = models.TextField(default="No objectives specified")  
+    partners = models.TextField(default="No partners specified")  
+    image = models.ImageField(upload_to="waqf_images/", null=True, blank=True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+
+
     
 class OTPCode(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

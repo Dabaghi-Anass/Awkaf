@@ -7,7 +7,7 @@ from .views import (
     AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,
     send_contact_email, RequestPasswordResetView, ResetPasswordView,
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
-    create_table,  get_table_data ,rename_table, modify_table, delete_table  # ✅ Import create_table view
+    create_table,  get_table_data ,rename_table, modify_table, delete_table,WaqfProjectListView  # ✅ Import create_table view
 )
 
 urlpatterns = [
@@ -34,6 +34,7 @@ urlpatterns = [
     path("admin/rename-table/", rename_table, name="rename-table"),
     path("admin/modify-table/", modify_table, name="modify-table"),
     path("admin/delete-table/<str:table_name>/", delete_table, name="delete-table"),
+    path("list/waqf-projects/", WaqfProjectListView.as_view(), name="waqf-projects-list"),
 ]
 
 if settings.DEBUG:
