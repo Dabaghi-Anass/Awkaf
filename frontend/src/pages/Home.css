@@ -1,0 +1,58 @@
+.App {
+    text-align: center;
+  }
+  
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+      animation: App-logo-spin infinite 20s linear;
+    }
+  }
+  
+  .App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+:root {
+    --blob-path: path('M202.092 2.60579C258.253 -0.883556 325.386 -4.7951 360.107 41.983C393.916 87.5338 364.112 151.838 355.262 208.969C348.529 252.433 346.063 298.862 315.651 328.975C285.953 358.382 242.379 354.544 202.092 360.638C150.054 368.508 93.3795 401.348 50.5996 369.063C5.65766 335.147 -0.96659 267.288 1.11779 208.969C3.11813 153.001 23.6163 99.558 61.6269 60.5282C99.0998 22.0505 149.934 5.84651 202.092 2.60579Z');
+  }
+  
+  /* Create a class that applies the clip-path */
+  .clip-blob {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    clip-path: var(--blob-path);
+    -webkit-clip-path: var(--blob-path);
+  }
+  
+  /* Make sure the image inside fills the container */
+  .clip-blob img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
