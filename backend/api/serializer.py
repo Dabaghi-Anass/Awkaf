@@ -147,4 +147,4 @@ class ZakatHistorySerializer(serializers.ModelSerializer):
 class WaqfProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaqfProject
-        fields = '__all__'
+        fields = '__all__'  # Includes created_at and updated_at fields
