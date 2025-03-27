@@ -9,7 +9,7 @@ from .views import (
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
     create_table,  get_table_data ,rename_table, modify_table, delete_table,WaqfProjectListView ,calculate_zakat,create_company_with_fields,delete_company,update_company_with_fields
 )
-
+from . import views  # or from your_app_name import views if outside
 urlpatterns = [
     # InputField URLs
     path("inputfields/", InputFieldListCreate.as_view(), name="inputfield-list-create"),
@@ -39,6 +39,7 @@ urlpatterns = [
     path('create-company-with-fields/', create_company_with_fields, name="create_company_with_fields"),
     path('delete-company/<int:company_type_id>/', delete_company, name="delete_company"),
     path('update-company/<int:company_type_id>/', update_company_with_fields, name="update_company"),
+    path('company-type/<int:company_type_id>/fields/', views.get_company_type_fields),
     
 ]
 
