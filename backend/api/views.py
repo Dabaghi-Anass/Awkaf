@@ -1046,10 +1046,11 @@ def create_company_with_fields(request):
         if not created:
             return Response({"error": "A company with this name already exists."}, status=400)
 
-        # Avoid duplicate fields
-        existing_fields = {field.name for field in company_type.fields.all()}
-        new_fields = [CompanyField(company_type=company_type, name=field["name"])
-                      for field in fields_data if field["name"] not in existing_fields]
+        # ✅ Correct way to access related fields
+        existing_fields = {field.name for field in company_type.fields.all()}  # Fix here!
+        
+        new_fields = [CompanyField(company_type=company_type, name=field_name)
+                      for field_name in fields_data if field_name not in existing_fields]
 
         if new_fields:
             CompanyField.objects.bulk_create(new_fields)  # Optimized bulk insert
@@ -1062,31 +1063,32 @@ def create_company_with_fields(request):
         return Response({"error": "A company with this name already exists."}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-
 @api_view(['POST'])
 def calculate_zakat(request):
     """
-    Calculate Zakat based on company type and user inputs.
+    Calculate Zakat based on company type, user inputs, and a multiplier 'moon'.
     """
     data = request.data
     company_type_id = data.get('company_type_id')
     user_inputs = data.get('user_inputs', {})
+    moon = data.get('moon', 1)  # ✅ Default to 1 if not provided
 
     if not company_type_id or not isinstance(user_inputs, dict):
         return JsonResponse({'error': 'Invalid data'}, status=400)
 
     try:
-        # Call the zakat calculation function
-        zakat_amount = calculate_zakat_logic(company_type_id, user_inputs)
+        zakat_amount = calculate_zakat_logic(company_type_id, user_inputs, moon)
         return JsonResponse({"zakat_amount": zakat_amount}, status=200)
     except ValueError as e:
         return JsonResponse({'error': str(e)}, status=400)
-def calculate_zakat_logic(company_type_id, user_inputs):
+
+def calculate_zakat_logic(company_type_id, user_inputs, moon):
     """
-    Securely calculate Zakat based on company type and user inputs.
+    Securely calculate Zakat based on company type, user inputs, and 'moon' multiplier.
 
     :param company_type_id: ID of the selected company type
     :param user_inputs: Dictionary of field values (e.g., {"liquidites": 1000, "stocks": 500})
+    :param moon: Multiplier for the final result
     :return: Calculated Zakat amount
     """
     company_type = get_object_or_404(CompanyType, id=company_type_id)
@@ -1104,6 +1106,9 @@ def calculate_zakat_logic(company_type_id, user_inputs):
         formula_symbols = {name: symbols(name) for name in required_fields}
         expression = sympify(formula, locals=formula_symbols)
         zakat_amount = expression.evalf(subs=user_inputs)
+
+        # ✅ Apply the 'moon' multiplier
+        zakat_amount *= float(moon)
 
         return round(float(zakat_amount), 2)
 

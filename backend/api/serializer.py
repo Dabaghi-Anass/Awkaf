@@ -163,29 +163,48 @@ class CompanyFieldSerializer(serializers.ModelSerializer):
         model = CompanyField
         fields = ['name']
 
+
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+
 class CompanyTypeSerializer(serializers.ModelSerializer):
-    fields = CompanyFieldSerializer(many=True, required=False)  # Allow optional fields
+    # Input: accepts a list of field names
+    fields = serializers.ListField(
+        child=serializers.CharField(), write_only=True, required=False
+    )
+
+    # Output: will be renamed to 'fields' in the response
+    output_fields = serializers.SerializerMethodField()
 
     class Meta:
         model = CompanyType
-        fields = ['id', 'name', 'calculation_method', 'fields']
+        fields = ['id', 'name', 'calculation_method', 'fields', 'output_fields']
+
+    def get_output_fields(self, obj):
+        return [field.name for field in obj.fields.all()]
 
     def validate_name(self, value):
-        """Prevent duplicate company names (case insensitive)"""
         if CompanyType.objects.filter(name__iexact=value).exists():
             raise serializers.ValidationError("A company with this name already exists.")
         return value
 
     def create(self, validated_data):
-        fields_data = validated_data.pop('fields', [])  # Extract fields from request data
-        
-        # 🚀 Create company without duplicates
+        fields_data = validated_data.pop('fields', [])
         company_type = CompanyType.objects.create(**validated_data)
 
-        # Avoid duplicate fields
-        existing_fields = {field.name.lower() for field in company_type.fields.all()}
-        for field_data in fields_data:
-            if field_data['name'].lower() not in existing_fields:
-                CompanyField.objects.create(company_type=company_type, **field_data)
-
+        unique_fields = set(fields_data)
+        new_fields = [
+            CompanyField(company_type=company_type, name=field)
+            for field in unique_fields
+        ]
+        CompanyField.objects.bulk_create(new_fields)
         return company_type
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+
+        # Replace 'output_fields' with 'fields' in response
+        rep['fields'] = rep.pop('output_fields', [])
+
+        return rep
