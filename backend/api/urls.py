@@ -40,6 +40,7 @@ urlpatterns = [
     path('delete-company/<int:company_type_id>/', delete_company, name="delete_company"),
     path('update-company/<int:company_type_id>/', update_company_with_fields, name="update_company"),
     path('company-type/<int:company_type_id>/fields/', views.get_company_type_fields),
+    path('company-types/', views.list_all_company_types),
     
 ]
 

@@ -1194,3 +1194,12 @@ def get_company_type_fields(request, company_type_id):
     company_type = get_object_or_404(CompanyType, id=company_type_id)
     serializer = CompanyTypeSimpleSerializer(company_type)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def list_all_company_types(request):
+    """
+    Get all company types with their fields
+    """
+    all_companies = CompanyType.objects.all()
+    serializer = CompanyTypeSimpleSerializer(all_companies, many=True)
+    return Response(serializer.data)
