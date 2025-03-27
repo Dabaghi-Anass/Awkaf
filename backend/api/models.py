@@ -86,3 +86,11 @@ class OTPCode(models.Model):
     def is_valid(self):
         """Check if OTP is still valid (expires after 5 minutes)."""
         return (now() - self.created_at) < timedelta(minutes=5)
+    
+class CompanyType(models.Model):
+    name = models.CharField(max_length=255, unique=True) 
+    calculation_method = models.TextField()  # Stores the formula
+
+class CompanyField(models.Model):
+    company_type = models.ForeignKey(CompanyType, on_delete=models.CASCADE, related_name="fields")
+    name = models.CharField(max_length=255)

@@ -148,3 +148,44 @@ class WaqfProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaqfProject
         fields = '__all__'  # Includes created_at and updated_at fields
+
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+from rest_framework import serializers
+from .models import CompanyField
+
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+class CompanyFieldSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyField
+        fields = ['name']
+
+class CompanyTypeSerializer(serializers.ModelSerializer):
+    fields = CompanyFieldSerializer(many=True, required=False)  # Allow optional fields
+
+    class Meta:
+        model = CompanyType
+        fields = ['id', 'name', 'calculation_method', 'fields']
+
+    def validate_name(self, value):
+        """Prevent duplicate company names (case insensitive)"""
+        if CompanyType.objects.filter(name__iexact=value).exists():
+            raise serializers.ValidationError("A company with this name already exists.")
+        return value
+
+    def create(self, validated_data):
+        fields_data = validated_data.pop('fields', [])  # Extract fields from request data
+        
+        # 🚀 Create company without duplicates
+        company_type = CompanyType.objects.create(**validated_data)
+
+        # Avoid duplicate fields
+        existing_fields = {field.name.lower() for field in company_type.fields.all()}
+        for field_data in fields_data:
+            if field_data['name'].lower() not in existing_fields:
+                CompanyField.objects.create(company_type=company_type, **field_data)
+
+        return company_type
