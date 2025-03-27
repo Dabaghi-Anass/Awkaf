@@ -60,6 +60,11 @@ from rest_framework.pagination import PageNumberPagination
 from api.models import User
 from api.serializer import UserSerializer
 from api.permissions import IsStaffUser
+from .models import CompanyType, CompanyField
+from .serializer import CompanyTypeSerializer, CompanyFieldSerializer
+from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
+from django.db.utils import IntegrityError
 
 
 
@@ -1003,3 +1008,178 @@ class WaqfProjectListView(generics.ListAPIView):
 
         # ✅ Default: Return all projects (no pagination)
         return Response(serialized_data)
+
+
+from django.shortcuts import get_object_or_404
+from sympy import sympify, symbols
+from .models import CompanyType, CompanyField
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from .models import CompanyType, CompanyField
+from .serializer import CompanyTypeSerializer, CompanyFieldSerializer
+
+@api_view(['POST'])
+def create_company_with_fields(request):
+    """
+    Create a company type and its fields in a single request while avoiding duplicates.
+    """
+    data = request.data
+    name = data.get('name')
+    calculation_method = data.get('calculation_method')
+    fields_data = data.get('fields', [])
+
+    if not name or not calculation_method:
+        return Response({"error": "Name and calculation method are required"}, status=400)
+
+    if not fields_data:
+        return Response({"error": "At least one field is required"}, status=400)
+
+    try:
+        # Check if company type already exists
+        company_type, created = CompanyType.objects.get_or_create(
+            name=name,
+            defaults={"calculation_method": calculation_method}
+        )
+
+        if not created:
+            return Response({"error": "A company with this name already exists."}, status=400)
+
+        # ✅ Correct way to access related fields
+        existing_fields = {field.name for field in company_type.fields.all()}  # Fix here!
+        
+        new_fields = [CompanyField(company_type=company_type, name=field_name)
+                      for field_name in fields_data if field_name not in existing_fields]
+
+        if new_fields:
+            CompanyField.objects.bulk_create(new_fields)  # Optimized bulk insert
+
+        # Serialize and return the response
+        company_data = CompanyTypeSerializer(company_type).data
+        return Response(company_data, status=201)
+
+    except IntegrityError:
+        return Response({"error": "A company with this name already exists."}, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+@api_view(['POST'])
+def calculate_zakat(request):
+    """
+    Calculate Zakat based on company type, user inputs, and a multiplier 'moon'.
+    """
+    data = request.data
+    company_type_id = data.get('company_type_id')
+    user_inputs = data.get('user_inputs', {})
+    moon = data.get('moon', 1)  # ✅ Default to 1 if not provided
+
+    if not company_type_id or not isinstance(user_inputs, dict):
+        return JsonResponse({'error': 'Invalid data'}, status=400)
+
+    try:
+        zakat_amount = calculate_zakat_logic(company_type_id, user_inputs, moon)
+        return JsonResponse({"zakat_amount": zakat_amount}, status=200)
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def calculate_zakat_logic(company_type_id, user_inputs, moon):
+    """
+    Securely calculate Zakat based on company type, user inputs, and 'moon' multiplier.
+
+    :param company_type_id: ID of the selected company type
+    :param user_inputs: Dictionary of field values (e.g., {"liquidites": 1000, "stocks": 500})
+    :param moon: Multiplier for the final result
+    :return: Calculated Zakat amount
+    """
+    company_type = get_object_or_404(CompanyType, id=company_type_id)
+    fields = CompanyField.objects.filter(company_type=company_type)
+
+    required_fields = {field.name for field in fields}
+    missing_fields = required_fields - user_inputs.keys()
+
+    if missing_fields:
+        raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
+
+    formula = company_type.calculation_method
+
+    try:
+        formula_symbols = {name: symbols(name) for name in required_fields}
+        expression = sympify(formula, locals=formula_symbols)
+        zakat_amount = expression.evalf(subs=user_inputs)
+
+        # ✅ Apply the 'moon' multiplier
+        zakat_amount *= float(moon)
+
+        return round(float(zakat_amount), 2)
+
+    except Exception as e:
+        raise ValueError(f"Error evaluating formula: {e}")
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import CompanyType
+
+@api_view(['DELETE'])
+def delete_company(request, company_type_id):
+    """
+    Delete a company type and all its related fields.
+    """
+    try:
+        company_type = CompanyType.objects.get(id=company_type_id)
+    except CompanyType.DoesNotExist:
+        return Response({"error": f"Company Type with ID {company_type_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Delete the company type (cascades to related fields)
+    company_type.delete()
+    
+    # ✅ Ensure a valid DRF Response
+    return Response({"message": f"Company Type {company_type_id} deleted successfully"}, status=status.HTTP_200_OK)
+
+@api_view(['PUT', 'PATCH'])
+def update_company_with_fields(request, company_type_id):
+    """
+    Update a company type and its related fields.
+    - PUT: Full replace (deletes old fields and adds new ones)
+    - PATCH: Modify only provided fields (replace names if needed)
+    """
+    company_type = get_object_or_404(CompanyType, id=company_type_id)
+    
+    # Extract request data
+    data = request.data
+    fields_data = data.pop('fields', None)  # Extract fields if provided
+
+    # Update company type details
+    serializer = CompanyTypeSerializer(company_type, data=data, partial=(request.method == "PATCH"))
+    
+    if serializer.is_valid():
+        serializer.save()
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Handle fields update
+    if fields_data is not None:
+        if request.method == "PUT":
+            # PUT: Remove all fields and add new ones
+            company_type.fields.all().delete()
+        
+        for field_data in fields_data:
+            field_name = field_data.get("name")
+            if not field_name:
+                continue  # Skip invalid fields
+            
+            existing_field = company_type.fields.filter(name=field_name).first()
+            
+            if request.method == "PATCH":
+                if existing_field:
+                    # PATCH: Rename existing field instead of adding duplicate
+                    existing_field.name = field_name
+                    existing_field.save()
+                else:
+                    # PATCH: Add new field if it does not exist
+                    CompanyField.objects.create(company_type=company_type, **field_data)
+            else:
+                # PUT: Just add new fields (all old ones were deleted)
+                CompanyField.objects.create(company_type=company_type, **field_data)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)

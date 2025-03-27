@@ -7,7 +7,7 @@ from .views import (
     AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,
     send_contact_email, RequestPasswordResetView, ResetPasswordView,
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
-    create_table,  get_table_data ,rename_table, modify_table, delete_table,WaqfProjectListView  # ✅ Import create_table view
+    create_table,  get_table_data ,rename_table, modify_table, delete_table,WaqfProjectListView ,calculate_zakat,create_company_with_fields,delete_company,update_company_with_fields
 )
 
 urlpatterns = [
@@ -35,6 +35,11 @@ urlpatterns = [
     path("admin/modify-table/", modify_table, name="modify-table"),
     path("admin/delete-table/<str:table_name>/", delete_table, name="delete-table"),
     path("list/waqf-projects/", WaqfProjectListView.as_view(), name="waqf-projects-list"),
+    path('calculate-zakat/', calculate_zakat, name="calculate_zakat"),
+    path('create-company-with-fields/', create_company_with_fields, name="create_company_with_fields"),
+    path('delete-company/<int:company_type_id>/', delete_company, name="delete_company"),
+    path('update-company/<int:company_type_id>/', update_company_with_fields, name="update_company"),
+    
 ]
 
 if settings.DEBUG:

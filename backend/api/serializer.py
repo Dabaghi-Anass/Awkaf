@@ -148,3 +148,63 @@ class WaqfProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaqfProject
         fields = '__all__'  # Includes created_at and updated_at fields
+
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+from rest_framework import serializers
+from .models import CompanyField
+
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+class CompanyFieldSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyField
+        fields = ['name']
+
+
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+
+class CompanyTypeSerializer(serializers.ModelSerializer):
+    # Input: accepts a list of field names
+    fields = serializers.ListField(
+        child=serializers.CharField(), write_only=True, required=False
+    )
+
+    # Output: will be renamed to 'fields' in the response
+    output_fields = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CompanyType
+        fields = ['id', 'name', 'calculation_method', 'fields', 'output_fields']
+
+    def get_output_fields(self, obj):
+        return [field.name for field in obj.fields.all()]
+
+    def validate_name(self, value):
+        if CompanyType.objects.filter(name__iexact=value).exists():
+            raise serializers.ValidationError("A company with this name already exists.")
+        return value
+
+    def create(self, validated_data):
+        fields_data = validated_data.pop('fields', [])
+        company_type = CompanyType.objects.create(**validated_data)
+
+        unique_fields = set(fields_data)
+        new_fields = [
+            CompanyField(company_type=company_type, name=field)
+            for field in unique_fields
+        ]
+        CompanyField.objects.bulk_create(new_fields)
+        return company_type
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+
+        # Replace 'output_fields' with 'fields' in response
+        rep['fields'] = rep.pop('output_fields', [])
+
+        return rep
