@@ -20,8 +20,10 @@ export const ZakatProvider = ({ children }) => {
     const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
     const [isUnnaire, setIsUnnaire] = useState(false);
     const [showResault, setShowResault] = useState(false);
-
+    const [isEditing, setIsEditing] = useState(false);
+    const [totalAmount, setTotalAmount] = useState(0);
     
+
         const saveZakatHistory = async () => {
             const token = localStorage.getItem("accessToken");
         
@@ -60,7 +62,7 @@ export const ZakatProvider = ({ children }) => {
         
                 // Reset form after successful save
                 setZakatFormInfos(initialZakatData);
-        
+                setTotalAmount(0);
             } catch (error) {
                 console.error("Error:", error);
                 alert(error.message);
@@ -76,6 +78,7 @@ export const ZakatProvider = ({ children }) => {
         const nissab = zakatFormInfos.nisab || 0;
         const zakatRate = isUnnaire ? 2.5 : 2.577;
         const totalActifs = (liquidites + stocks) - (fondsNonDispo + stocksInvendable);
+        setTotalAmount(totalActifs);
         const zakat = (totalActifs > nissab) ? (totalActifs * (zakatRate / 100)) : 0;
 
         setZakatFormInfos(prevState => ({
@@ -92,7 +95,9 @@ export const ZakatProvider = ({ children }) => {
             isUnnaire, setIsUnnaire, 
             calculateZakat, 
             showResault, setShowResault ,
-            saveZakatHistory
+            saveZakatHistory,isEditing,
+            setIsEditing ,totalAmount,setTotalAmount
+
         }}>
             {children}
         </ZakatContext.Provider>

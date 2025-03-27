@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link,useNavigate } from "react-router-dom";
 import { Header } from "../Components/Header";
 import Footer from "../Components/Footer";
 
 export const WakfP = () => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -55,23 +55,15 @@ export const WakfP = () => {
         )}
 
         {/* تفاصيل المشروع */}
-        <div className="bg-green-900 text-green-100 p-8 mt-10 rounded-lg shadow-xl">
+        <div className="">
           {[
-            { key: "introduction", label: " مقدمة المشروع" },
-            { key: "background", label: " الخلفية" },
+           
             { key: "objectives", label: " الأهداف" },
-            { key: "key_stages", label: " المراحل الرئيسية" },
-            { key: "expected_outcomes", label: " النتائج المتوقعة" },
-            { key: "challenges_solutions", label: " التحديات والحلول" },
-            { key: "required_resources", label: " الموارد المطلوبة" },
-            { key: "timeline", label: " الجدول الزمني" },
-            { key: "tools_technologies", label: " الأدوات والتقنيات" },
-            { key: "partners_supporters", label: " الشركاء والداعمون" },
-            { key: "conclusion", label: " الخاتمة" },
+            { key: "partners", label: " الشركاء والداعمون" },
           ].map(
             ({ key, label }) =>
               project[key] && (
-                <div key={key} className="mb-6 border-b border-green-600 pb-4">
+                <div key={key} className="mb-6 border-b border-green-600 bg-green-900 text-green-100 p-8 mt-10 rounded-lg shadow-xl">
                   <h2 className="text-2xl font-semibold">{label}</h2>
                   <p className="mt-2 text-green-50 leading-relaxed">
                     {project[key]}
@@ -83,7 +75,7 @@ export const WakfP = () => {
 
         {/* CTA (اختياري) */}
         <div className="text-center mt-10">
-          <button className="bg-amber-400 text-green-900 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-500 transition">
+          <button  className="bg-amber-400 text-green-900 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-500 transition"  onClick={() => navigate('/contribution')}>
             دعم المشروع
           </button>
         </div>

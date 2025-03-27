@@ -11,7 +11,7 @@ function Home() {
 
   return (
 
-    <div className="App my-0 mx-auto ">
+    <div dir='rtl' className="App my-0 mx-auto ">
 
         <Header />
 

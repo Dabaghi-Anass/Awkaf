@@ -42,7 +42,7 @@ export const Contact = () => {
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-10 left-20 w-20 h-20 bg-green-200 rounded-full opacity-50"></div>
+        <div className="absolute top-45 left-20 w-20 h-20 bg-green-200 rounded-full opacity-50"></div>
         <div className="absolute bottom-10 right-20 w-28 h-28 bg-green-300 rounded-full opacity-50"></div>
       </div>
       <Footer></Footer>

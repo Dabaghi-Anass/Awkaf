@@ -28,9 +28,9 @@ export const CalForm = () => {
 
                     {/* Input Fields */}
                     {[
-                        { label: "السيولة النقدية", name: "liquidites" },
-                        { label: "المخزون المعد للبيع", name: "stocks" },
-                        { label: "الاستثمارات", name: "investissements" },
+                        { label: "النقدية (صندوق، بنك)", name: "liquidites" },
+                        { label: "المخزون المعد للبيع (بسعر البيع)", name: "stocks" },
+                        { label: "الاستثمارات المعدة للتنازل عنها", name: "investissements" },
                         { label: "الممتلكات للاستخدام الداخلي", name: "bienUsageInterne" },
                         { label: "الأصول المؤجرة", name: "bienLocation" },
                         { label: "الديون المستحقة على العملاء", name: "creancesClients" },
@@ -49,7 +49,7 @@ export const CalForm = () => {
                                     onChange={handleChange}
                                     placeholder='00,000'
                                 />
-                                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">د.إ</span>
+                                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">دج</span>
                             </div>
                         </div>
                     ))}

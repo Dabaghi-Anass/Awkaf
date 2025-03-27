@@ -27,6 +27,8 @@ import App from './App.jsx';
 import { CalForm } from './Components/CalForm.jsx';
 import { ProtectedRoute } from './ProtectedRoutes.jsx';
 import { Contribution } from './pages/Contribution.jsx';
+import { AddUser } from './Components/admin_dashboard/AddUser.jsx';
+import AdminFormBuilder from './Components/AdminFormBuilder.jsx';
 
 
 const router = createBrowserRouter([
@@ -37,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "About/",
     element: <About />,
+  },
+  {
+    path: "manage-project/",
+    element: <ManageAwkaf />,
   },
   {
     path: "Contact/",
@@ -56,7 +62,7 @@ const router = createBrowserRouter([
   },
   {
     path: "kol/",
-    element: <CalForm />,
+    element: <AdminFormBuilder />,
   },
   {
     path: "Register/",
@@ -76,7 +82,7 @@ const router = createBrowserRouter([
   },
   
   {
-    path: "test/",
+    path: "Contribution/",
     element: <Contribution />,
   },
   {

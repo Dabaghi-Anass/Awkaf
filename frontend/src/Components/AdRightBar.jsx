@@ -3,30 +3,7 @@ import '../CSS/AdRightBar.css'
 export const AdRightBar = ({inputFeild,addNewInput,handleChange,handleCancel,existingInput,existingChoice,addChoice,setExistingChoice}) => {
 
       
-    {/*
-      {input.type==='dropDown' || input.type==='multipleChoice' ? (
-                  <input type='text' placehoder='new choice' >
-                  <button onClick={function}>add choice<button/>
-                  <button onClick={function}>delete choice<button/>
-          ):()
-
-        {inputFeild.type === "dropDown" || inputFeild.type === "multipleChoice" ? (
-                  <>
-                    {inputFeild.choices.map((choice, index) => (
-                      <input 
-                        key={choice.id} 
-                        type="text" 
-                        placeholder="New choice" 
-                        value={choice.content} 
-                        onChange={(e) => handleChoiceChange(index, e.target.value)} 
-                      />
-                    ))}
-                    <button onClick={addChoice}>Add Choice</button>
-                    <button onClick={deleteChoice}>Delete Choice</button>
-                  </>
-                ) : null}
-        }
-       */}
+   
        
 
   return (
@@ -76,14 +53,7 @@ export const AdRightBar = ({inputFeild,addNewInput,handleChange,handleCancel,exi
               ) : null}
 
 
-          <div className="side-bar-sub-title">Validation</div>
-          <p className='validation-text'>Default email input validation will be applied</p>
-
-          <span className="inter-validation">Required</span>
-          <div className="yes-no">
-            <button className={`yes ${inputFeild.isRequired ? "active" : ""}`} onClick={() => handleChange({ target: { name: "isRequired", value: true } })}>Yes</button>
-            <button className={`no ${!inputFeild.isRequired ? "active" : ""}`} onClick={() => handleChange({ target: { name: "isRequired", value: false } })}>No</button>
-          </div>
+         
 
 
           {/*
