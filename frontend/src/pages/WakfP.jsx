@@ -55,23 +55,15 @@ export const WakfP = () => {
         )}
 
         {/* تفاصيل المشروع */}
-        <div className="bg-green-900 text-green-100 p-8 mt-10 rounded-lg shadow-xl">
+        <div className="">
           {[
-            { key: "introduction", label: " مقدمة المشروع" },
-            { key: "background", label: " الخلفية" },
+           
             { key: "objectives", label: " الأهداف" },
-            { key: "key_stages", label: " المراحل الرئيسية" },
-            { key: "expected_outcomes", label: " النتائج المتوقعة" },
-            { key: "challenges_solutions", label: " التحديات والحلول" },
-            { key: "required_resources", label: " الموارد المطلوبة" },
-            { key: "timeline", label: " الجدول الزمني" },
-            { key: "tools_technologies", label: " الأدوات والتقنيات" },
-            { key: "partners_supporters", label: " الشركاء والداعمون" },
-            { key: "conclusion", label: " الخاتمة" },
+            { key: "partners", label: " الشركاء والداعمون" },
           ].map(
             ({ key, label }) =>
               project[key] && (
-                <div key={key} className="mb-6 border-b border-green-600 pb-4">
+                <div key={key} className="mb-6 border-b border-green-600 bg-green-900 text-green-100 p-8 mt-10 rounded-lg shadow-xl">
                   <h2 className="text-2xl font-semibold">{label}</h2>
                   <p className="mt-2 text-green-50 leading-relaxed">
                     {project[key]}

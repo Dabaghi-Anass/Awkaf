@@ -8,18 +8,8 @@ export const ManageAwkaf = () => {
   const { isEditing, setIsEditing} = useContext(ZakatContext);
   const defaultProject = {
     name: "",
-    introduction: "",
-    background: "",
     objectives: "",
-    key_stages: "",
-    expected_outcomes: "",
-    challenges_solutions: "",
-    required_resources: "",
-    timeline: "",
-    tools_technologies: "",
-    team_members: "",
-    partners_supporters: "",
-    conclusion: "",
+    partners: "",
     image: null,
   };
 
@@ -96,18 +86,9 @@ export const ManageAwkaf = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         {[
           { label: "Project Name", name: "name", type: "text" },
-          { label: "Introduction", name: "introduction", type: "textarea" },
-          { label: "Background", name: "background", type: "textarea" },
           { label: "Objectives", name: "objectives", type: "textarea" },
-          { label: "Key Stages", name: "key_stages", type: "textarea" },
-          { label: "Expected Outcomes", name: "expected_outcomes", type: "textarea" },
-          { label: "Challenges & Solutions", name: "challenges_solutions", type: "textarea" },
-          { label: "Required Resources", name: "required_resources", type: "textarea" },
-          { label: "Timeline", name: "timeline", type: "textarea" },
-          { label: "Tools & Technologies", name: "tools_technologies", type: "textarea" },
-          { label: "Team Members", name: "team_members", type: "textarea" },
-          { label: "Partners & Supporters", name: "partners_supporters", type: "textarea" },
-          { label: "Conclusion", name: "conclusion", type: "textarea" },
+          { label: "Partners & Supporters", name: "partners", type: "textarea" },
+    
         ].map(({ label, name, type }) => (
           <div key={name}>
             <label className="block text-gray-700 font-medium">{label}</label>

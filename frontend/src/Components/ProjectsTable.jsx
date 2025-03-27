@@ -36,7 +36,7 @@ export const ProjectsTable = () => {
   const fetchProjects = async (pageNumber, pageSize) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/apif/public/waqf-projects/?page=${pageNumber}&page_size=${pageSize}`
+        `http://127.0.0.1:8000/apif/list/waqf-projects/?page=${pageNumber}&page_size=${pageSize}`
       );
       if (!response.ok) {
         console.error("Failed to fetch projects:", response.status);
@@ -96,7 +96,7 @@ export const ProjectsTable = () => {
             <tr>
               <th scope="col" className="px-6 py-3">ID</th>
               <th scope="col" className="px-6 py-3">Project Name</th>
-              <th scope="col" className="px-6 py-3">Introduction</th>
+              <th scope="col" className="px-6 py-3">Objectives</th>
               <th scope="col" className="px-6 py-3">Created Date</th>
               <th scope="col" className="px-6 py-3">Actions</th>
             </tr>
@@ -110,8 +110,8 @@ export const ProjectsTable = () => {
                 >
                   <td className="px-6 py-4">{project.id}</td>
                   <td className="px-6 py-4">{project.name}</td>
-                  <td className="px-6 py-4">{project.introduction}</td>
-                  <td className="px-6 py-4">{project.date_created}</td>
+                  <td className="px-6 py-4">{project.objectives}</td>
+                  <td className="px-6 py-4">{project.created_at}</td>
                   <td className="px-6 py-4 space-x-2">
                     {/* ✅ Edit Button */}
                     <button

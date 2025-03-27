@@ -1,60 +1,100 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 const AdminFormBuilder = () => {
+  const [companyName, setCompanyName] = useState("");
   const [fields, setFields] = useState([]);
-  const [newFieldName, setNewFieldName] = useState("");
+  const [calculationMethod, setCalculationMethod] = useState("");
 
   const addField = () => {
-    if (newFieldName.trim() !== "") {
-      setFields([...fields, { name: newFieldName, type: "text" }]);
-      setNewFieldName("");
-    }
+    setFields([...fields, { name: "", type: "text" }]);
+  };
+
+  const updateField = (index, key, value) => {
+    const updatedFields = [...fields];
+    updatedFields[index][key] = value;
+    setFields(updatedFields);
   };
 
   const removeField = (index) => {
     setFields(fields.filter((_, i) => i !== index));
   };
 
-  return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-xl font-bold mb-4 text-green-700">Créer un type d’entreprise</h2>
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const companyData = {
+      companyName,
+      fields,
+      calculationMethod,
+    };
+    setFields([]);
+    console.log("Company Type Created:", companyData);
+  };
 
-      {/* Input for new field */}
-      <div className="flex items-center gap-2 mb-4">
+  return (
+    <div className="p-6 max-w-3xl mx-auto bg-white rounded-lg shadow-md border border-gray-200">
+      <h2 className="text-xl font-bold mb-4 text-green-700">Créer un Type d'Entreprise</h2>
+      <form onSubmit={handleSubmit}>
+        <label className="block mb-2 font-medium">Nom du Type d'Entreprise</label>
         <input
           type="text"
-          placeholder="Nom du champ"
-          value={newFieldName}
-          onChange={(e) => setNewFieldName(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+          required
         />
-        <button
-          onClick={addField}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Ajouter
-        </button>
-      </div>
 
-      {/* Display created fields */}
-      <div className="space-y-3">
+        <h3 className="mt-4 font-semibold text-green-700">Champs de Données</h3>
         {fields.map((field, index) => (
-          <div key={index} className="flex items-center justify-between border p-2 rounded">
-            <span className="text-gray-700">{field.name}</span>
-            <button
-              onClick={() => removeField(index)}
-              className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+          <div key={index} className="flex gap-2 mt-2">
+            <input
+              type="text"
+              value={field.name}
+              onChange={(e) => updateField(index, "name", e.target.value)}
+              placeholder="Nom du champ"
+              className="flex-1 px-3 py-2 border rounded-md focus:ring-green-600"
+              required
+            />
+            <select
+              value={field.type}
+              onChange={(e) => updateField(index, "type", e.target.value)}
+              className="px-3 py-2 border rounded-md focus:ring-green-600"
             >
-              Supprimer
+              <option value="text">Texte</option>
+              <option value="number">Nombre</option>
+            </select>
+            <button
+              type="button"
+              onClick={() => removeField(index)}
+              className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
+            >
+              X
             </button>
           </div>
         ))}
-      </div>
+        <button
+          type="button"
+          onClick={addField}
+          className="mt-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-800"
+        >
+          Ajouter un champ
+        </button>
 
-      {/* Save Button */}
-      <button className="mt-4 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
-        Enregistrer
-      </button>
+        <h3 className="mt-4 font-semibold text-green-700">Méthode de Calcul</h3>
+        <textarea
+          value={calculationMethod}
+          onChange={(e) => setCalculationMethod(e.target.value)}
+          placeholder="Définissez la méthode de calcul de la Zakat"
+          className="w-full px-3 py-2 border rounded-md focus:ring-green-600"
+          required
+        />
+
+        <button
+          type="submit"
+          className="mt-4 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-900"
+        >
+          Enregistrer
+        </button>
+      </form>
     </div>
   );
 };
