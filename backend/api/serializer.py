@@ -214,7 +214,12 @@ class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyType
-        fields = ['name', 'custom_fields']
+        fields = ['id', 'name', 'custom_fields']
 
     def get_custom_fields(self, obj):
         return [field.name for field in obj.fields.all()]
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['fields'] = rep.pop('custom_fields')
+        return rep
