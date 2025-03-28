@@ -4,9 +4,9 @@ import { ZakatContext } from '../Components/ZakatProvider';
 import { ZakatPrice } from './ZakatPrice';
 
 export const CalForm = () => {
-    const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResault } = useContext(ZakatContext);
+    const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResault,selectedCompany,setSelectedCompany } = useContext(ZakatContext);
     const [companyTypes, setCompanyTypes] = useState([]);
-    const [selectedCompany, setSelectedCompany] = useState(null);
+   
     const [fields, setFields] = useState([]);
 
     const fetchCompanyTypes = async () => {
@@ -42,31 +42,21 @@ export const CalForm = () => {
         fetchCompanyTypes();
         
       }, []);
-      console.log("Company Types:", companyTypes);
+     
     
     
       useEffect(() => {
-        const fetchFields = async () => {
-            if (!selectedCompany?.id) return; // Prevent fetching if no company is selected
-    
-            try {
-                const response = await fetch(`http://localhost:8000/api/company-types/${selectedCompany.id}/fields/`);
-                
-                if (!response.ok) {
-                    const errorData = await response.json(); // Get error details
-                    throw new Error(errorData.error || `Error ${response.status}: Failed to fetch fields`);
-                }
-    
-                const data = await response.json();
-                setFields(data);
-            } catch (error) {
-                console.error("Error fetching fields:", error);
-                alert(`Error fetching fields: ${error.message}`);
-            }
-        };
-    
-        fetchFields();
+        if (selectedCompany) {
+            console.log("Using existing fields for company:", selectedCompany);
+            setFields(selectedCompany.fields); // Directly set fields from selectedCompany
+        } else {
+            setFields([]); // Reset fields when no company is selected
+        }
     }, [selectedCompany]);
+    
+    
+    
+  
     
 
     const handleChange = (e) => {
@@ -90,36 +80,41 @@ export const CalForm = () => {
                         {/* Select Company Type */}
                         <div className="flex flex-col gap-1 mb-5">
                             <label className="text-gray-700 font-semibold text-[1em]">نوع الشركة</label>
-                            <select
-                                className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
-                                onChange={(e) => setSelectedCompany(e.target.value)}
-                            >
-                                <option value="">اختر نوع الشركة</option>
+                            <select 
+                            className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
+                             onChange={(e) => {
+                                const selected = companyTypes.find(c => c.id === parseInt(e.target.value));
+                                setSelectedCompany(selected || null);
+
+                            }}>
+                                <option value="">Select a company</option>
                                 {companyTypes.map(company => (
-                                    <option key={company.name} value={company.id}>{company.name}</option>
+                                    <option key={company.id} value={company.id}>{company.name}</option>
                                 ))}
                             </select>
+
                         </div>
 
                         {/* Dynamic Input Fields */}
-                        {fields.map(field => (
-                            <div className="bg-whiteflex flex-col gap-1 mb-5" key={field.id}>
-                                <label className="text-gray-700 text-[1em] font-semibold">{field.name}</label>
+                        {fields.map((field, index) => (
+                            <div className="bg-white flex flex-col gap-1 mb-5" key={`${selectedCompany.id}-${index}`}>
+                                <label className="text-gray-700 text-[1em] font-semibold">{field}</label>
                                 <div className="relative w-full">
                                     <input
                                         className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right"
                                         type="text"
-                                        name={field.name}
+                                        name={field}  // Use the field name directly
                                         min={0}
-                                        value={formatNumber(zakatFormInfos[field.name])}
+                                        value={formatNumber(zakatFormInfos[field] || "")}  // Prevent undefined errors
                                         onChange={handleChange}
-                                        placeholder='00,000'
+                                        placeholder="00,000"
                                     />
                                     <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">دج</span>
                                 </div>
                             </div>
                         ))}
 
+ 
                         {/* Select Dropdown */}
                         <div className="flex flex-col gap-1 mb-5">
                             <label className="text-gray-700 font-semibold text-[1em]">نوع الحول</label>

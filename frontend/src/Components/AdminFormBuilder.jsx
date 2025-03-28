@@ -27,16 +27,16 @@ const AdminFormBuilder = () => {
     const companyData = {
       name: companyName,
       calculation_method: calculationMethod,
-      fields: fields.map(field => field.name), // Extract only field names
+      fields: fields,  // ✅ Directly send the array of field names
     };
-  
+
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
         alert("Authentication required! Please log in.");
         return;
       }
-  
+
       const response = await fetch("http://localhost:8000/apif/create-company-with-fields/", {
         method: "POST",
         headers: {
@@ -45,12 +45,12 @@ const AdminFormBuilder = () => {
         },
         body: JSON.stringify(companyData),
       });
-  
+
       if (!response.ok) {
-        const errorData = await response.json(); // Get error details
+        const errorData = await response.json();
         throw new Error(errorData.error || "Failed to create company type");
       }
-  
+
       alert("Company Type Created Successfully!");
       setCompanyName("");
       setFields([]);
@@ -59,7 +59,8 @@ const AdminFormBuilder = () => {
       console.error("Error creating company type:", error);
       alert(`Error: ${error.message}`);
     }
-  };
+};
+
   
 
   return (
@@ -80,7 +81,7 @@ const AdminFormBuilder = () => {
             <input
             className="bg-amber-500"
               type="text"
-              value={field.name}
+              value={field}
               onChange={(e) => updateField(index, e.target.value)}
 
               placeholder="Field Name"
