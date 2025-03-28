@@ -208,3 +208,13 @@ class CompanyTypeSerializer(serializers.ModelSerializer):
         rep['fields'] = rep.pop('output_fields', [])
 
         return rep
+
+class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
+    custom_fields = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CompanyType
+        fields = ['name', 'custom_fields']
+
+    def get_custom_fields(self, obj):
+        return [field.name for field in obj.fields.all()]

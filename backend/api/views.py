@@ -1183,3 +1183,23 @@ def update_company_with_fields(request, company_type_id):
                 CompanyField.objects.create(company_type=company_type, **field_data)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+from .serializer import CompanyTypeSimpleSerializer
+
+@api_view(['GET'])
+def get_company_type_fields(request, company_type_id):
+    """
+    Get only the name and fields of a CompanyType
+    """
+    company_type = get_object_or_404(CompanyType, id=company_type_id)
+    serializer = CompanyTypeSimpleSerializer(company_type)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def list_all_company_types(request):
+    """
+    Get all company types with their fields
+    """
+    all_companies = CompanyType.objects.all()
+    serializer = CompanyTypeSimpleSerializer(all_companies, many=True)
+    return Response(serializer.data)
