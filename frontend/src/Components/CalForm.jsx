@@ -4,7 +4,7 @@ import { ZakatContext } from '../Components/ZakatProvider';
 import { ZakatPrice } from './ZakatPrice';
 
 export const CalForm = () => {
-    const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResault,selectedCompany,setSelectedCompany } = useContext(ZakatContext);
+    const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResult,selectedCompany,setSelectedCompany } = useContext(ZakatContext);
     const [companyTypes, setCompanyTypes] = useState([]);
    
     const [fields, setFields] = useState([]);
@@ -137,7 +137,7 @@ export const CalForm = () => {
             </div>
 
             {/* Display Zakat Result */}
-            {showResault && <ZakatPrice />}
+            {showResult && <ZakatPrice />}
         </div>
     );
 };
