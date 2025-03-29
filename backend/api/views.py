@@ -1063,6 +1063,12 @@ def create_company_with_fields(request):
         return Response({"error": "A company with this name already exists."}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+import json
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from sympy import symbols, sympify
+from .models import CompanyType, CompanyField
+
 def calculate_zakat(request):
     """
     Calculate Zakat based on company type, user inputs, a multiplier 'moon', and a threshold 'nissab'.
@@ -1118,6 +1124,8 @@ def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
 
     except Exception as e:
         raise ValueError(f"Error evaluating formula: {e}")
+from django.db import IntegrityError
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
