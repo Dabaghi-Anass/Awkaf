@@ -1063,33 +1063,35 @@ def create_company_with_fields(request):
         return Response({"error": "A company with this name already exists."}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-@api_view(['POST'])
 def calculate_zakat(request):
     """
-    Calculate Zakat based on company type, user inputs, and a multiplier 'moon'.
+    Calculate Zakat based on company type, user inputs, a multiplier 'moon', and a threshold 'nissab'.
     """
-    data = request.data
-    company_type_id = data.get('company_type_id')
-    user_inputs = data.get('user_inputs', {})
-    moon = data.get('moon', 1)  # ✅ Default to 1 if not provided
-
-    if not company_type_id or not isinstance(user_inputs, dict):
-        return JsonResponse({'error': 'Invalid data'}, status=400)
-
     try:
-        zakat_amount = calculate_zakat_logic(company_type_id, user_inputs, moon)
-        return JsonResponse({"zakat_amount": zakat_amount}, status=200)
+        # ✅ Parse JSON body correctly
+        data = json.loads(request.body.decode('utf-8'))
+
+        company_type_id = data.get('company_type_id')
+        user_inputs = data.get('user_inputs', {})
+        moon = float(data.get('moon', 1))  # ✅ Convert to float
+        nissab = float(data.get('nissab', 0))  # ✅ Convert to float
+
+        # ✅ Check if inputs are valid
+        if not company_type_id or not isinstance(user_inputs, dict):
+            return JsonResponse({'error': 'Invalid data'}, status=400)
+
+        # ✅ Perform calculation
+        zakat_bottle, zakat_result = calculate_zakat_logic(company_type_id, user_inputs, moon, nissab)
+        return JsonResponse({"zakat_bottle": zakat_bottle, "zakat_result": zakat_result}, status=200)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON format'}, status=400)
     except ValueError as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-def calculate_zakat_logic(company_type_id, user_inputs, moon):
+def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
     """
-    Securely calculate Zakat based on company type, user inputs, and 'moon' multiplier.
-
-    :param company_type_id: ID of the selected company type
-    :param user_inputs: Dictionary of field values (e.g., {"liquidites": 1000, "stocks": 500})
-    :param moon: Multiplier for the final result
-    :return: Calculated Zakat amount
+    Securely calculate Zakat based on company type, user inputs, 'moon' multiplier, and 'nissab' threshold.
     """
     company_type = get_object_or_404(CompanyType, id=company_type_id)
     fields = CompanyField.objects.filter(company_type=company_type)
@@ -1105,12 +1107,14 @@ def calculate_zakat_logic(company_type_id, user_inputs, moon):
     try:
         formula_symbols = {name: symbols(name) for name in required_fields}
         expression = sympify(formula, locals=formula_symbols)
-        zakat_amount = expression.evalf(subs=user_inputs)
+        zakat_bottle = expression.evalf(subs=user_inputs)  # ✅ Calculate total amount
 
-        # ✅ Apply the 'moon' multiplier
-        zakat_amount *= float(moon)
+        zakat_bottle = round(float(zakat_bottle), 2)  # ✅ Convert to float and round
 
-        return round(float(zakat_amount), 2)
+        # ✅ Calculate Zakat Result
+        zakat_result = zakat_bottle * moon if zakat_bottle > nissab else 0
+
+        return zakat_bottle, zakat_result
 
     except Exception as e:
         raise ValueError(f"Error evaluating formula: {e}")
