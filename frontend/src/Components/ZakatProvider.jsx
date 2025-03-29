@@ -1,103 +1,140 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const ZakatContext = createContext();
 
 export const ZakatProvider = ({ children }) => {
-    const initialZakatData = {
-        liquidites: "",
-        stocks: "",
-        investissements: "",
-        bienLocation: "",
-        creancesClients: "",
-        bienUsageInterne: "",
-        fondsNonDispo: "",
-        stocksInvendable: "",
-        zakatAmount: 0,
+    /*const initialZakatData = {
         created_at: new Date().toISOString().split("T")[0],
         nisab: 800000,
-    };
+    };*/
 
-    const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
+    const [zakatFormInfos, setZakatFormInfos] = useState({});
     const [isUnnaire, setIsUnnaire] = useState(false);
-    const [showResault, setShowResault] = useState(false);
+    const [showResult, setShowResult] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
-    
+    const [selectedCompany, setSelectedCompany] = useState(null);
 
-        const saveZakatHistory = async () => {
-            const token = localStorage.getItem("accessToken");
-        
-            const zakatData = {
-                liquidites: zakatFormInfos.liquidites || -1,
-                investissements: zakatFormInfos.investissements || -1,
-                bien_location: zakatFormInfos.bienLocation || -1,
-                creances_clients: zakatFormInfos.creancesClients || -1,
-                bien_usage_interne: zakatFormInfos.bienUsageInterne || -1,
-                fonds_non_dispo: zakatFormInfos.fondsNonDispo || -1,
-                stocks_invendable: zakatFormInfos.stocksInvendable || -1,
-                stocks: zakatFormInfos.stocks || -1,
-                created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-                nisab:zakatFormInfos.nisab,
-                zakat_amount:zakatFormInfos.zakatAmount,
-            };
-        
-            try {
-                const response = await fetch("http://localhost:8000/apif/save-zakat-history/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(zakatData),
-                });
-        
-                const data = await response.json();
-                if (!response.ok) {
-                    console.error("Backend error:", data);
-                    throw new Error("Failed to save Zakat history");
-                }
-        
-                console.log("Zakat history saved successfully:", data);
-                alert("Zakat history saved successfully!");
-        
-                // Reset form after successful save
-                setZakatFormInfos(initialZakatData);
-                setTotalAmount(0);
-            } catch (error) {
-                console.error("Error:", error);
-                alert(error.message);
-            }
+    // Update form fields dynamically when company type changes
+    useEffect(() => {
+        if (selectedCompany) {
+            const initialData = { zakatAmount: 0 };
+            selectedCompany.fields.forEach(field => {
+                initialData[field.name] = "";
+            });
+            setZakatFormInfos(initialData);
+        }
+    }, [selectedCompany]);
+
+    const saveZakatHistory = async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            alert("Authentication required! Please log in.");
+            return;
+        }
+
+        const zakatData = {
+            ...zakatFormInfos,
+            created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
         };
 
-    const calculateZakat = () => {
-        const liquidites = Number(zakatFormInfos.liquidites) || 0;
-        const stocks = Number(zakatFormInfos.stocks) || 0;
-        const fondsNonDispo = Number(zakatFormInfos.fondsNonDispo) || 0;
-        const stocksInvendable = Number(zakatFormInfos.stocksInvendable) || 0;
+        try {
+            const response = await fetch("http://localhost:8000/apif/save-zakat-history/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(zakatData),
+            });
 
-        const nissab = zakatFormInfos.nisab || 0;
-        const zakatRate = isUnnaire ? 2.5 : 2.577;
-        const totalActifs = (liquidites + stocks) - (fondsNonDispo + stocksInvendable);
-        setTotalAmount(totalActifs);
-        const zakat = (totalActifs > nissab) ? (totalActifs * (zakatRate / 100)) : 0;
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("Backend error:", data);
+                throw new Error("Failed to save Zakat history");
+            }
 
-        setZakatFormInfos(prevState => ({
-            ...prevState,
-            zakatAmount: zakat.toFixed(2),
-        }));
-
-        setShowResault(true);
+            alert("Zakat history saved successfully!");
+            setZakatFormInfos(initialZakatData);
+            setTotalAmount(0);
+        } catch (error) {
+            console.error("Error:", error);
+            alert(error.message);
+        }
     };
+
+    
+    const calculateZakat = async () => {
+        const token = localStorage.getItem("accessToken");
+    
+        if (!token || !selectedCompany) {
+            alert("Please select a company type and log in.");
+            return;
+        }
+    
+        console.log("Selected Company:", selectedCompany);
+    
+        // Ensure all values are numbers or -1 if empty
+        const cleanedInputs = {};
+        Object.keys(zakatFormInfos).forEach(key => {
+            const value = zakatFormInfos[key];
+            cleanedInputs[key] = value && !isNaN(value) ? Number(value) : -1;
+        });
+    
+        console.log("Cleaned Inputs:", cleanedInputs);
+    
+        try {
+            console.log("Sending request:", {
+                company_type_id: selectedCompany.id,
+                user_inputs: cleanedInputs,
+                moon: isUnnaire ? 2.5 : 2.57,
+            });
+    
+            const response = await fetch("http://localhost:8000/apif/calculate-zakat/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    company_type_id: selectedCompany.id,
+                    user_inputs: cleanedInputs,
+                    moon: isUnnaire ? 2.5 : 2.57,
+                }),
+            });
+    
+            const data = await response.json();
+            console.log("Backend Response:", data);
+    
+            if (!response.ok) {
+                console.error("Backend error:", data);
+                throw new Error("Failed to calculate Zakat");
+            }
+    
+            setZakatFormInfos(prevState => ({
+                ...prevState,
+                zakatAmount: data.zakat_amount,
+            }));
+    
+            setShowResult(true);
+        } catch (error) {
+            console.error("Error:", error);
+            alert(error.message);
+        }
+    };
+    
+    
 
     return (
         <ZakatContext.Provider value={{ 
             zakatFormInfos, setZakatFormInfos, 
             isUnnaire, setIsUnnaire, 
             calculateZakat, 
-            showResault, setShowResault ,
-            saveZakatHistory,isEditing,
-            setIsEditing ,totalAmount,setTotalAmount
-
+            showResult, setShowResult,
+            saveZakatHistory, 
+            isEditing, setIsEditing,
+            totalAmount, setTotalAmount,
+            selectedCompany, setSelectedCompany
         }}>
             {children}
         </ZakatContext.Provider>

@@ -1011,7 +1011,7 @@ class WaqfProjectListView(generics.ListAPIView):
 
 
 from django.shortcuts import get_object_or_404
-from sympy import sympify, symbols
+from sympy import sympify, symbols # type: ignore
 from .models import CompanyType, CompanyField
 
 from django.http import JsonResponse
