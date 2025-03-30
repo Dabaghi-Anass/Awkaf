@@ -6,8 +6,11 @@ const AdminFormBuilder = () => {
   const [calculationMethod, setCalculationMethod] = useState("");
 
   const addField = () => {
-    setFields([...fields, ""]); // Store only the field name as a string
+    if (fields.length === 0 || fields[fields.length - 1] !== "") {
+      setFields([...fields, ""]); // ✅ Only add a new empty input when needed
+    }
   };
+  
   
 
   const updateField = (index, value) => {
@@ -24,12 +27,18 @@ const AdminFormBuilder = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    const cleanedFields = fields.filter(field => field.trim() !== ""); // ✅ Remove empty fields
+
     const companyData = {
       name: companyName,
       calculation_method: calculationMethod,
-      fields: fields,  // ✅ Directly send the array of field names
+      fields: cleanedFields,  // ✅ Send only valid field names
     };
-
+  
+    if (cleanedFields.length === 0) {
+      alert("Please add at least one valid field.");
+      return;
+    }
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
