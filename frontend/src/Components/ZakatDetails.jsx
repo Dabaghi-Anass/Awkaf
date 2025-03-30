@@ -1,11 +1,13 @@
-import React from "react";
-
-export default function ZakatDetails({ zakatFormInfos, onClose,totalAmount }) {
+import React, { useContext } from "react";
+import { ZakatContext } from "./ZakatProvider";
+export default function ZakatDetails({ zakatFormInfos, onClose }) {
+   const { isUnnaire } = useContext(ZakatContext);
   const formatNumber = (num) => (!num ? "0" : num.toLocaleString("fr-FR"));
 
   const handlePrint = () => {
     window.print();
   };
+ 
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-[40em] mx-auto mt-5">
@@ -16,12 +18,12 @@ export default function ZakatDetails({ zakatFormInfos, onClose,totalAmount }) {
       <div className="space-y-3 text-lg text-gray-800">
         <div className="flex justify-between">
           <span>قيمة النصاب:</span>
-          <span className="font-bold">{formatNumber(zakatFormInfos.nisab)} د.ج</span>
+          <span className="font-bold">{formatNumber(zakatFormInfos.nissab)} د.ج</span>
         </div>
 
         <div className="flex justify-between">
           <span>الوعاء الزكوي:</span>
-          <span className="font-bold">{formatNumber(totalAmount)} د.ج</span>
+          <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
         </div>
 
         <div className="flex justify-between text-green-800 font-bold">
@@ -36,7 +38,7 @@ export default function ZakatDetails({ zakatFormInfos, onClose,totalAmount }) {
 
         <div className="flex justify-between">
           <span>نوع الحول:</span>
-          <span>{zakatFormInfos.isUnnaire ? "هجري" : "ميلادي"}</span>
+          <span>{isUnnaire ? "هجري" : "ميلادي"}</span>
         </div>
       </div>
 

@@ -3,30 +3,26 @@ import React, { createContext, useState, useEffect } from "react";
 export const ZakatContext = createContext();
 
 export const ZakatProvider = ({ children }) => {
-    const initialZakatData = {
-        /*created_at: new Date().toISOString().split("T")[0],*/
-        /*nisab: 800000,*/
-    };
-
-    const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
-    const [isUnnaire, setIsUnnaire] = useState(false);
-    const [showResult, setShowResult] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [totalAmount, setTotalAmount] = useState(0);
-    const [selectedCompany, setSelectedCompany] = useState(null);
-
-    // Update form fields dynamically when company type changes
-    useEffect(() => {
-        console.log("Selected company:", selectedCompany);
-        if (selectedCompany) {
-            const initialData = { zakatAmount: 0 };
-        selectedCompany.fields.forEach(field => {
-            initialData[field] = ""; // ✅ field is a string, directly use it as a key
-        });
-            setZakatFormInfos(initialData);
-        }
-    }, [selectedCompany]);
     
+    const initialData = { zakatAmount: 0, nissab: 800000 ,  };
+
+const [zakatFormInfos, setZakatFormInfos] = useState(initialData);
+const [isUnnaire, setIsUnnaire] = useState(false);
+const [showResult, setShowResult] = useState(false);
+const [isEditing, setIsEditing] = useState(false);
+const [totalAmount, setTotalAmount] = useState(0);
+const [selectedCompany, setSelectedCompany] = useState(null);
+
+// Update form fields dynamically when company type changes
+useEffect(() => {
+    if (selectedCompany) {
+        setZakatFormInfos(prevData => ({
+            ...initialData,  // Reset to initial data first
+            ...Object.fromEntries(selectedCompany.fields.map(field => [field, ""])) // Add dynamic fields
+        }));
+    }
+}, [selectedCompany]);
+
 
     const saveZakatHistory = async () => {
         const token = localStorage.getItem("accessToken");
@@ -57,8 +53,8 @@ export const ZakatProvider = ({ children }) => {
             }
 
             alert("Zakat history saved successfully!");
-            setZakatFormInfos(initialZakatData);
-            setTotalAmount(0);
+            setZakatFormInfos(initialData);
+          
         } catch (error) {
             console.error("Error:", error);
             alert(error.message);
@@ -74,7 +70,7 @@ export const ZakatProvider = ({ children }) => {
             return;
         }
     
-        console.log("Raw zakatFormInfos:", zakatFormInfos);
+       
     
         const cleanedInputs = {};
         Object.entries(zakatFormInfos).forEach(([key, value]) => {
@@ -85,11 +81,7 @@ export const ZakatProvider = ({ children }) => {
         console.log("Final Cleaned Inputs:", cleanedInputs);
     
         try {
-            console.log("Sending request:", {
-                company_type_id: selectedCompany.id,
-                user_inputs: cleanedInputs,
-                moon: isUnnaire ? 2.5 : 2.57,
-            });
+            
     
             const response = await fetch("http://localhost:8000/apif/calculate-zakat/", {
                 method: "POST",
@@ -100,17 +92,14 @@ export const ZakatProvider = ({ children }) => {
                 body: JSON.stringify({
                     company_type_id: selectedCompany.id,
                     user_inputs: cleanedInputs,
-                    moon: isUnnaire ? 2.5 : 2.57,
+                    moon: isUnnaire ? 0.025 : 0.0257,
+                    nissab:800000,
                 }),
             });
     
             const data = await response.json();
             console.log("Backend Response:", data);
-            setZakatFormInfos(prevState => ({
-                ...prevState,
-                zakatAmount: data.zakat_amount
-            }));
-            console.log("Updated zakatFormInfos:", zakatFormInfos);
+            
             
     
             if (!response.ok) {
@@ -123,11 +112,12 @@ export const ZakatProvider = ({ children }) => {
     
             setZakatFormInfos(prevState => ({
                 ...prevState,
-                zakatAmount: data.zakat_amount,  // Received from backend
-                totalAmount: data.total_amount,  // New field from backend
-                calculationDate: calculationDate, // Add the date of calculation
+                zakatAmount: data.zakat_result,  // Received from backend
+                totalAmount: data.zakat_bottle,  // New field from backend
+                calculationDate: calculationDate,
+                 // Add the date of calculation
             }));
-           
+            
     
             setShowResult(true);
             console.log("resuelt", showResult);
@@ -136,7 +126,7 @@ export const ZakatProvider = ({ children }) => {
             alert(error.message);
         }
     };
-    
+    console.log("Updated zakatFormInfos:", zakatFormInfos);
     
 
     return (

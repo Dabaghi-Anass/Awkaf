@@ -3,7 +3,7 @@ import { ZakatContext } from "./ZakatProvider";
 import ZakatDetails from "./ZakatDetails"; // Import the new component
 
 export const ZakatPrice = () => {
-    const { zakatFormInfos, setShowResault, saveZakatHistory,totalAmount } = useContext(ZakatContext);
+    const { zakatFormInfos, setShowResult, saveZakatHistory } = useContext(ZakatContext);
     const [showDetails, setShowDetails] = useState(false);
 
     return (
@@ -20,7 +20,7 @@ export const ZakatPrice = () => {
                 <button className="bg-amber-300 py-2 w-1/3 px-5 rounded-lg font-bold" onClick={saveZakatHistory}>
                     تأكيد
                 </button>
-                <button className="bg-red-500 py-2 w-1/3 px-5 rounded-lg font-bold text-white" onClick={() => setShowResault(false)}>
+                <button className="bg-red-500 py-2 w-1/3 px-5 rounded-lg font-bold text-white" onClick={() => setShowResult(false)}>
                     إلغاء
                 </button>
             </div>
@@ -33,7 +33,7 @@ export const ZakatPrice = () => {
             </div>
 
             {/* Show Details Modal */}
-            {showDetails && <ZakatDetails totalAmount={totalAmount} zakatFormInfos={zakatFormInfos} onClose={() => setShowDetails(false)} />}
+            {showDetails && <ZakatDetails zakatFormInfos={zakatFormInfos} onClose={() => setShowDetails(false)} />}
         </div>
     );
 };

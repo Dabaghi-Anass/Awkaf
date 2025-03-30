@@ -134,10 +134,11 @@ export const CalForm = () => {
                         </button>
                     </form>
                 </div>
+                {showResult && <ZakatPrice />}
             </div>
 
             {/* Display Zakat Result */}
-            {showResult && <ZakatPrice />}
+           
         </div>
     );
 };
