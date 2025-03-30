@@ -901,6 +901,7 @@ from rest_framework.response import Response
 from .models import CompanyType, CompanyField
 
 @api_view(['POST'])
+@api_view(['POST'])
 def create_company_with_fields(request):
     """
     Create a company type and its fields in a single request while avoiding duplicates.
@@ -917,13 +918,14 @@ def create_company_with_fields(request):
         return Response({"error": "At least one field is required"}, status=400)
 
     try:
-        # ✅ Normalize field names (replace spaces with underscores)
-        normalized_fields = {field_name.strip().replace(" ", "_") for field_name in fields_data}
+        # ✅ Normalize all field names (replace spaces with underscores)
+        normalized_fields = {field.strip().replace(" ", "_") for field in fields_data}
 
-        # ✅ Normalize field names in calculation_method
+        # ✅ Normalize field names inside the formula
         def normalize_formula(formula, fields):
             for field in fields:
-                formula = re.sub(rf'\b{re.escape(field)}\b', field.replace(" ", "_"), formula)
+                safe_field = field.strip().replace(" ", "_")  # Ensure consistency
+                formula = re.sub(rf'\b{re.escape(field)}\b', safe_field, formula)
             return formula
 
         calculation_method = normalize_formula(calculation_method, fields_data)
@@ -952,7 +954,6 @@ def create_company_with_fields(request):
         return Response({"error": "A company with this name already exists."}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-
 @api_view(['POST'])
 def calculate_zakat(request):
     """
@@ -985,7 +986,7 @@ def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
     fields = CompanyField.objects.filter(company_type=company_type)
 
     # ✅ Normalize user input field names
-    user_inputs = {key.replace(" ", "_"): value for key, value in user_inputs.items()}
+    user_inputs = {key.strip().replace(" ", "_"): value for key, value in user_inputs.items()}
 
     required_fields = {field.name for field in fields}
     missing_fields = required_fields - user_inputs.keys()
@@ -996,6 +997,7 @@ def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
     formula = company_type.calculation_method
 
     try:
+        # ✅ Normalize formula to ensure all fields match
         formula_symbols = {name: symbols(name) for name in required_fields}
         expression = sympify(formula, locals=formula_symbols)
         zakat_base = expression.evalf(subs=user_inputs)
