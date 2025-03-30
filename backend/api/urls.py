@@ -2,8 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import (
-    InputFieldListCreate, BulkInputFieldUpdate, BulkInputFieldDelete,
-    SaveZakatHistoryView, AdminDeleteUserView, ManageZakatHistoryAPIView,
+    InputFieldListCreate, BulkInputFieldUpdate, BulkInputFieldDelete,AdminDeleteUserView,
     AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,
     send_contact_email, RequestPasswordResetView, ResetPasswordView,
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
@@ -15,9 +14,8 @@ urlpatterns = [
     path("inputfields/", InputFieldListCreate.as_view(), name="inputfield-list-create"),
     path("inputfields/bulk-update/", BulkInputFieldUpdate.as_view(), name="inputfield-bulk-update"),
     path("inputfields/bulk-delete/", BulkInputFieldDelete.as_view(), name="inputfield-bulk-delete"),
-    path("save-zakat-history/", SaveZakatHistoryView.as_view(), name="save_zakat_history"),
     path('admin/delete-user/<int:user_id>/', AdminDeleteUserView.as_view(), name='admin-delete-user'),
-    path('admin/manage-zakat/', ManageZakatHistoryAPIView.as_view(), name='manage-zakat'),
+    path("save-zakat-history/", views.zakat_history),
     path("waqf-projects/", WaqfProjectListCreateView.as_view(), name="waqfproject-list-create"),
     path("waqf-projects/<int:pk>/", WaqfProjectDetailView.as_view(), name="waqfproject-detail"),
     path("send-email/", send_contact_email, name="send_email"),

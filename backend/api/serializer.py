@@ -223,3 +223,10 @@ class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
         rep = super().to_representation(instance)
         rep['fields'] = rep.pop('custom_fields')
         return rep
+    
+from .models import ZakatHistory  # ✅ Updated model import
+
+class ZakatHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZakatHistory  # ✅ Updated model reference
+        fields = '__all__'
