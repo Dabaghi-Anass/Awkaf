@@ -914,26 +914,43 @@ def normalize_formula(formula, fields):
         formula = re.sub(rf'\b{re.escape(field)}\b', safe_field, formula)
     
     return formula
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+import json
+import re
+
+@api_view(['POST'])
 def create_company_with_fields(request):
     """
     Create a company type and its fields in a single request while avoiding duplicates.
     """
-    data = request.data
-    name = data.get('name')
-    calculation_method = data.get('calculation_method')
-    fields_data = data.get('fields', [])
-
-    if not name or not calculation_method:
-        return Response({"error": "Name and calculation method are required"}, status=400)
-
-    if not fields_data:
-        return Response({"error": "At least one field is required"}, status=400)
-
     try:
-        # ✅ Normalize all field names (replace spaces with underscores)
+        # ✅ Ensure request data is correctly parsed
+        if hasattr(request, 'data'):  # DRF request
+            data = request.data
+        else:  # Fallback for raw JSON request
+            data = json.loads(request.body.decode('utf-8'))
+
+        name = data.get('name')
+        calculation_method = data.get('calculation_method')
+        fields_data = data.get('fields', [])
+
+        if not name or not calculation_method:
+            return Response({"error": "Name and calculation method are required"}, status=400)
+
+        if not fields_data:
+            return Response({"error": "At least one field is required"}, status=400)
+
+        # ✅ Normalize field names
         normalized_fields = {field.strip().replace(" ", "_") for field in fields_data}
 
         # ✅ Normalize field names inside the formula
+        def normalize_formula(formula, fields):
+            for field in sorted(fields, key=len, reverse=True):
+                safe_field = field.strip().replace(" ", "_")
+                formula = re.sub(rf'\b{re.escape(field)}\b', safe_field, formula)
+            return formula
+
         calculation_method = normalize_formula(calculation_method, fields_data)
 
         # ✅ Check if company type already exists
@@ -945,9 +962,8 @@ def create_company_with_fields(request):
         if not created:
             return Response({"error": "A company with this name already exists."}, status=400)
 
-        # ✅ Check for existing fields and avoid duplicates
+        # ✅ Check for existing fields
         existing_fields = {field.name for field in company_type.fields.all()}
-        
         new_fields = [CompanyField(company_type=company_type, name=field_name)
                       for field_name in normalized_fields if field_name not in existing_fields]
 
@@ -956,8 +972,8 @@ def create_company_with_fields(request):
 
         return Response({"message": "Company created successfully!"}, status=201)
 
-    except IntegrityError:
-        return Response({"error": "A company with this name already exists."}, status=400)
+    except json.JSONDecodeError:
+        return Response({"error": "Invalid JSON format"}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
 
