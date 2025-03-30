@@ -4,9 +4,9 @@ export const ZakatContext = createContext();
 
 export const ZakatProvider = ({ children }) => {
     
-    const initialData = { zakatAmount: 0, nissab: 800000 ,  };
+    
 
-const [zakatFormInfos, setZakatFormInfos] = useState(initialData);
+const [zakatFormInfos, setZakatFormInfos] = useState();
 const [isUnnaire, setIsUnnaire] = useState(false);
 const [showResult, setShowResult] = useState(false);
 const [isEditing, setIsEditing] = useState(false);
@@ -16,8 +16,7 @@ const [selectedCompany, setSelectedCompany] = useState(null);
 // Update form fields dynamically when company type changes
 useEffect(() => {
     if (selectedCompany) {
-        setZakatFormInfos(prevData => ({
-            ...initialData,  // Reset to initial data first
+        setZakatFormInfos(prevData => ({  // Reset to initial data first
             ...Object.fromEntries(selectedCompany.fields.map(field => [field, ""])) // Add dynamic fields
         }));
     }
