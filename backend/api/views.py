@@ -902,6 +902,18 @@ from .models import CompanyType, CompanyField
 
 @api_view(['POST'])
 @api_view(['POST'])
+@api_view(['POST'])
+
+def normalize_formula(formula, fields):
+    """
+    Normalize field names inside the formula by replacing spaces with underscores, 
+    even if they are inside parentheses.
+    """
+    for field in sorted(fields, key=len, reverse=True):  # Sort by length to avoid partial replacements
+        safe_field = field.strip().replace(" ", "_")  # Ensure spaces are replaced
+        formula = re.sub(rf'\b{re.escape(field)}\b', safe_field, formula)
+    
+    return formula
 def create_company_with_fields(request):
     """
     Create a company type and its fields in a single request while avoiding duplicates.
@@ -922,12 +934,6 @@ def create_company_with_fields(request):
         normalized_fields = {field.strip().replace(" ", "_") for field in fields_data}
 
         # ✅ Normalize field names inside the formula
-        def normalize_formula(formula, fields):
-            for field in fields:
-                safe_field = field.strip().replace(" ", "_")  # Ensure consistency
-                formula = re.sub(rf'\b{re.escape(field)}\b', safe_field, formula)
-            return formula
-
         calculation_method = normalize_formula(calculation_method, fields_data)
 
         # ✅ Check if company type already exists
@@ -954,6 +960,7 @@ def create_company_with_fields(request):
         return Response({"error": "A company with this name already exists."}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+
 @api_view(['POST'])
 def calculate_zakat(request):
     """
