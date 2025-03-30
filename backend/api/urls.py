@@ -39,6 +39,8 @@ urlpatterns = [
     path('update-company/<int:company_type_id>/', update_company_with_fields, name="update_company"),
     path('company-type/<int:company_type_id>/fields/', views.get_company_type_fields),
     path('company-types/', views.list_all_company_types),
+    path('get-zakat-history/', views.get_zakat_history),  # GET
+    path('get-zakat-history/<int:id>/', views.get_zakat_history_by_id)
     
 ]
 

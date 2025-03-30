@@ -1147,3 +1147,21 @@ def zakat_history(request):
 
     serializer = ZakatHistorySerializer(zakat_record)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def get_zakat_history(request):
+    """
+    Retrieve all Zakat history records.
+    """
+    zakat_history = ZakatHistory.objects.all().order_by('-calculation_date')  # Sort by latest date
+    serializer = ZakatHistorySerializer(zakat_history, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_zakat_history_by_id(request, id):
+    """
+    Retrieve a single zakat history record by its ID.
+    """
+    zakat_record = get_object_or_404(ZakatHistory, id=id)
+    serializer = ZakatHistorySerializer(zakat_record)
+    return Response(serializer.data, status=status.HTTP_200_OK)
