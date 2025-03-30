@@ -900,24 +900,16 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import CompanyType, CompanyField
 
-@api_view(['POST'])
-@api_view(['POST'])
-@api_view(['POST'])
 
-def normalize_formula(formula, fields):
-    """
-    Normalize field names inside the formula by replacing spaces with underscores, 
-    even if they are inside parentheses.
-    """
-    for field in sorted(fields, key=len, reverse=True):  # Sort by length to avoid partial replacements
-        safe_field = field.strip().replace(" ", "_")  # Ensure spaces are replaced
-        formula = re.sub(rf'\b{re.escape(field)}\b', safe_field, formula)
-    
-    return formula
+ 
+
+
+import re
+import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import json
-import re
+from .models import CompanyType, CompanyField
+from django.db.utils import IntegrityError
 
 @api_view(['POST'])
 def create_company_with_fields(request):
@@ -925,11 +917,8 @@ def create_company_with_fields(request):
     Create a company type and its fields in a single request while avoiding duplicates.
     """
     try:
-        # ✅ Ensure request data is correctly parsed
-        if hasattr(request, 'data'):  # DRF request
-            data = request.data
-        else:  # Fallback for raw JSON request
-            data = json.loads(request.body.decode('utf-8'))
+        # ✅ Handle request data correctly
+        data = request.data if hasattr(request, 'data') else json.loads(request.body.decode('utf-8'))
 
         name = data.get('name')
         calculation_method = data.get('calculation_method')
@@ -941,14 +930,15 @@ def create_company_with_fields(request):
         if not fields_data:
             return Response({"error": "At least one field is required"}, status=400)
 
-        # ✅ Normalize field names
-        normalized_fields = {field.strip().replace(" ", "_") for field in fields_data}
+        # ✅ Normalize field names (remove extra spaces, replace spaces with underscores)
+        normalized_fields = {re.sub(r'\s+', '_', field.strip()) for field in fields_data}
 
-        # ✅ Normalize field names inside the formula
+        # ✅ Normalize field names inside the formula (handle spaces within parentheses)
         def normalize_formula(formula, fields):
-            for field in sorted(fields, key=len, reverse=True):
-                safe_field = field.strip().replace(" ", "_")
-                formula = re.sub(rf'\b{re.escape(field)}\b', safe_field, formula)
+            for field in sorted(fields, key=len, reverse=True):  # Sort by length to avoid partial matches
+                safe_field = re.sub(r'\s+', '_', field.strip())  # Replace spaces with underscores
+                pattern = rf'\b{re.escape(field.strip())}\b'  # Match entire words only
+                formula = re.sub(pattern, safe_field, formula)
             return formula
 
         calculation_method = normalize_formula(calculation_method, fields_data)
@@ -962,7 +952,7 @@ def create_company_with_fields(request):
         if not created:
             return Response({"error": "A company with this name already exists."}, status=400)
 
-        # ✅ Check for existing fields
+        # ✅ Check for existing fields and avoid duplicates
         existing_fields = {field.name for field in company_type.fields.all()}
         new_fields = [CompanyField(company_type=company_type, name=field_name)
                       for field_name in normalized_fields if field_name not in existing_fields]
@@ -974,6 +964,8 @@ def create_company_with_fields(request):
 
     except json.JSONDecodeError:
         return Response({"error": "Invalid JSON format"}, status=400)
+    except IntegrityError:
+        return Response({"error": "A company with this name already exists."}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
 
