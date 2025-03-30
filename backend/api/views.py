@@ -423,56 +423,7 @@ class BulkInputFieldDelete(APIView):
     
 from django.db import connection
 
-class SaveZakatHistoryView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get_dynamic_columns(self):
-        """Fetch all column names in api_zakathistory except default ones."""
-        with connection.cursor() as cursor:
-            cursor.execute("SHOW COLUMNS FROM api_zakathistory;")
-            columns = [row[0] for row in cursor.fetchall()]
-        
-        # Exclude predefined columns
-        default_columns = {
-            "id", "user_id", "liquidites", "investissements", "bien_location", 
-            "creances_clients", "bien_usage_interne", "fonds_non_dispo", 
-            "stocks_invendable", "stocks", "created_at", "nisab", "zakat_amount"
-        }
-        return [col for col in columns if col not in default_columns]
-
-    def post(self, request):
-        data = request.data.copy()
-        data["user_id"] = request.user.id  # ✅ Assign authenticated user
-
-        # Ensure valid date format
-        try:
-            data["created_at"] = datetime.strptime(data["created_at"], "%Y-%m-%d").date()
-        except ValueError:
-            return Response({"created_at": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # ✅ Get dynamically added columns
-        dynamic_columns = self.get_dynamic_columns()
-
-        # ✅ Ensure only existing columns are inserted
-        allowed_columns = set(dynamic_columns + [
-            "user_id", "liquidites", "investissements", "bien_location", 
-            "creances_clients", "bien_usage_interne", "fonds_non_dispo", 
-            "stocks_invendable", "stocks", "created_at", "nisab", "zakat_amount"
-        ])
-        filtered_data = {k: v for k, v in data.items() if k in allowed_columns}
-
-        # ✅ Construct the SQL query dynamically
-        columns = ", ".join(filtered_data.keys())
-        values = ", ".join(["%s"] * len(filtered_data))
-        sql = f"INSERT INTO api_zakathistory ({columns}) VALUES ({values})"
-
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql, list(filtered_data.values()))
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return Response({"message": "Zakat history saved successfully"}, status=status.HTTP_201_CREATED)
 class AdminDeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -491,88 +442,7 @@ class AdminDeleteUserView(APIView):
         cache.delete("non_staff_users_list")
 
         return Response({"message": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-class ManageZakatHistoryAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        """Add a new column to the api_zakathistory table."""
-        if not request.user.is_staff:
-            raise PermissionDenied("Only admins can manage tables.")
-
-        column_name = request.data.get("column_name")
-        column_type = request.data.get("column_type", "VARCHAR(255)")
-
-        if not column_name:
-            return Response({"error": "Missing column_name"}, status=status.HTTP_400_BAD_REQUEST)
-
-        query = f"ALTER TABLE api_zakathistory ADD COLUMN {column_name} {column_type};"
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-
-        return Response({"message": f"Column '{column_name}' added to api_zakathistory"}, status=status.HTTP_200_OK)
-
-    def put(self, request):
-        """Rename or modify an existing column in api_zakathistory."""
-        if not request.user.is_staff:
-            raise PermissionDenied("Only admins can manage tables.")
-
-        old_column = request.data.get("old_column")
-        new_column = request.data.get("new_column")
-        new_type = request.data.get("new_type", "VARCHAR(255)")
-
-        if not old_column or not new_column:
-            return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
-
-        query = f"ALTER TABLE api_zakathistory CHANGE {old_column} {new_column} {new_type};"
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-
-        return Response({"message": f"Column '{old_column}' renamed to '{new_column}' in api_zakathistory"}, status=status.HTTP_200_OK)
-
-    def patch(self, request):
-        """Rename a column or change its type in api_zakathistory."""
-        if not request.user.is_staff:
-            raise PermissionDenied("Only admins can manage tables.")
-
-        old_column = request.data.get("old_column")
-        new_column = request.data.get("new_column")
-        new_type = request.data.get("new_type")
-
-        if not old_column:
-            return Response({"error": "Missing old_column"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if new_column and new_type:
-            query = f"ALTER TABLE api_zakathistory CHANGE {old_column} {new_column} {new_type};"
-            message = f"Column {old_column} renamed to {new_column} and type changed to {new_type}."
-        elif new_column:
-            query = f"ALTER TABLE api_zakathistory CHANGE {old_column} {new_column} VARCHAR(255);"
-            message = f"Column {old_column} renamed to {new_column}."
-        elif new_type:
-            query = f"ALTER TABLE api_zakathistory MODIFY {old_column} {new_type};"
-            message = f"Column {old_column} type changed to {new_type}."
-        else:
-            return Response({"error": "Missing new_column or new_type"}, status=status.HTTP_400_BAD_REQUEST)
-
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-
-        return Response({"message": message}, status=status.HTTP_200_OK)
-
-    def delete(self, request):
-        """Delete a column from the api_zakathistory table."""
-        if not request.user.is_staff:
-            raise PermissionDenied("Only admins can manage tables.")
-
-        column_name = request.data.get("column_name")
-
-        if not column_name:
-            return Response({"error": "Missing column_name"}, status=status.HTTP_400_BAD_REQUEST)
-
-        query = f"ALTER TABLE api_zakathistory DROP COLUMN {column_name};"
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-
-        return Response({"message": f"Column '{column_name}' deleted from api_zakathistory"}, status=status.HTTP_200_OK)
     
 class WaqfProjectListCreateView(generics.ListCreateAPIView):
     queryset = WaqfProject.objects.all().order_by('-created_at')  # Order by newest first
@@ -1020,6 +890,16 @@ from rest_framework.decorators import api_view
 from .models import CompanyType, CompanyField
 from .serializer import CompanyTypeSerializer, CompanyFieldSerializer
 
+import json
+import re
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.db.utils import IntegrityError
+from sympy import symbols, sympify
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import CompanyType, CompanyField
+
 @api_view(['POST'])
 def create_company_with_fields(request):
     """
@@ -1037,7 +917,18 @@ def create_company_with_fields(request):
         return Response({"error": "At least one field is required"}, status=400)
 
     try:
-        # Check if company type already exists
+        # ✅ Normalize field names (replace spaces with underscores)
+        normalized_fields = {field_name.strip().replace(" ", "_") for field_name in fields_data}
+
+        # ✅ Normalize field names in calculation_method
+        def normalize_formula(formula, fields):
+            for field in fields:
+                formula = re.sub(rf'\b{re.escape(field)}\b', field.replace(" ", "_"), formula)
+            return formula
+
+        calculation_method = normalize_formula(calculation_method, fields_data)
+
+        # ✅ Check if company type already exists
         company_type, created = CompanyType.objects.get_or_create(
             name=name,
             defaults={"calculation_method": calculation_method}
@@ -1046,49 +937,40 @@ def create_company_with_fields(request):
         if not created:
             return Response({"error": "A company with this name already exists."}, status=400)
 
-        # ✅ Correct way to access related fields
-        existing_fields = {field.name for field in company_type.fields.all()}  # Fix here!
+        # ✅ Check for existing fields and avoid duplicates
+        existing_fields = {field.name for field in company_type.fields.all()}
         
         new_fields = [CompanyField(company_type=company_type, name=field_name)
-                      for field_name in fields_data if field_name not in existing_fields]
+                      for field_name in normalized_fields if field_name not in existing_fields]
 
         if new_fields:
             CompanyField.objects.bulk_create(new_fields)  # Optimized bulk insert
 
-        # Serialize and return the response
-        company_data = CompanyTypeSerializer(company_type).data
-        return Response(company_data, status=201)
+        return Response({"message": "Company created successfully!"}, status=201)
 
     except IntegrityError:
         return Response({"error": "A company with this name already exists."}, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-import json
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from sympy import symbols, sympify
-from .models import CompanyType, CompanyField
 
+@api_view(['POST'])
 def calculate_zakat(request):
     """
     Calculate Zakat based on company type, user inputs, a multiplier 'moon', and a threshold 'nissab'.
     """
     try:
-        # ✅ Parse JSON body correctly
         data = json.loads(request.body.decode('utf-8'))
 
         company_type_id = data.get('company_type_id')
         user_inputs = data.get('user_inputs', {})
-        moon = float(data.get('moon', 1))  # ✅ Convert to float
-        nissab = float(data.get('nissab', 0))  # ✅ Convert to float
+        moon = float(data.get('moon', 1))
+        nissab = float(data.get('nissab', 0))
 
-        # ✅ Check if inputs are valid
         if not company_type_id or not isinstance(user_inputs, dict):
             return JsonResponse({'error': 'Invalid data'}, status=400)
 
-        # ✅ Perform calculation
-        zakat_bottle, zakat_result = calculate_zakat_logic(company_type_id, user_inputs, moon, nissab)
-        return JsonResponse({"zakat_bottle": zakat_bottle, "zakat_result": zakat_result}, status=200)
+        zakat_base, zakat_result = calculate_zakat_logic(company_type_id, user_inputs, moon, nissab)
+        return JsonResponse({"zakat_base": zakat_base, "zakat_result": zakat_result}, status=200)
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
@@ -1102,6 +984,9 @@ def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
     company_type = get_object_or_404(CompanyType, id=company_type_id)
     fields = CompanyField.objects.filter(company_type=company_type)
 
+    # ✅ Normalize user input field names
+    user_inputs = {key.replace(" ", "_"): value for key, value in user_inputs.items()}
+
     required_fields = {field.name for field in fields}
     missing_fields = required_fields - user_inputs.keys()
 
@@ -1113,14 +998,14 @@ def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
     try:
         formula_symbols = {name: symbols(name) for name in required_fields}
         expression = sympify(formula, locals=formula_symbols)
-        zakat_bottle = expression.evalf(subs=user_inputs)  # ✅ Calculate total amount
+        zakat_base = expression.evalf(subs=user_inputs)
 
-        zakat_bottle = round(float(zakat_bottle), 2)  # ✅ Convert to float and round
+        zakat_base = round(float(zakat_base), 2)
 
         # ✅ Calculate Zakat Result
-        zakat_result = zakat_bottle * moon if zakat_bottle > nissab else 0
+        zakat_result = zakat_base * moon if zakat_base > nissab else 0
 
-        return zakat_bottle, zakat_result
+        return zakat_base, zakat_result
 
     except Exception as e:
         raise ValueError(f"Error evaluating formula: {e}")
@@ -1215,3 +1100,33 @@ def list_all_company_types(request):
     all_companies = CompanyType.objects.all()
     serializer = CompanyTypeSimpleSerializer(all_companies, many=True)
     return Response(serializer.data)
+
+from .models import ZakatHistory
+from .serializer import ZakatHistorySerializer
+
+@api_view(['POST'])
+def zakat_history(request):
+    """
+    Save zakat calculations in the database with only the date (YYYY-MM-DD).
+    """
+    data = request.data
+
+    zakat_base = data.get('zakat_base')
+    zakat_result = data.get('zakat_result')
+    month_type = data.get('month_type')
+    nissab = data.get('nissab')
+
+    if zakat_base is None or zakat_result is None or month_type is None or nissab is None:
+        return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # ✅ Save in database with only the date (YYYY-MM-DD)
+    zakat_record = ZakatHistory.objects.create(
+        zakat_base=zakat_base,
+        zakat_result=zakat_result,
+        month_type=month_type,
+        calculation_date=now().date(),  # ✅ Stores only YYYY-MM-DD
+        nissab=nissab
+    )
+
+    serializer = ZakatHistorySerializer(zakat_record)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)

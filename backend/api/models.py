@@ -38,31 +38,6 @@ class InputField(models.Model):
 
     def __str__(self):
         return self.label
-class ZakatHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    liquidites = models.FloatField()
-    stocks = models.FloatField()
-    investissements = models.FloatField()
-    bien_location = models.FloatField()
-    creances_clients = models.FloatField()
-    bien_usage_interne = models.FloatField()
-    fonds_non_dispo = models.FloatField()
-    stocks_invendable = models.FloatField()
-    zakat_amount = models.FloatField(null=True, blank=True, default=None)  # ✅ Allows NULL values
-    nisab = models.FloatField(null=True, blank=True, default=None)  # Allow NULL values
-    created_at = models.DateTimeField()
-
-    def __str__(self):
-        return f"ZakatHistory({self.user.username} - {self.created_at})"
-
-from django.db import models
-from django.utils.timezone import now
-
-from django.db import models
-from django.utils.timezone import now
-
-from django.db import models
-from django.utils.timezone import now
 
 class WaqfProject(models.Model):
     name = models.CharField(max_length=255, default="Unnamed Project")  
@@ -94,3 +69,13 @@ class CompanyType(models.Model):
 class CompanyField(models.Model):
     company_type = models.ForeignKey(CompanyType, on_delete=models.CASCADE, related_name="fields")
     name = models.CharField(max_length=255)
+    
+class ZakatHistory(models.Model):
+    zakat_base = models.FloatField(default=0.0)  # ✅ Default to 0.0
+    zakat_result = models.FloatField(default=0.0)  # ✅ Default to 0.0
+    month_type = models.CharField(max_length=50, default="Unknown")  # ✅ Default to "Unknown"
+    calculation_date = models.DateField(default=now)  # ✅ Default to today's date
+    nissab = models.FloatField(default=0.0)  # ✅ Default to 0.0
+
+    def __str__(self):
+        return f"ZakatHistory({self.month_type} - {self.calculation_date})"
