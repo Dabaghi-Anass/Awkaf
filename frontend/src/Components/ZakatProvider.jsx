@@ -32,8 +32,12 @@ useEffect(() => {
         }
 
         const zakatData = {
-            ...zakatFormInfos,
-            created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+            zakat_result:zakatFormInfos.zakatAmount,
+            zakat_base:zakatFormInfos.totalAmount,
+            calculation_date: zakatFormInfos.calculationDate,
+            month_type: "Miladi",
+            nissab:zakatFormInfos.nissab 
+           
         };
 
         try {
@@ -113,7 +117,7 @@ useEffect(() => {
             setZakatFormInfos(prevState => ({
                 ...prevState,
                 zakatAmount: data.zakat_result,  // Received from backend
-                totalAmount: data.zakat_bottle,  // New field from backend
+                totalAmount: data.zakat_base,  // New field from backend
                 calculationDate: calculationDate,
                  // Add the date of calculation
             }));
