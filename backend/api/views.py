@@ -912,6 +912,23 @@ from .models import CompanyType, CompanyField
 from django.db.utils import IntegrityError
 
 @api_view(['POST'])
+def normalize_formula(formula, fields):
+    """
+    Normalize field names in the formula by replacing spaces with underscores.
+    This ensures that all variable names are consistently formatted.
+    """
+    for field in sorted(fields, key=len, reverse=True):  # Sort by length to avoid partial matches
+        normalized_field = re.sub(r'\s+', '_', field.strip())  # Replace spaces with underscores
+        pattern = rf'(?<!\w){re.escape(field.strip())}(?!\w)'  # Match full word boundaries
+        formula = re.sub(pattern, normalized_field, formula)
+
+    # ✅ Handle spaces within parentheses explicitly
+    formula = re.sub(r'\(\s+', '(', formula)  # Remove leading spaces inside parentheses
+    formula = re.sub(r'\s+\)', ')', formula)  # Remove trailing spaces inside parentheses
+
+    return formula
+
+@api_view(['POST'])
 def create_company_with_fields(request):
     """
     Create a company type and its fields in a single request while avoiding duplicates.
@@ -933,14 +950,7 @@ def create_company_with_fields(request):
         # ✅ Normalize field names (remove extra spaces, replace spaces with underscores)
         normalized_fields = {re.sub(r'\s+', '_', field.strip()) for field in fields_data}
 
-        # ✅ Normalize field names inside the formula (handle spaces within parentheses)
-        def normalize_formula(formula, fields):
-            for field in sorted(fields, key=len, reverse=True):  # Sort by length to avoid partial matches
-                safe_field = re.sub(r'\s+', '_', field.strip())  # Replace spaces with underscores
-                pattern = rf'\b{re.escape(field.strip())}\b'  # Match entire words only
-                formula = re.sub(pattern, safe_field, formula)
-            return formula
-
+        # ✅ Normalize field names inside the formula
         calculation_method = normalize_formula(calculation_method, fields_data)
 
         # ✅ Check if company type already exists
@@ -1001,7 +1011,7 @@ def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
     fields = CompanyField.objects.filter(company_type=company_type)
 
     # ✅ Normalize user input field names
-    user_inputs = {key.strip().replace(" ", "_"): value for key, value in user_inputs.items()}
+    user_inputs = {re.sub(r'\s+', '_', key.strip()): value for key, value in user_inputs.items()}
 
     required_fields = {field.name for field in fields}
     missing_fields = required_fields - user_inputs.keys()
@@ -1147,3 +1157,21 @@ def zakat_history(request):
 
     serializer = ZakatHistorySerializer(zakat_record)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def get_zakat_history(request):
+    """
+    Retrieve all Zakat history records.
+    """
+    zakat_history = ZakatHistory.objects.all().order_by('-calculation_date')  # Sort by latest date
+    serializer = ZakatHistorySerializer(zakat_history, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_zakat_history_by_id(request, id):
+    """
+    Retrieve a single zakat history record by its ID.
+    """
+    zakat_record = get_object_or_404(ZakatHistory, id=id)
+    serializer = ZakatHistorySerializer(zakat_record)
+    return Response(serializer.data, status=status.HTTP_200_OK)
