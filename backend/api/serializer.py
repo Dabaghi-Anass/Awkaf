@@ -210,21 +210,24 @@ class CompanyTypeSerializer(serializers.ModelSerializer):
         rep['fields'] = rep.pop('output_fields', [])
         return rep
 
+from rest_framework import serializers
+from .models import CompanyType
+
 class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
-    fields = serializers.SerializerMethodField()
+    custom_fields = serializers.SerializerMethodField()
 
     class Meta:
         model = CompanyType
-        fields = ['id', 'name', 'fields']
+        fields = ['id', 'name', 'custom_fields']
 
-    def get_fields(self, obj):
+    def get_custom_fields(self, obj):
         return [
             {
                 "name": field.name,
                 "label": field.label
             } for field in obj.fields.all()
         ]
-    
+
 from .models import ZakatHistory  # ✅ Updated model import
 
 class ZakatHistorySerializer(serializers.ModelSerializer):
