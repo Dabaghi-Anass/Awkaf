@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { ZakatContext } from "./ZakatProvider";
 export default function ZakatDetails({ zakatFormInfos, onClose }) {
-   const { isUnnaire } = useContext(ZakatContext);
+   const { isUnnaire ,nissab} = useContext(ZakatContext);
   const formatNumber = (num) => (!num ? "0" : num.toLocaleString("fr-FR"));
 
   const handlePrint = () => {
@@ -18,7 +18,7 @@ export default function ZakatDetails({ zakatFormInfos, onClose }) {
       <div className="space-y-3 text-lg text-gray-800">
         <div className="flex justify-between">
           <span>قيمة النصاب:</span>
-          <span className="font-bold">{formatNumber(zakatFormInfos.nissab)} د.ج</span>
+          <span className="font-bold">{formatNumber(nissab)} د.ج</span>
         </div>
 
         <div className="flex justify-between">

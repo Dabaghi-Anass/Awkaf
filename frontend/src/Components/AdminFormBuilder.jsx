@@ -38,6 +38,7 @@ const AdminFormBuilder = () => {
       calculation_method: calculationMethod,
       fields: cleanedFields, // Now correctly formatted
     };
+    console.log("Company Data:", companyData);
   
     try {
       const token = localStorage.getItem("accessToken");
@@ -60,8 +61,10 @@ const AdminFormBuilder = () => {
   
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("Backend error response:", errorData); // Log backend error
         throw new Error(errorData.error || "Failed to create company type");
-      }
+    }
+    
   
       alert("Company Type Created Successfully!");
       setCompanyName("");

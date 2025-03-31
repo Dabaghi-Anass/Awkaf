@@ -41,14 +41,16 @@ export const CalForm = () => {
     useEffect(() => {
         fetchCompanyTypes();
         
+        
       }, []);
+      companyTypes.map((company) => console.log("Company:", company));
      
     
     
       useEffect(() => {
         if (selectedCompany) {
             console.log("Using existing fields for company:", selectedCompany);
-            setFields(selectedCompany.fields); // Directly set fields from selectedCompany
+            setFields(selectedCompany.custom_fields); // Directly set fields from selectedCompany
         } else {
             setFields([]); // Reset fields when no company is selected
         }
@@ -98,14 +100,14 @@ export const CalForm = () => {
                         {/* Dynamic Input Fields */}
                         {fields.map((field, index) => (
                             <div className="bg-white flex flex-col gap-1 mb-5" key={`${selectedCompany.id}-${index}`}>
-                                <label className="text-gray-700 text-[1em] font-semibold">{field}</label>
+                                <label className="text-gray-700 text-[1em] font-semibold">{field.label}</label>
                                 <div className="relative w-full">
                                     <input
                                         className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right"
                                         type="text"
-                                        name={field}  // Use the field name directly
+                                        name={field.name}  // Use the field name directly
                                         min={0}
-                                        value={formatNumber(zakatFormInfos[field] || "")}  // Prevent undefined errors
+                                        value={formatNumber(zakatFormInfos[field.name] || "")}  // Prevent undefined errors
                                         onChange={handleChange}
                                         placeholder="00,000"
                                     />
