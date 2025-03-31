@@ -29,6 +29,7 @@ import { ProtectedRoute } from './ProtectedRoutes.jsx';
 import { Contribution } from './pages/Contribution.jsx';
 import { AddUser } from './Components/admin_dashboard/AddUser.jsx';
 import AdminFormBuilder from './Components/AdminFormBuilder.jsx';
+import UserHistory from './pages/UserHistory.jsx';
 
 
 const router = createBrowserRouter([
@@ -70,7 +71,7 @@ const router = createBrowserRouter([
   },
   {
     path: "Form/",
-    element: <TestForm />,
+    element: <UserHistory />,
   },
   {
     path: "DashboardAdmin/",
