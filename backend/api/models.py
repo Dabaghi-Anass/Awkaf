@@ -72,11 +72,18 @@ class CompanyField(models.Model):
     label = models.CharField(max_length=255)  # Display label, always provided in view
     
 class ZakatHistory(models.Model):
-    zakat_base = models.FloatField(default=0.0)  # ✅ Default to 0.0
-    zakat_result = models.FloatField(default=0.0)  # ✅ Default to 0.0
-    month_type = models.CharField(max_length=50, default="Unknown")  # ✅ Default to "Unknown"
-    calculation_date = models.DateField(default=now)  # ✅ Default to today's date
-    nissab = models.FloatField(default=0.0)  # ✅ Default to 0.0
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='zakat_histories',
+        null=True,  # facultatif
+        blank=True
+    )
+    zakat_base = models.FloatField(default=0.0)
+    zakat_result = models.FloatField(default=0.0)
+    month_type = models.CharField(max_length=50, default="Unknown")
+    calculation_date = models.DateField(default=now)
+    nissab = models.FloatField(default=0.0)
 
     def __str__(self):
-        return f"ZakatHistory({self.month_type} - {self.calculation_date})"
+        return f"ZakatHistory({self.user.username} - {self.month_type} - {self.calculation_date})"

@@ -1067,9 +1067,10 @@ from .models import ZakatHistory
 from .serializer import ZakatHistorySerializer
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def zakat_history(request):
     """
-    Save zakat calculations in the database with only the date (YYYY-MM-DD).
+    Save zakat calculations in the database with authenticated user.
     """
     data = request.data
 
@@ -1081,32 +1082,37 @@ def zakat_history(request):
     if zakat_base is None or zakat_result is None or month_type is None or nissab is None:
         return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # ✅ Save in database with only the date (YYYY-MM-DD)
     zakat_record = ZakatHistory.objects.create(
+        user=request.user,  # ✅ Enregistre l'utilisateur connecté
         zakat_base=zakat_base,
         zakat_result=zakat_result,
         month_type=month_type,
-        calculation_date=now().date(),  # ✅ Stores only YYYY-MM-DD
+        calculation_date=now().date(),
         nissab=nissab
     )
 
     serializer = ZakatHistorySerializer(zakat_record)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 @api_view(['GET'])
 def get_zakat_history(request):
     """
-    Retrieve all Zakat history records.
+    Retrieve all Zakat history records (with user info).
     """
-    zakat_history = ZakatHistory.objects.all().order_by('-calculation_date')  # Sort by latest date
+    zakat_history = ZakatHistory.objects.all().order_by('-calculation_date')
     serializer = ZakatHistorySerializer(zakat_history, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+
 @api_view(['GET'])
-def get_zakat_history_by_id(request, id):
+def get_zakat_history_by_user(request, user_id):
     """
-    Retrieve a single zakat history record by its ID.
+    Retrieve all Zakat history records for a specific user ID.
     """
-    zakat_record = get_object_or_404(ZakatHistory, id=id)
-    serializer = ZakatHistorySerializer(zakat_record)
+    zakat_history = ZakatHistory.objects.filter(user__id=user_id).order_by('-calculation_date')
+    
+    if not zakat_history.exists():
+        return Response({"message": "No zakat history found for this user."}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ZakatHistorySerializer(zakat_history, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

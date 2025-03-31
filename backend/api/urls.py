@@ -39,7 +39,7 @@ urlpatterns = [
     path('company-type/<int:company_type_id>/fields/', views.get_company_type_fields),
     path('company-types/', views.list_all_company_types),
     path('get-zakat-history/', views.get_zakat_history),  # GET
-    path('get-zakat-history/<int:id>/', views.get_zakat_history_by_id),
+    path('get-zakat-history/<int:user_id>/', views.get_zakat_history_by_user),
     path('create-company-with-fields/', CompanyTypeCreateView.as_view()), # ✅ avec .as_view() ici
     path('calculate-zakat/', ZakatCalculationView.as_view())
 

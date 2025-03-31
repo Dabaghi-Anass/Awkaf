@@ -231,6 +231,9 @@ class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
 from .models import ZakatHistory  # ✅ Updated model import
 
 class ZakatHistorySerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
-        model = ZakatHistory  # ✅ Updated model reference
-        fields = '__all__'
+        model = ZakatHistory
+        fields = ['id', 'user_id', 'user_name', 'zakat_base', 'zakat_result', 'month_type', 'calculation_date', 'nissab']
