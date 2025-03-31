@@ -63,12 +63,13 @@ class OTPCode(models.Model):
         return (now() - self.created_at) < timedelta(minutes=5)
     
 class CompanyType(models.Model):
-    name = models.CharField(max_length=255, unique=True) 
-    calculation_method = models.TextField()  # Stores the formula
+    name = models.CharField(max_length=255, unique=True)
+    calculation_method = models.TextField()
 
 class CompanyField(models.Model):
-    company_type = models.ForeignKey(CompanyType, on_delete=models.CASCADE, related_name="fields")
-    name = models.CharField(max_length=255)
+    company_type = models.ForeignKey(CompanyType, related_name='fields', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)  # Used in formulas
+    label = models.CharField(max_length=255)  # Display label, always provided in view
     
 class ZakatHistory(models.Model):
     zakat_base = models.FloatField(default=0.0)  # ✅ Default to 0.0

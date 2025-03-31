@@ -920,128 +920,57 @@ from sympy import sympify, symbols
 import json
 import re
 
-@api_view(['POST'])
-def create_company_with_fields(request):
-    """
-    Create a company type and its fields in a single request while avoiding duplicates.
-    """
-    try:
-        # DRF gère déjà le parsing JSON, pas besoin de request.body
+class CompanyTypeCreateView(APIView):
+    permission_classes = [IsAuthenticated]  # ⚠️ Facultatif si tu veux auth
+
+    def post(self, request, *args, **kwargs):
+        serializer = CompanyTypeSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            company_type = serializer.save()
+            return Response(CompanyTypeSerializer(company_type, context={'request': request}).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ZakatCalculationView(APIView):
+    def post(self, request, *args, **kwargs):
         data = request.data
-
-        name = data.get('name')
-        calculation_method = data.get('calculation_method')
-        fields_data = data.get('fields', [])
-
-        if not name or not calculation_method:
-            return Response({"error": "Name and calculation method are required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not isinstance(fields_data, list) or not fields_data:
-            return Response({"error": "At least one field is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Normalize field names
-        normalized_fields = {re.sub(r'\s+', '_', field.strip()) for field in fields_data}
-
-        # Normalize calculation formula
-        calculation_method = normalize_formula(calculation_method, fields_data)
-
-        # Check if company type already exists
-        from .models import CompanyType, CompanyField  # ✅ mets ton import ici ou en haut selon ton fichier
-
-        company_type, created = CompanyType.objects.get_or_create(
-            name=name,
-            defaults={"calculation_method": calculation_method}
-        )
-
-        if not created:
-            return Response({"error": "A company with this name already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Add new fields only
-        existing_fields = {field.name for field in company_type.fields.all()}
-        new_fields = [
-            CompanyField(company_type=company_type, name=field_name)
-            for field_name in normalized_fields if field_name not in existing_fields
-        ]
-        if new_fields:
-            CompanyField.objects.bulk_create(new_fields)
-
-        return Response({"message": "Company created successfully!"}, status=status.HTTP_201_CREATED)
-
-    except IntegrityError:
-        return Response({"error": "A company with this name already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-    except Exception as e:
-        # Ici aussi on utilise DRF Response
-        return Response({"error": f"Internal server error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def normalize_formula(formula, fields):
-    """
-    Replace original field names in formula with normalized versions.
-    """
-    for field in fields:
-        normalized = re.sub(r'\s+', '_', field.strip())
-        formula = formula.replace(field, normalized)
-    return formula
-
-
-@api_view(['POST'])
-def calculate_zakat(request):
-    """
-    Calculate Zakat based on company type, user inputs, a multiplier 'moon', and a threshold 'nissab'.
-    """
-    try:
-        data = request.data if isinstance(request.data, dict) else json.loads(request.body.decode('utf-8'))
-
         company_type_id = data.get('company_type_id')
         user_inputs = data.get('user_inputs', {})
         moon = float(data.get('moon', 1))
         nissab = float(data.get('nissab', 0))
 
         if not company_type_id or not isinstance(user_inputs, dict):
-            return JsonResponse({'error': 'Invalid data'}, status=400)
+            return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
 
-        zakat_base, zakat_result = calculate_zakat_logic(company_type_id, user_inputs, moon, nissab)
-        return JsonResponse({"zakat_base": zakat_base, "zakat_result": zakat_result}, status=200)
+        try:
+            zakat_base, zakat_result = self.calculate_zakat_logic(company_type_id, user_inputs, moon, nissab)
+            return Response({
+                "zakat_base": zakat_base,
+                "zakat_result": zakat_result
+            }, status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': f"Unexpected error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-    except ValueError as e:
-        return JsonResponse({'error': str(e)}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': f"Unexpected error: {e}"}, status=500)
+    def calculate_zakat_logic(self, company_type_id, user_inputs, moon, nissab):
+        company_type = get_object_or_404(CompanyType, id=company_type_id)
+        fields = CompanyField.objects.filter(company_type=company_type)
 
+        user_inputs = {re.sub(r'\s+', '_', k.strip()): v for k, v in user_inputs.items()}
+        required_fields = {field.name for field in fields}
+        name_to_label = {field.name: field.label or field.name for field in fields}
 
-def calculate_zakat_logic(company_type_id, user_inputs, moon, nissab):
-    """
-    Securely calculate Zakat based on company type, user inputs, 'moon' multiplier, and 'nissab' threshold.
-    """
-    company_type = get_object_or_404(CompanyType, id=company_type_id)
-    fields = CompanyField.objects.filter(company_type=company_type)
+        missing_fields = required_fields - user_inputs.keys()
+        if missing_fields:
+            missing_labels = [name_to_label[name] for name in missing_fields]
+            raise ValueError(f"Missing required fields: {', '.join(missing_labels)}")
 
-    # Normalize field names
-    user_inputs = {re.sub(r'\s+', '_', key.strip()): value for key, value in user_inputs.items()}
-    required_fields = {field.name for field in fields}
-    missing_fields = required_fields - user_inputs.keys()
-
-    if missing_fields:
-        raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
-
-    try:
         formula_symbols = {name: symbols(name) for name in required_fields}
         expression = sympify(company_type.calculation_method, locals=formula_symbols)
-        zakat_base = float(expression.evalf(subs=user_inputs))
-        zakat_base = round(zakat_base, 2)
-
+        zakat_base = round(float(expression.evalf(subs=user_inputs)), 2)
         zakat_result = zakat_base * moon if zakat_base > nissab else 0
+
         return zakat_base, zakat_result
-
-    except Exception as e:
-        raise ValueError(f"Error evaluating formula: {e}")
-
-
-# Dummy formula normalizer (must be implemented properly)
-
 from django.db import IntegrityError
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404

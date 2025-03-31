@@ -3,11 +3,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import (
     InputFieldListCreate, BulkInputFieldUpdate, BulkInputFieldDelete,AdminDeleteUserView,
-    AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,
+    AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,CompanyTypeCreateView,
     send_contact_email, RequestPasswordResetView, ResetPasswordView,
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
-    create_table,  get_table_data ,rename_table, modify_table, delete_table,WaqfProjectListView ,calculate_zakat,create_company_with_fields,delete_company,update_company_with_fields
+    create_table,  get_table_data ,rename_table, modify_table,ZakatCalculationView,delete_table,WaqfProjectListView ,delete_company,update_company_with_fields
 )
+from .views import CompanyTypeCreateView
 from . import views  # or from your_app_name import views if outside
 urlpatterns = [
     # InputField URLs
@@ -33,14 +34,15 @@ urlpatterns = [
     path("admin/modify-table/", modify_table, name="modify-table"),
     path("admin/delete-table/<str:table_name>/", delete_table, name="delete-table"),
     path("list/waqf-projects/", WaqfProjectListView.as_view(), name="waqf-projects-list"),
-    path('calculate-zakat/', calculate_zakat, name="calculate_zakat"),
-    path('create-company-with-fields/', create_company_with_fields, name="create_company_with_fields"),
     path('delete-company/<int:company_type_id>/', delete_company, name="delete_company"),
     path('update-company/<int:company_type_id>/', update_company_with_fields, name="update_company"),
     path('company-type/<int:company_type_id>/fields/', views.get_company_type_fields),
     path('company-types/', views.list_all_company_types),
     path('get-zakat-history/', views.get_zakat_history),  # GET
-    path('get-zakat-history/<int:id>/', views.get_zakat_history_by_id)
+    path('get-zakat-history/<int:id>/', views.get_zakat_history_by_id),
+    path('create-company-with-fields/', CompanyTypeCreateView.as_view()), # ✅ avec .as_view() ici
+    path('calculate-zakat/', ZakatCalculationView.as_view())
+
     
 ]
 

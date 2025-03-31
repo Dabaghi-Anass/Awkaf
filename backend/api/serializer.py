@@ -171,54 +171,59 @@ from .models import CompanyType, CompanyField
 from rest_framework import serializers
 from .models import CompanyType, CompanyField
 
+
+
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+class CompanyFieldOutputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyField
+        fields = ['name', 'label']
+
 class CompanyTypeSerializer(serializers.ModelSerializer):
     fields = serializers.ListField(
-        child=serializers.CharField(), write_only=True, required=False
-    )  # ✅ Accepts a list of field names for input
-
-    output_fields = serializers.SerializerMethodField()
+        child=serializers.DictField(child=serializers.CharField()),
+        write_only=True
+    )
+    output_fields = CompanyFieldOutputSerializer(many=True, source='fields', read_only=True)
 
     class Meta:
         model = CompanyType
         fields = ['id', 'name', 'calculation_method', 'fields', 'output_fields']
 
-    def get_output_fields(self, obj):
-        return [field.name.replace("_", " ") for field in obj.fields.all()]  # ✅ Remove underscores
-
-    def validate_name(self, value):
-        if CompanyType.objects.filter(name__iexact=value).exists():
-            raise serializers.ValidationError("A company with this name already exists.")
-        return value
-
     def create(self, validated_data):
         fields_data = validated_data.pop('fields', [])
         company_type = CompanyType.objects.create(**validated_data)
 
-        unique_fields = {field.replace(" ", "_") for field in fields_data}  # ✅ Convert spaces to underscores
-        new_fields = [CompanyField(company_type=company_type, name=field) for field in unique_fields]
-        CompanyField.objects.bulk_create(new_fields)
+        new_fields = []
+        for field in fields_data:
+            name = field.get('name', '').strip().replace(' ', '_')
+            label = field.get('label', '').strip() or name
+            new_fields.append(CompanyField(company_type=company_type, name=name, label=label))
 
+        CompanyField.objects.bulk_create(new_fields)
         return company_type
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['fields'] = rep.pop('output_fields', [])  # ✅ Ensure consistent response
+        rep['fields'] = rep.pop('output_fields', [])
         return rep
 
 class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
-    custom_fields = serializers.SerializerMethodField()
+    fields = serializers.SerializerMethodField()
 
     class Meta:
         model = CompanyType
-        fields = ['id', 'name', 'custom_fields']
+        fields = ['id', 'name', 'fields']
 
-    def get_custom_fields(self, obj):
-        return [field.name.replace("_", " ") for field in obj.fields.all()]  # ✅ Remove underscores
-
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep['fields'] = rep.pop('custom_fields')  # ✅ Rename correctly
-        return rep
+    def get_fields(self, obj):
+        return [
+            {
+                "name": field.name,
+                "label": field.label
+            } for field in obj.fields.all()
+        ]
     
 from .models import ZakatHistory  # ✅ Updated model import
 
