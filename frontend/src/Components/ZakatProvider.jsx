@@ -5,7 +5,7 @@ export const ZakatContext = createContext();
 export const ZakatProvider = ({ children }) => {
     
     
-
+const [nissab, setNissab] = useState(800000);
 const [zakatFormInfos, setZakatFormInfos] = useState();
 const [isUnnaire, setIsUnnaire] = useState(false);
 const [showResult, setShowResult] = useState(false);
@@ -15,12 +15,13 @@ const [selectedCompany, setSelectedCompany] = useState(null);
 
 // Update form fields dynamically when company type changes
 useEffect(() => {
-    if (selectedCompany) {
-        setZakatFormInfos(prevData => ({  // Reset to initial data first
-            ...Object.fromEntries(selectedCompany.fields.map(field => [field, ""])) // Add dynamic fields
+    if (selectedCompany && Array.isArray(selectedCompany.custom_fields)) {
+        setZakatFormInfos(prevData => ({
+            ...Object.fromEntries(selectedCompany.custom_fields.map(field => [field.name, ""]))
         }));
     }
 }, [selectedCompany]);
+
 
 
     const saveZakatHistory = async () => {
@@ -34,8 +35,8 @@ useEffect(() => {
             zakat_result:zakatFormInfos.zakatAmount,
             zakat_base:zakatFormInfos.totalAmount,
             calculation_date: zakatFormInfos.calculationDate,
-            month_type: "Miladi",
-            nissab:zakatFormInfos.nissab 
+            month_type: isUnnaire ? "هجري" : "ميلادي",
+            nissab:nissab
            
         };
 
@@ -56,7 +57,7 @@ useEffect(() => {
             }
 
             alert("Zakat history saved successfully!");
-            setZakatFormInfos(initialData);
+            setZakatFormInfos({});
           
         } catch (error) {
             console.error("Error:", error);
@@ -96,7 +97,7 @@ useEffect(() => {
                     company_type_id: selectedCompany.id,
                     user_inputs: cleanedInputs,
                     moon: isUnnaire ? 0.025 : 0.0257,
-                    nissab:800000,
+                    nissab:nissab,
                 }),
             });
     
@@ -115,8 +116,8 @@ useEffect(() => {
     
             setZakatFormInfos(prevState => ({
                 ...prevState,
-                zakatAmount: data.zakat_result,  // Received from backend
-                totalAmount: data.zakat_base,  // New field from backend
+                zakatAmount: data.zakat_result.toFixed(3),  // Received from backend
+                totalAmount: data.zakat_base.toFixed(3),  // New field from backend
                 calculationDate: calculationDate,
                  // Add the date of calculation
             }));
@@ -141,7 +142,8 @@ useEffect(() => {
             saveZakatHistory, 
             isEditing, setIsEditing,
             totalAmount, setTotalAmount,
-            selectedCompany, setSelectedCompany
+            selectedCompany, setSelectedCompany,
+            nissab,setNissab
         }}>
             {children}
         </ZakatContext.Provider>
