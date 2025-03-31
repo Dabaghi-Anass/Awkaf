@@ -2,50 +2,50 @@ import React, { useState } from "react";
 
 const AdminFormBuilder = () => {
   const [companyName, setCompanyName] = useState("");
-  const [fields, setFields] = useState([]);
+  const [fields, setFields] = useState([]); 
   const [calculationMethod, setCalculationMethod] = useState("");
 
   const addField = () => {
-    if (fields.length === 0 || fields[fields.length - 1] !== "") {
-      setFields([...fields, ""]);
-    }
+    setFields([...fields, { name: "", label: "" }]);
   };
 
-  const updateField = (index, value) => {
+  const updateField = (index, key, value) => {
     const updatedFields = [...fields];
-    updatedFields[index] = value;
+    updatedFields[index][key] = value;
     setFields(updatedFields);
   };
 
   const removeField = (index) => {
     setFields(fields.filter((_, i) => i !== index));
   };
-
+  console.log("Fields state:", fields)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const cleanedFields = fields.filter((field) => field.trim() !== "");
+    
+    ; // Debugging step
+    
+    const cleanedFields = fields.filter(
+      (field) => typeof field.name === "string" && field.name.trim() !== ""
+    );
+  
     if (cleanedFields.length === 0) {
       alert("Please add at least one valid field.");
       return;
     }
-
+  
     const companyData = {
       name: companyName,
       calculation_method: calculationMethod,
-      fields: cleanedFields,
+      fields: cleanedFields, // Now correctly formatted
     };
-    {/* console.log("Company Data:", companyData);
-      const field =[{
-        name: "field1",
-        variable_name: "x1",}]
-       */}
+  
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
         alert("Authentication required! Please log in.");
         return;
       }
-
+  
       const response = await fetch(
         "http://localhost:8000/apif/create-company-with-fields/",
         {
@@ -57,12 +57,12 @@ const AdminFormBuilder = () => {
           body: JSON.stringify(companyData),
         }
       );
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to create company type");
       }
-
+  
       alert("Company Type Created Successfully!");
       setCompanyName("");
       setFields([]);
@@ -72,6 +72,8 @@ const AdminFormBuilder = () => {
       alert(`Error: ${error.message}`);
     }
   };
+  
+  
 
   return (
     <div dir="rtl" className="max-w-3xl mx-auto mt-10 p-8 bg-green-600 shadow-md rounded-2xl border border-gray-200">
@@ -79,7 +81,7 @@ const AdminFormBuilder = () => {
         إنشاء نوع شركة
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Company Name */}
         <div>
           <label className="block text-gray-700 font-semibold mb-1">
@@ -102,9 +104,17 @@ const AdminFormBuilder = () => {
             <div key={index} className="flex items-center gap-2 mb-2">
               <input
                 type="text"
-                value={field}
-                onChange={(e) => updateField(index, e.target.value)}
-                placeholder="أدخل اسم الحقل"
+                value={field.label}
+                onChange={(e) => updateField(index, "label", e.target.value)}
+                placeholder="اسم الحقل الظاهر"
+                className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#035116] text-right"
+                required
+              />
+              <input
+                type="text"
+                value={field.name}
+                onChange={(e) => updateField(index, "name", e.target.value)}
+                placeholder="المتغير (للعملية الحسابية)"
                 className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#035116] text-right"
                 required
               />
