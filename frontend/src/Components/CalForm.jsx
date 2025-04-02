@@ -83,23 +83,25 @@ export const CalForm = () => {
                         <div className="flex flex-col gap-1 mb-5">
                             <label className="text-gray-700 font-semibold text-[1em]">نوع الشركة</label>
                             <select 
-                            className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
-                             onChange={(e) => {
-                                const selected = companyTypes.find(c => c.id === parseInt(e.target.value));
-                                setSelectedCompany(selected || null);
-
-                            }}>
-                                <option value="">Select a company</option>
+                                className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
+                                onChange={(e) => {
+                                    const selected = companyTypes.find(c => c.id === parseInt(e.target.value));
+                                    setSelectedCompany(selected ?? null); // Ensure we never set undefined
+                                }}
+                                disabled={companyTypes.length === 0} // Disable if no companies available
+                            >
+                                <option value="">{companyTypes.length === 0 ? "لا توجد شركات متاحة" : "اختر نوع الشركة"}</option>
                                 {companyTypes.map(company => (
                                     <option key={company.id} value={company.id}>{company.name}</option>
                                 ))}
                             </select>
 
+
                         </div>
 
                         {/* Dynamic Input Fields */}
                         {fields.map((field, index) => (
-                            <div className="bg-white flex flex-col gap-1 mb-5" key={`${selectedCompany.id}-${index}`}>
+                            <div className="bg-white flex flex-col gap-1 mb-5" key={index}>
                                 <label className="text-gray-700 text-[1em] font-semibold">{field.label}</label>
                                 <div className="relative w-full">
                                     <input
@@ -130,7 +132,7 @@ export const CalForm = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button className="w-full py-3 mt-6 bg-[#FBBF24] text-[#035116] text-xl font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-[#FACC15] hover:scale-105 active:scale-95"
+                        <button className="w-full py-3 mt-6 bg-green-500 text-white text-xl font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600 "
                             type="submit" onClick={(e) => { e.preventDefault(); calculateZakat(); }}>
                             حساب الزكاة
                         </button>

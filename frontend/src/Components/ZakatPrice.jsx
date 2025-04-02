@@ -13,7 +13,7 @@ export const ZakatPrice = () => {
             </h1>
 
             <h1 className="text-center pt-10 text-5xl font-extrabold text-white my-5">
-                {zakatFormInfos.zakatAmount.toLocaleString("fr-FR")} د.ج
+                {zakatFormInfos.zakatAmount} د.ج
             </h1>
 
             <div className="flex justify-center gap-5 mt-8">

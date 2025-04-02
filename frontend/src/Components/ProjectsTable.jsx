@@ -2,10 +2,11 @@ import React, { useEffect, useState,useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { ZakatContext } from './ZakatProvider';
+import { AdminContext } from "./AdminProvider";
+
 
 export const ProjectsTable = () => {
-  
+  const { activeTab, setActiveTab ,setProjectData,setIsEditing} = useContext(AdminContext);
   const [projects, setProjects] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
@@ -83,16 +84,17 @@ export const ProjectsTable = () => {
   };
 
   const handleEdit = (project) => {
-    navigate("/DashboardAdmin", { state: { project }, replace: true });
+    setProjectData(project);
+    setIsEditing(true);
     setActiveTab("ManageProject");
 
   };
 
   return (
     <>
-      <div className="relative overflow-x-auto flex flex-col items-center text-left shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <div className="relative overflow-x-auto flex flex-col items-center text-left  sm:rounded-lg">
+        <table className="w-full text-sm text-left text-white dark:text-gray-400">
+          <thead className="text-xs text-white uppercase  bg-green-800 ">
             <tr>
               <th scope="col" className="px-6 py-3">ID</th>
               <th scope="col" className="px-6 py-3">Project Name</th>
@@ -106,7 +108,7 @@ export const ProjectsTable = () => {
               projects.map((project) => (
                 <tr
                   key={project.id}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="bg-white border-b  hover:bg-gray-100 "
                 >
                   <td className="px-6 py-4">{project.id}</td>
                   <td className="px-6 py-4">{project.name}</td>
@@ -116,7 +118,7 @@ export const ProjectsTable = () => {
                     {/* ✅ Edit Button */}
                     <button
                       onClick={() => handleEdit(project)}
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded"
+                      className="bg-green-400 hover:bg-green-600 text-white font-bold py-1 px-3 rounded"
                     >
                       Edit
                     </button>
@@ -139,8 +141,7 @@ export const ProjectsTable = () => {
             )}
           </tbody>
         </table>
-      </div>
-      <Stack spacing={2} className="mt-4">
+        <Stack spacing={2} className="mt-4">
         <Pagination
           count={totalPages}
           page={page}
@@ -149,6 +150,8 @@ export const ProjectsTable = () => {
           className="mx-auto text-center"
         />
       </Stack>
+      </div>
+      
     </>
   );
 };

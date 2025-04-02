@@ -11,10 +11,6 @@ import ZakatCal from './pages/ZakatCal.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { Admin } from './pages/Admin.jsx';
-import { ZakatForm } from './Components/ZakatForm.jsx';
-import { TestForm } from './Components/TestForm.jsx';
-import { ZakatInputs } from './Components/ZakatInputs.jsx';
-import { RapportCal } from './Components/RapportCal.jsx';
 import { DashboardAdmin } from './pages/DashboardAdmin.jsx';
 import { ZakatProvider } from './Components/ZakatProvider.jsx';
 import { AdminRegister } from './pages/AdminRegister.jsx';
@@ -24,12 +20,12 @@ import { WakfP } from './pages/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 import App from './App.jsx';
 
-import { CalForm } from './Components/CalForm.jsx';
 import { ProtectedRoute } from './ProtectedRoutes.jsx';
 import { Contribution } from './pages/Contribution.jsx';
-import { AddUser } from './Components/admin_dashboard/AddUser.jsx';
+
 import AdminFormBuilder from './Components/AdminFormBuilder.jsx';
 import UserHistory from './pages/UserHistory.jsx';
+import { AdminProvider } from './Components/AdminProvider.jsx';
 
 
 const router = createBrowserRouter([
@@ -70,7 +66,7 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: "Form/",
+    path: "userhistory/",
     element: <UserHistory />,
   },
   {
@@ -113,8 +109,9 @@ const router = createBrowserRouter([
 
 
 createRoot(document.getElementById('root')).render(
-  
-    <ZakatProvider>  {/* 🔥 Now, all pages inside the router have access to ZakatContext */}
+  <ZakatProvider>  
+    <AdminProvider>  {/* ✅ Now, all pages inside have access to both contexts */}
       <RouterProvider router={router} />
-    </ZakatProvider>
-  )
+    </AdminProvider>
+  </ZakatProvider>
+);

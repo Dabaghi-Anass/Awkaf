@@ -71,7 +71,9 @@ const UserHistory = () => {
                             <th className="border border-gray-300 p-2">التاريخ</th>
                             <th className="border border-gray-300 p-2">الوعاء الزكوي</th>
                             <th className="border border-gray-300 p-2">قيمة الزكاة</th>
+                            <th className="border border-gray-300 p-2">نوع الحول</th>
                             <th className="border border-gray-300 p-2">التفاصيل</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -80,6 +82,7 @@ const UserHistory = () => {
                                 <td className="p-2">{item.calculation_date}</td>
                                 <td className="p-2">{item.zakat_base.toLocaleString("fr-FR")} د.ج</td>
                                 <td className="p-2 text-green-700 font-bold">{item.zakat_result.toLocaleString("fr-FR")} د.ج</td>
+                                <td className="p-2">{item.month_type}</td>
                                 <td className="p-2">
                                     <button className="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
                                         عرض
