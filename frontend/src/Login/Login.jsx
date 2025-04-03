@@ -1,25 +1,42 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export const Login = ({ handleChange, data }) => {
     const [loginError, setLoginError] = useState("");
+    const [formErrors, setFormErrors] = useState({});
     const [otpSent, setOtpSent] = useState(false);
     const [otpCode, setOtpCode] = useState("");
     const navigate = useNavigate();
 
+    const validate = (values) => {
+        const errors = {};
+        if (!values.username.trim()) {
+            errors.username = "اسم المستخدم مطلوب!";
+        }
+        if (!values.password.trim()) {
+            errors.password = "كلمة المرور مطلوبة!";
+        }
+        return errors;
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        const errors = validate(data);
+        setFormErrors(errors);
+
+        if (Object.keys(errors).length > 0) return;
+
         try {
             const response = await fetch("http://127.0.0.1:8000/apif/token/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
             });
             const result = await response.json();
-            
+
             if (response.ok && result.message === "OTP sent to your email. Enter OTP to proceed.") {
                 setOtpSent(true);
-                alert("OTP sent to your email. Enter it below.");
+                alert("تم إرسال رمز OTP إلى بريدك الإلكتروني.");
             } else if (result.access && result.refresh) {
                 localStorage.setItem("accessToken", result.access);
                 localStorage.setItem("refreshToken", result.refresh);
@@ -34,19 +51,24 @@ export const Login = ({ handleChange, data }) => {
 
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
+        if (!otpCode.trim()) {
+            alert("يرجى إدخال رمز OTP.");
+            return;
+        }
+
         try {
             const response = await fetch("http://127.0.0.1:8000/apif/token/verify/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: data.username, otp: otpCode })
+                body: JSON.stringify({ username: data.username, otp: otpCode }),
             });
             const tokens = await response.json();
-            
+
             if (response.ok) {
                 localStorage.setItem("accessToken", tokens.access_token);
                 localStorage.setItem("refreshToken", tokens.refresh_token);
                 alert("تم التحقق من OTP! تسجيل الدخول ناجح.");
-                navigate("/");  
+                navigate("/");
             } else {
                 alert("فشل التحقق من OTP. حاول مرة أخرى.");
             }
@@ -74,6 +96,7 @@ export const Login = ({ handleChange, data }) => {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                                     required
                                 />
+                                {formErrors.username && <p className="text-red-500 text-sm">{formErrors.username}</p>}
                             </div>
                             <div>
                                 <label className="block text-gray-600 mb-1">كلمة المرور</label>
@@ -85,6 +108,7 @@ export const Login = ({ handleChange, data }) => {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                                     required
                                 />
+                                {formErrors.password && <p className="text-red-500 text-sm">{formErrors.password}</p>}
                                 <Link className="text-sm text-green-600 hover:underline block mt-1" to='/'>نسيت كلمة المرور؟</Link>
                                 {loginError && <p className="text-red-500 text-sm mt-2">{loginError}</p>}
                             </div>

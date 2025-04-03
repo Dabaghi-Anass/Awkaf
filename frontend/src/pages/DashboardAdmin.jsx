@@ -47,7 +47,7 @@ export const DashboardAdmin = () => {
   return (
     <>
      {/* <TopBar />*/}
-      <div className=" flex gap-80 bg-green-400 min-h-screen  ">
+      <div className=" flex gap-80  min-h-screen  ">
         <div>
         <SideBar setActiveTab={setActiveTab} activeTab={activeTab} />
         </div>

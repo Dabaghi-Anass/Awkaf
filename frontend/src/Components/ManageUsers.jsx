@@ -100,78 +100,68 @@ export const ManageUsers = () => {
 
   return (
     <>
-      <div className="relative overflow-x-auto flex flex-col items-center text-left shadow-md sm:rounded-lg w-full">
-        <table className="w-full text-sm text-left text-gray-900 bg-white rounded-lg shadow-md">
-          {/* Table Header */}
-          <thead className="text-xs uppercase bg-[#035116] text-white rounded-t-lg">
-            <tr>
-              <th scope="col" className="px-6 py-3">ID</th>
-              <th scope="col" className="px-6 py-3">Username</th>
-              <th scope="col" className="px-6 py-3">Email</th>
-              <th scope="col" className="px-6 py-3">Created Date</th>
-              <th scope="col" className="px-6 py-3 text-center">Actions</th>
+      <div className="w-full mx-auto  p-6 ">
+      
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-green-400">
+              <th className="border border-gray-300 p-2">ID</th>
+              <th className="border border-gray-300 p-2">Usernmae</th>
+              <th className="border border-gray-300 p-2">Email</th>
+              <th className="border border-gray-300 p-2">Created date</th>
+              <th className="border border-gray-300 p-2 text-center">Acions</th>
             </tr>
           </thead>
-
-          {/* Table Body */}
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
-                <tr
-                  key={user.id}
-                  className="bg-white border-b hover:bg-[#e6f5ea] transition-all"
-                >
-                  <td className="px-6 py-4">{user.id}</td>
-                  <td className="px-6 py-4">{user.username}</td>
-                  <td className="px-6 py-4">{user.email}</td>
-                  <td className="px-6 py-4">{user.date_joined}</td>
-                  <td className="px-6 py-4 text-center">
+                <tr key={user.id} className="text-center border border-gray-300">
+                  <td className="p-2">{user.id}</td>
+                  <td className="p-2">{user.username}</td>
+                  <td className="p-2">{user.email}</td>
+                  <td className="p-2">{user.date_joined}</td>
+                  <td className="p-2">
                     <button
                       onClick={(e) => { e.preventDefault(); deleteUser(user.id); }}
-                      className="bg-red-600 hover:bg-red-800 text-white font-bold py-1 px-3 rounded-md transition-all"
+                      className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-800"
                     >
-                      Delete
+                      حذف
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="text-center py-4 text-gray-500">
-                  No users found
-                </td>
+                <td colSpan={5} className="text-center p-4 text-gray-600">لا يوجد مستخدمون</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
       <div className="flex justify-center mt-5">
-  <Stack spacing={2} className="flex">
-    <Pagination
-      count={totalPages}
-      page={page}
-      onChange={(_, value) => setPage(value)}
-      variant="outlined"
-      shape="rounded-2xl"
-      sx={{
-        "& .MuiPaginationItem-root": {
-          color: "#035116",  // Text color
-          borderColor: "#035116", // Border color
-        },
-        "& .MuiPaginationItem-root:hover": {
-          backgroundColor: "#e6f5ea",  // Hover effect (light green)
-        },
-        "& .Mui-selected": {
-          backgroundColor: "#035116 !important",
-          color: "white !important",
-        },
-      }}
-    />
-  </Stack>
-</div>
-
+        <Stack spacing={2} className="flex">
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            variant="outlined"
+            shape="rounded-2xl"
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "#035116",
+                borderColor: "#035116",
+              },
+              "& .MuiPaginationItem-root:hover": {
+                backgroundColor: "#e6f5ea",
+              },
+              "& .Mui-selected": {
+                backgroundColor: "#035116 !important",
+                color: "white !important",
+              },
+            }}
+          />
+        </Stack>
+      </div>
     </>
   );
 };

@@ -1,17 +1,16 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { AdminContext } from "./AdminProvider";
 
-
 export const ProjectsTable = () => {
-  const { activeTab, setActiveTab ,setProjectData,setIsEditing} = useContext(AdminContext);
+  const { activeTab, setActiveTab, setProjectData, setIsEditing } = useContext(AdminContext);
   const [projects, setProjects] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
-  const navigate = useNavigate(); // ✅ To navigate to the edit form
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProjects(page, pageSize);
@@ -87,45 +86,40 @@ export const ProjectsTable = () => {
     setProjectData(project);
     setIsEditing(true);
     setActiveTab("ManageProject");
-
   };
 
   return (
     <>
-      <div className="relative overflow-x-auto flex flex-col items-center text-left  sm:rounded-lg">
-        <table className="w-full text-sm text-left text-white dark:text-gray-400">
-          <thead className="text-xs text-white uppercase  bg-green-800 ">
-            <tr>
-              <th scope="col" className="px-6 py-3">ID</th>
-              <th scope="col" className="px-6 py-3">Project Name</th>
-              <th scope="col" className="px-6 py-3">Objectives</th>
-              <th scope="col" className="px-6 py-3">Created Date</th>
-              <th scope="col" className="px-6 py-3">Actions</th>
+      <div className="w-full mx-auto  p-6">
+        
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-green-400">
+              <th className="border border-gray-300 p-2">ID</th>
+              <th className="border border-gray-300 p-2">Project Name</th>
+              <th className="border border-gray-300 p-2">Objectives</th>
+              <th className="border border-gray-300 p-2">Created Date</th>
+              <th className="border border-gray-300 p-2 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {projects.length > 0 ? (
               projects.map((project) => (
-                <tr
-                  key={project.id}
-                  className="bg-white border-b  hover:bg-gray-100 "
-                >
-                  <td className="px-6 py-4">{project.id}</td>
-                  <td className="px-6 py-4">{project.name}</td>
-                  <td className="px-6 py-4">{project.objectives}</td>
-                  <td className="px-6 py-4">{project.created_at}</td>
-                  <td className="px-6 py-4 space-x-2">
-                    {/* ✅ Edit Button */}
+                <tr key={project.id} className="text-center border border-gray-300 hover:bg-gray-100 transition duration-300">
+                  <td className="p-2">{project.id}</td>
+                  <td className="p-2">{project.name}</td>
+                  <td className="p-2">{project.objectives}</td>
+                  <td className="p-2">{project.created_at}</td>
+                  <td className="p-2">
                     <button
                       onClick={() => handleEdit(project)}
-                      className="bg-green-400 hover:bg-green-600 text-white font-bold py-1 px-3 rounded"
+                      className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-800"
                     >
                       Edit
                     </button>
-                    {/* 🗑 Delete Button */}
                     <button
                       onClick={() => deleteProject(project.id)}
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
+                      className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-800 ml-2"
                     >
                       Delete
                     </button>
@@ -134,24 +128,37 @@ export const ProjectsTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="text-center py-4">
-                  No projects found
-                </td>
+                <td colSpan={5} className="text-center p-4 text-gray-600">No projects found</td>
               </tr>
             )}
           </tbody>
         </table>
-        <Stack spacing={2} className="mt-4">
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(_, value) => setPage(value)}
-          color="primary"
-          className="mx-auto text-center"
-        />
-      </Stack>
+
+        <div className="flex justify-center mt-5">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={(_, value) => setPage(value)}
+              variant="outlined"
+              shape="rounded-2xl"
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  color: "#035116",
+                  borderColor: "#035116",
+                },
+                "& .MuiPaginationItem-root:hover": {
+                  backgroundColor: "#e6f5ea",
+                },
+                "& .Mui-selected": {
+                  backgroundColor: "#035116 !important",
+                  color: "white !important",
+                },
+              }}
+            />
+          </Stack>
+        </div>
       </div>
-      
     </>
   );
 };
