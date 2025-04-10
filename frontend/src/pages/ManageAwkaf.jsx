@@ -1,28 +1,25 @@
 import React, { useEffect, useState,useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ZakatContext } from "../Components/ZakatProvider";
+import { AdminContext } from "../Components/AdminProvider";
 
 export const ManageAwkaf = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { isEditing, setIsEditing} = useContext(ZakatContext);
-  const defaultProject = {
-    name: "",
-    objectives: "",
-    partners: "",
-    image: null,
-  };
+  const { isEditing, setIsEditing,setActiveTab,projectData,setProjectData,defaultProject} = useContext(AdminContext);
+  console.log("isEditing:", isEditing);
+ 
 
-  const [projectData, setProjectData] = useState(defaultProject);
-  const [projectId, setProjectId] = useState(null);
+  
+ 
 
-  useEffect(() => {
+ /* useEffect(() => {
     if (location.state?.project) {
       setProjectData(location.state.project);
-      setIsEditing(true);
       setProjectId(location.state.project.id);
+      setIsEditing(true);  // 🔥 Set editing mode if project exists
+    } else {
+      setIsEditing(false); // 🔥 Reset editing state if there's no project
     }
-  }, [location.state]);
+  }, [location.state]);*/
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,7 +49,7 @@ export const ManageAwkaf = () => {
     });
   
     const url = isEditing
-      ? `http://127.0.0.1:8000/apif/waqf-projects/${projectId}/`
+      ? `http://127.0.0.1:8000/apif/waqf-projects/${projectData.id}/`
       : "http://127.0.0.1:8000/apif/waqf-projects/";
     const method = isEditing ? "PUT" : "POST";
   
@@ -66,7 +63,13 @@ export const ManageAwkaf = () => {
       if (response.ok) {
         alert(isEditing ? "Project Updated Successfully!" : "Project Added!");
         setIsEditing(false);
-        setActiveTab("Projects"); // Return to the table after submission
+        
+        setProjectData((prev) => ({
+          ...defaultProject, // Reset form fields
+          image: null,       // Explicitly reset the image field
+        }));
+        setActiveTab("Projects");
+         // Return to the table after submission
       } else {
         const responseData = await response.json();
         console.error("Error:", responseData);
@@ -79,8 +82,8 @@ export const ManageAwkaf = () => {
   
 
   return (
-    <div className="max-w-4xl  bg-white p-8 shadow-lg rounded-lg">
-      <h2 className="text-3xl font-bold text-center text-[#035116] mb-6">
+    <div className="w-full  bg-green-800 p-8 shadow-lg rounded-lg o">
+      <h2 className="text-3xl font-bold text-center text-white mb-6">
         {isEditing ? "Edit Project" : "Add New Project"}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -91,7 +94,7 @@ export const ManageAwkaf = () => {
     
         ].map(({ label, name, type }) => (
           <div key={name}>
-            <label className="block text-gray-700 font-medium">{label}</label>
+            <label className="block text-green-400 font-medium">{label}</label>
             {type === "text" ? (
               <input
                 type="text"
@@ -99,7 +102,7 @@ export const ManageAwkaf = () => {
                 value={projectData[name]}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218]"
+                className="w-full p-3 bg-white border border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218]"
               />
             ) : (
               <textarea
@@ -107,7 +110,7 @@ export const ManageAwkaf = () => {
                 value={projectData[name]}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218] resize-y"
+                className="w-full p-3 border bg-white border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218] resize-y"
               />
             )}
           </div>
@@ -115,7 +118,7 @@ export const ManageAwkaf = () => {
 
         {/* Image Upload */}
         <div>
-          <label className="block text-gray-700 font-medium">Project Image</label>
+          <label className="block text-green-400 font-medium">Project Image</label>
           <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-[#118218] transition">
             <input
               type="file"
@@ -149,9 +152,18 @@ export const ManageAwkaf = () => {
         </div>
 
         {/* Submit Button */}
+        {isEditing && (
+          <button
+            type="submit"
+            className="w-full bg-green-300 text-green-800 py-3 rounded-md font-semibold hover:bg-green-400 transition"
+            onClick={() =>{ setIsEditing(false); setProjectData(defaultProject);setActiveTab("Projects");}}
+          >
+           cancel
+          </button>
+        )}
         <button
           type="submit"
-          className="w-full bg-[#118218] text-white py-3 rounded-md font-semibold hover:bg-[#0d6d13] transition"
+          className="w-full bg-green-500 text-white py-3 rounded-md font-semibold hover:bg-green-600 transition"
         >
           {isEditing ? "Update Project" : "Add Project"}
         </button>

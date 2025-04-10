@@ -12,7 +12,7 @@ export const RegisterPage = () => {
         password:'',
         email:'',
         confirm_password:'',
-        company:'',
+        company:"company",
     }
     const [formData,setFormData]=useState(userData);
     const [formErrors,setFormErrors]=useState({});

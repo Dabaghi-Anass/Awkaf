@@ -9,7 +9,6 @@ const [nissab, setNissab] = useState(800000);
 const [zakatFormInfos, setZakatFormInfos] = useState();
 const [isUnnaire, setIsUnnaire] = useState(false);
 const [showResult, setShowResult] = useState(false);
-const [isEditing, setIsEditing] = useState(false);
 const [totalAmount, setTotalAmount] = useState(0);
 const [selectedCompany, setSelectedCompany] = useState(null);
 
@@ -58,6 +57,7 @@ useEffect(() => {
 
             alert("Zakat history saved successfully!");
             setZakatFormInfos({});
+            setShowResult(false);
           
         } catch (error) {
             console.error("Error:", error);
@@ -140,7 +140,7 @@ useEffect(() => {
             calculateZakat, 
             showResult, setShowResult,
             saveZakatHistory, 
-            isEditing, setIsEditing,
+           
             totalAmount, setTotalAmount,
             selectedCompany, setSelectedCompany,
             nissab,setNissab

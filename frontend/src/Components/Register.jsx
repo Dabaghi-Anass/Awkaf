@@ -82,7 +82,7 @@ export const Register = ({ handleChange, formData }) => {
             <div className="wrapper bg-white rounded-lg p-8  px-10 w-full max-w-md  shadow-lg text-center">
                 <header className='text-3xl text-gray-700 font-bold mb-6'>تسجيل حساب</header>
                 <form dir="rtl" ref={formRef} onSubmit={handleSubmit}>
-                    {['username', 'email', 'password', 'confirm_password', 'company'].map((field, index) => (
+                    {['username', 'email', 'password', 'confirm_password',].map((field, index) => (
                         <div key={index} className='my-5'>
                             <input 
                                 className={` py-3 px-4 w-full rounded-lg border border-gray-300 ${errors[field] ? 'border-red-500 ring-2 ring-red-400' : 'focus:border-green-600 focus:ring-2 focus:ring-green-400'}`}
