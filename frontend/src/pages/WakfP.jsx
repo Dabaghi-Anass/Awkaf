@@ -75,7 +75,7 @@ export const WakfP = () => {
 
         {/* CTA (اختياري) */}
         <div className="text-center mt-10">
-          <button  className="bg-amber-400 text-green-900 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-500 transition"  onClick={() => navigate('/contribution')}>
+          <button  className="bg-amber-400 text-green-900 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-500 transition"  onClick={() => navigate('/Contact')}>
             دعم المشروع
           </button>
         </div>

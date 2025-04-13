@@ -3,6 +3,7 @@ import { Header } from '../Components/Header';
 import Footer from '../Components/Footer';
 import AboutPic from '../Components/AboutPic';
 import Values from '../Components/Values';
+import { Link } from 'react-router-dom';
 
 export default function About() {
   return (
@@ -11,7 +12,7 @@ export default function About() {
      
       
       {/* Hero Section */}
-      <div className="relative w-full h-80 bg-green-900 text-white flex flex-col justify-center items-center text-center px-4">
+      <div className=" w-full h-80 bg-green-900 text-white flex flex-col justify-center items-center text-center px-4 mt-50">
         <h1 className="text-4xl font-bold">الزكاة في الإسلام</h1>
         <p className="text-lg mt-4 max-w-2xl">
         عن ابن عمر رضي الله عنهما، أن النبي صلى الله عليه وسلم قال: (بني الإسلام على خمس: شهادة أن لا إله إلا الله، وأن محمداً رسول الله، وإقام الصلاة، وإيتاء الزكاة، ..) الحديث.
@@ -60,9 +61,9 @@ export default function About() {
       <div className="text-center py-10">
         <h2 className="text-2xl font-bold text-green-900">احسب زكاتك الآن</h2>
         <p className="text-gray-700 mt-4">استخدم منصتنا لحساب مقدار الزكاة المستحق بسهولة.</p>
-        <a href="/zakat-calculator" className="mt-6 inline-block px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition">
+        <Link to="/ZakatCalculator" className="mt-6 inline-block px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition">
           احسب الآن
-        </a>
+        </Link>
       </div>
       
       <Footer />

@@ -22,17 +22,19 @@ export const ProjectsTable = () => {
 
   const fetchTotalPages = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/apif/public/waqf-projects/");
+      const response = await fetch("http://127.0.0.1:8000/apif/list/waqf-projects/");
       const data = await response.json();
       if (Array.isArray(data)) {
         setTotalPages(Math.ceil(data.length / pageSize));
+        console.log("Total Pages:", data);
       }
     } catch (error) {
       console.error("Error fetching total pages:", error);
       setTotalPages(1);
     }
   };
-
+  
+  console.log("Total Pages:", totalPages);
   const fetchProjects = async (pageNumber, pageSize) => {
     try {
       const response = await fetch(
@@ -49,6 +51,7 @@ export const ProjectsTable = () => {
       setProjects([]);
     }
   };
+  console.log("Projects:", projects);
 
   const deleteProject = async (projectId) => {
     try {
@@ -99,6 +102,7 @@ export const ProjectsTable = () => {
               <th className="border border-gray-300 p-2">Project Name</th>
               <th className="border border-gray-300 p-2">Objectives</th>
               <th className="border border-gray-300 p-2">Created Date</th>
+              <th className="border border-gray-300 p-2">Updated Date</th>
               <th className="border border-gray-300 p-2 text-center">Actions</th>
             </tr>
           </thead>
@@ -110,6 +114,7 @@ export const ProjectsTable = () => {
                   <td className="p-2">{project.name}</td>
                   <td className="p-2">{project.objectives}</td>
                   <td className="p-2">{project.created_at}</td>
+                  <td className="p-2">{project.updated_at}</td>
                   <td className="p-2">
                     <button
                       onClick={() => handleEdit(project)}

@@ -3,37 +3,63 @@ import { ZakatContext } from "./ZakatProvider";
 import ZakatDetails from "./ZakatDetails"; // Import the new component
 
 export const ZakatPrice = () => {
-    const { zakatFormInfos, setShowResult, saveZakatHistory } = useContext(ZakatContext);
+    const { zakatFormInfos,onClose, setShowResult, saveZakatHistory,isUnnaire ,nissab } = useContext(ZakatContext);
     const [showDetails, setShowDetails] = useState(false);
-
+    const formatNumber = (num) => (!num ? "0" : num.toLocaleString("fr-FR"));
+    const handlePrint = () => {
+        window.print();
+      };
     return (
-        <div className="bg-green-800 w-1/2 mx-auto h-fit rounded-2xl pb-10 mt-10 p-5">
-            <h1 className="relative text-center pt-10 text-3xl font-extrabold text-white after:content-[''] after:h-1 after:w-3/4 after:bg-amber-300 after:absolute after:-bottom-5 after:left-1/2 after:-translate-x-1/2 after:rounded-3xl">
-                قيمة الزكاة الواجبة على شركتكم
-            </h1>
+        <div className="bg-white p-6 rounded-lg shadow-md w-[40em] mx-auto mt-5">
+      <h2 className="text-2xl font-bold text-green-900 text-center mb-4">
+        تفاصيل حساب الزكاة
+      </h2>
 
-            <h1 className="text-center pt-10 text-5xl font-extrabold text-white my-5">
-                {zakatFormInfos.zakatAmount} د.ج
-            </h1>
-
-            <div className="flex justify-center gap-5 mt-8">
-                <button className="bg-amber-300 py-2 w-1/3 px-5 rounded-lg font-bold" onClick={saveZakatHistory}>
-                    تأكيد
-                </button>
-                <button className="bg-red-500 py-2 w-1/3 px-5 rounded-lg font-bold text-white" onClick={() => setShowResult(false)}>
-                    إلغاء
-                </button>
-            </div>
-
-            {/* Button to Show Calculation Details */}
-            <div className="flex justify-center mt-4">
-                <button className="bg-blue-500 py-2 px-6 rounded-lg text-white font-bold hover:bg-blue-600 transition" onClick={() => setShowDetails(true)}>
-                    عرض التفاصيل
-                </button>
-            </div>
-
-            {/* Show Details Modal */}
-            {showDetails && <ZakatDetails zakatFormInfos={zakatFormInfos} onClose={() => setShowDetails(false)} />}
+      <div className="space-y-3 text-lg text-gray-800">
+        <div className="flex justify-between">
+          <span>قيمة النصاب:</span>
+          <span className="font-bold">{formatNumber(nissab)} د.ج</span>
         </div>
+
+        <div className="flex justify-between">
+          <span>الوعاء الزكوي:</span>
+          <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
+        </div>
+
+        <div className="flex justify-between text-green-800 font-bold">
+          <span>قيمة الزكاة:</span>
+          <span>{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>التاريخ:</span>
+          <span>{new Date().toISOString().split("T")[0]}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>نوع الحول:</span>
+          <span>{isUnnaire ? "هجري" : "ميلادي"}</span>
+        </div>
+      </div>
+
+      {/* Buttons */}
+      <div className="flex justify-between mt-6">
+        <button
+          onClick={()=>setShowResult(false)}
+          className="py-2 px-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition"
+        >
+          إغلاق
+        </button>
+
+        <button
+          onClick={handlePrint}
+          className="py-2 px-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+        >
+          طباعة
+        </button>
+      </div>
+    </div>
+
+           
     );
 };

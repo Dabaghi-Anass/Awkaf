@@ -22,13 +22,13 @@ export const Contact = () => {
   return (
     <>
       <Header />
-      <div dir="rtl" className="min-h-screen flex flex-col items-center justify-center mx-auto bg-gray-100 p-6">
-        <div className="bg-white shadow-lg rounded-lg p-8 max-w-3xl w-full text-center">
+      <div dir="rtl" className="mt-25  flex flex-col items-center justify-center mx-auto bg-gray-100 p-6">
+        <div className="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full text-center">
           {/* Contact Title */}
-          <h1 className="text-3xl font-bold text-green-900 mb-4">
+          <h1 className="text-2xl font-bold text-green-500 mb-4">
             تواصل معنا
           </h1>
-          <p className="text-gray-600 text-lg mb-6">
+          <p className="text-gray-600 text-sm mb-6">
             راسلنا عبر البريد الإلكتروني، اتصل، أو املأ النموذج لمعرفة كيف يمكننا حل مشكلة المراسلة لديك.
           </p>
 

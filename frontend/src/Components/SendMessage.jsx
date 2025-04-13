@@ -30,7 +30,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
 
     return (
         <div dir='rtl' className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">إرسال رسالة</h2>
+
             <form onSubmit={sendMessage} className="space-y-4">
                 <div className="flex gap-4">
                     <input 
@@ -39,7 +39,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                         name="first_name" 
                         value={userMessage.first_name} 
                         onChange={handleChange} 
-                        className="w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                        className="w-1/2 p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                     />
                     <input 
                         type="text" 
@@ -47,7 +47,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                         name="last_name" 
                         value={userMessage.last_name} 
                         onChange={handleChange} 
-                        className="w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                        className="w-1/2 p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                     />
                 </div>
 
@@ -57,7 +57,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="sender_email" 
                     value={userMessage.sender_email} 
                     onChange={handleChange} 
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 />
 
                 <input 
@@ -66,7 +66,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="phone" 
                     value={userMessage.phone} 
                     onChange={handleChange} 
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                 />
 
                 <textarea 
@@ -74,7 +74,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="message" 
                     value={userMessage.message} 
                     onChange={handleChange} 
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 resize-none min-h-[120px] outline-none"
+                    className="w-full p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 resize-none min-h-[120px] outline-none"
                 ></textarea>
 
                 <button 
