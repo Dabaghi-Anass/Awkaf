@@ -12,7 +12,7 @@ export default function About() {
      
       
       {/* Hero Section */}
-      <div className=" w-full h-80 bg-green-900 text-white flex flex-col justify-center items-center text-center px-4 mt-50">
+      <div className=" w-full h-80 bg-green-200 text-green-900 flex flex-col justify-center items-center text-center px-4 mt-18">
         <h1 className="text-4xl font-bold">الزكاة في الإسلام</h1>
         <p className="text-lg mt-4 max-w-2xl">
         عن ابن عمر رضي الله عنهما، أن النبي صلى الله عليه وسلم قال: (بني الإسلام على خمس: شهادة أن لا إله إلا الله، وأن محمداً رسول الله، وإقام الصلاة، وإيتاء الزكاة، ..) الحديث.

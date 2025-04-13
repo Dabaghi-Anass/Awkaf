@@ -73,12 +73,12 @@ const AdminFormBuilder = () => {
   };
 
   return (
-    <div className="w-full text-white   p-8 bg-green-800 shadow-md rounded-2xl ">
-      <h2 className="text-2xl font-bold text-center mb-6">Create Company Type</h2>
+    <div className="w-full text-green-400   p-8 bg-gray-100 shadow-md rounded-lg ">
+      <h2 className="text-2xl font-bold text-center mb-6">Create Company Form</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block font-semibold mb-1">Company Name</label>
+          <label className="block text-sm font-medium mb-1">Company Name</label>
           <input
             type="text"
             value={companyName}
@@ -90,9 +90,9 @@ const AdminFormBuilder = () => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">Fields</h3>
+          <h3 className="text-sm font-medium mb-1">Fields</h3>
           {fields.map((field, index) => (
-            <div key={index} className="flex items-center gap-2 mb-2">
+            <div key={index} className="flex items-center gap-2 mb-1">
               <input
                 type="text"
                 value={field.label}
@@ -129,7 +129,7 @@ const AdminFormBuilder = () => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">Calculation Formula</h3>
+          <h3 className="text-sm font-medium  mb-2">Calculation Formula</h3>
           <textarea
             value={calculationMethod}
             onChange={(e) => setCalculationMethod(e.target.value)}
@@ -141,7 +141,7 @@ const AdminFormBuilder = () => {
 
         <button
           type="submit"
-          className="w-full py-3 bg-green-500 text-white text-xl font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600  "
+          className="w-full py-3 bg-green-500 text-white text-lg font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600  "
         >
           Save Company
         </button>

@@ -68,7 +68,7 @@ export const AdminLogin = () => {
                 localStorage.setItem("accessToken", result.access_token);
                 localStorage.setItem("refreshToken", result.refresh_token);
                 alert("OTP Verified! You are logged in.");
-                navigate("/");
+                navigate("/home");
             } else {
                 alert(result.error || "OTP verification failed!");
             }
@@ -111,7 +111,7 @@ export const AdminLogin = () => {
                             <div>
                                 <label className="block text-gray-600 mb-1">المفتاح السري</label>
                                 <input
-                                    type="text"
+                                    type="password"
                                     name="secretKey"
                                     value={data.secretKey}
                                     onChange={handleChange}
@@ -140,7 +140,7 @@ export const AdminLogin = () => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 transition"
+                                className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
                             >
                                 تحقق من OTP
                             </button>

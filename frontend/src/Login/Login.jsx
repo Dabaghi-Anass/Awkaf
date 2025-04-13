@@ -68,7 +68,7 @@ export const Login = ({ handleChange, data }) => {
                 localStorage.setItem("accessToken", tokens.access_token);
                 localStorage.setItem("refreshToken", tokens.refresh_token);
                 alert("تم التحقق من OTP! تسجيل الدخول ناجح.");
-                navigate("/");
+                navigate("/home");
             } else {
                 alert("فشل التحقق من OTP. حاول مرة أخرى.");
             }
@@ -133,7 +133,7 @@ export const Login = ({ handleChange, data }) => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 transition"
+                                className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
                             >
                                 تحقق من OTP
                             </button>

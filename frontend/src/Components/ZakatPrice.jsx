@@ -10,9 +10,9 @@ export const ZakatPrice = () => {
         window.print();
       };
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md w-[40em] mx-auto mt-5">
-      <h2 className="text-2xl font-bold text-green-900 text-center mb-4">
-        تفاصيل حساب الزكاة
+        <div className="bg-green-500 p-6 rounded-lg shadow-md shadow-amber-100 relative mx-auto mt-5">
+      <h2 className="text-2xl font-bold text-white text-center mb-4">
+        تفاصيل حساب 
       </h2>
 
       <div className="space-y-3 text-lg text-gray-800">
@@ -26,8 +26,8 @@ export const ZakatPrice = () => {
           <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
         </div>
 
-        <div className="flex justify-between text-green-800 font-bold">
-          <span>قيمة الزكاة:</span>
+        <div className="flex justify-between text-white font-bold">
+          <span className="">قيمة الزكاة:</span>
           <span>{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
         </div>
 
@@ -43,17 +43,18 @@ export const ZakatPrice = () => {
       </div>
 
       {/* Buttons */}
+      <button className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 p-2 text-white rounded-bl-lg rounded-tr-lg" onClick={() => setShowResult(false)}>X</button>
       <div className="flex justify-between mt-6">
         <button
-          onClick={()=>setShowResult(false)}
-          className="py-2 px-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition"
+          onClick={()=>saveZakatHistory()}
+          className="py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
         >
-          إغلاق
+          حفظ
         </button>
 
         <button
           onClick={handlePrint}
-          className="py-2 px-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+          className="py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
         >
           طباعة
         </button>

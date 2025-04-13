@@ -1,7 +1,15 @@
-import { Navigate } from "react-router-dom";
+// ProtectedRoutes.jsx
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
 export const ProtectedRoute = ({ children }) => {
-  const accessToken = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
-  return accessToken ? children : <Navigate to="/AdminLogin" />;
+  if (!token) {
+    // User is not authenticated — redirect to login
+    return <Navigate to="*" replace />;
+  }
+
+  // User is authenticated — allow access
+  return children;
 };
