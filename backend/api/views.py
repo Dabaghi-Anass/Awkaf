@@ -539,7 +539,7 @@ class VerifyEmailView(APIView):
         except (User.DoesNotExist, ValueError, TypeError):
             return JsonResponse({"error": "Invalid verification link."}, status=400)
 class RequestPasswordResetView(APIView):
-    permission_classes = [AllowAny]  # ✅ Publicly accessible
+    permission_classes = [AllowAny]  # Publicly accessible
 
     def post(self, request):
         email = request.data.get("email")
@@ -547,9 +547,11 @@ class RequestPasswordResetView(APIView):
             user = User.objects.get(email=email)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-            reset_link = f"http://127.0.0.1:8000/apif/user/reset-password/{uid}/{token}/"
 
-            # ✅ Send Email
+            # Dynamically construct the link
+            reset_link = f"http://{request.get_host()}/apif/user/reset-password/{uid}/{token}/"
+
+
             send_mail(
                 subject="Password Reset Request",
                 message=f"Click the link to reset your password: {reset_link}",
@@ -561,8 +563,26 @@ class RequestPasswordResetView(APIView):
 
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+
 class ResetPasswordView(APIView):
-    permission_classes = [AllowAny]  # ✅ Allow all users to access this endpoint (no auth required)
+    permission_classes = [AllowAny]  # Allow unauthenticated access
+
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            if not default_token_generator.check_token(user, token):
+                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({
+                "message": "Token is valid. You can now send a POST request with your new password.",
+                "uid": uidb64,
+                "token": token
+            }, status=status.HTTP_200_OK)
+
+        except (User.DoesNotExist, DjangoUnicodeDecodeError):
+            return Response({"error": "Invalid link or user not found."}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, uidb64, token):
         try:
@@ -579,21 +599,80 @@ class ResetPasswordView(APIView):
             user.set_password(new_password)
             user.save()
 
-            # ✅ Send email notification
             send_mail(
                 subject="Password Changed Successfully",
-                message="Your password has been changed successfully. If you did not request this change, please contact support immediately.",
+                message="Your password has been changed successfully.",
                 from_email="noreply@yourdomain.com",
                 recipient_list=[user.email],
                 fail_silently=False,
             )
 
-            return Response({"message": "Password reset successful. A confirmation email has been sent."}, status=status.HTTP_200_OK)
+            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+from django.shortcuts import render
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.views import View
+
+from django.shortcuts import render
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.views import View
+
+class ResetPasswordHTMLView(View):
+    def get(self, request, uidb64, token):
+        # Just show the form with the uidb64 and token as hidden fields
+        return render(request, "reset_password_form.html", {"uidb64": uidb64, "token": token})
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            # Validate the token
+            if not default_token_generator.check_token(user, token):
+                return render(request, "reset_password_form.html", {
+                    "error": "Invalid or expired link."
+                })
+
+            password = request.POST.get("password")
+            if not password:
+                return render(request, "reset_password_form.html", {
+                    "error": "Password cannot be empty.",
+                })
+
+            # Set and save the new password
+            user.set_password(password)
+            user.save()
+
+            # Optional: Send confirmation email
+            send_mail(
+                subject="Your password was changed",
+                message="Your password has been successfully reset.",
+                from_email="noreply@yourdomain.com",
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return render(request, "reset_password_form.html", {
+                "success": "Your password has been reset successfully!"
+            })
+
+        except Exception as e:
+            return render(request, "reset_password_form.html", {
+                "error": "Something went wrong. Please try again.",
+            })
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
