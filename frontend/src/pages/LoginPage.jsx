@@ -5,7 +5,7 @@ import { Login } from '../Login/Login.jsx';
 export const LoginPage = () => {
 
   
-  const [data, setData] = useState({
+  const [formData, setFormData] = useState({
     username: "",
     password: ""
   });
@@ -13,14 +13,13 @@ export const LoginPage = () => {
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setData({
-      ...data,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  
 
   useEffect(() => {
-    setData({
+    setFormData({
       username: "",
       password: "",
     });
@@ -28,13 +27,10 @@ export const LoginPage = () => {
 
   return (
     <div className="sign-up-container center">
-      <Login  data ={data}  setData={setData} setErrors={setErrors}
+      <Login  formData ={formData}  setFormData={setFormData} setErrors={setErrors}
        errors={errors} handleChange={handleChange} 
        />
-      <div className="">
       
-
-      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const AdminLogin = () => {
     const navigate = useNavigate();
@@ -8,20 +8,35 @@ export const AdminLogin = () => {
         password: "",
         secretKey: "",
     });
+    const [formErrors, setFormErrors] = useState({});
     const [otpSent, setOtpSent] = useState(false);
     const [otpCode, setOtpCode] = useState("");
+    const [otpError, setOtpError] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
+        setFormErrors((prev) => ({ ...prev, [name]: "" })); // Clear error on change
     };
 
     const handleOtpChange = (e) => {
         setOtpCode(e.target.value);
+        setOtpError(""); // Clear OTP error on change
+    };
+
+    const validateFields = () => {
+        const errors = {};
+        if (!data.username.trim()) errors.username = "إسم المستخدم مطلوب!";
+        if (!data.password.trim()) errors.password = "كلمة المرور مطلوبة!";
+        if (!data.secretKey.trim()) errors.secretKey = "المفتاح السري مطلوب!";
+        return errors;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const errors = validateFields();
+        setFormErrors(errors);
+        if (Object.keys(errors).length > 0) return;
 
         try {
             const response = await fetch("http://127.0.0.1:8000/apif/admin/login/", {
@@ -55,6 +70,11 @@ export const AdminLogin = () => {
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
 
+        if (!otpCode.trim()) {
+            setOtpError("يرجى إدخال رمز OTP.");
+            return;
+        }
+
         try {
             const response = await fetch("http://127.0.0.1:8000/apif/admin/verify/", {
                 method: "POST",
@@ -70,10 +90,11 @@ export const AdminLogin = () => {
                 alert("OTP Verified! You are logged in.");
                 navigate("/home");
             } else {
-                alert(result.error || "OTP verification failed!");
+                setOtpError(result.error || "فشل التحقق من OTP!");
             }
         } catch (error) {
             console.error("OTP verification failed:", error);
+            setOtpError("حدث خطأ أثناء التحقق من OTP.");
         }
     };
 
@@ -83,7 +104,7 @@ export const AdminLogin = () => {
                 <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
                     {otpSent ? "تحقق من OTP" : "تسجيل دخول المشرف"}
                 </h2>
-                <form onSubmit={otpSent ? handleOtpSubmit : handleSubmit} className="space-y-4">
+                <form onSubmit={otpSent ? handleOtpSubmit : handleSubmit} noValidate className="space-y-4">
                     {!otpSent ? (
                         <>
                             <div>
@@ -94,8 +115,8 @@ export const AdminLogin = () => {
                                     value={data.username}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    required
                                 />
+                                {formErrors.username && <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>}
                             </div>
                             <div>
                                 <label className="block text-gray-600 mb-1">كلمة المرور</label>
@@ -105,8 +126,8 @@ export const AdminLogin = () => {
                                     value={data.password}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    required
                                 />
+                                {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
                             </div>
                             <div>
                                 <label className="block text-gray-600 mb-1">المفتاح السري</label>
@@ -116,8 +137,8 @@ export const AdminLogin = () => {
                                     value={data.secretKey}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    required
                                 />
+                                {formErrors.secretKey && <p className="text-red-500 text-sm mt-1">{formErrors.secretKey}</p>}
                             </div>
                             <button
                                 type="submit"
@@ -135,8 +156,8 @@ export const AdminLogin = () => {
                                     value={otpCode}
                                     onChange={handleOtpChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    required
                                 />
+                                {otpError && <p className="text-red-500 text-sm mt-1">{otpError}</p>}
                             </div>
                             <button
                                 type="submit"

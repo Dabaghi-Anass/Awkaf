@@ -33,12 +33,12 @@ export const Register = ({ handleChange, formData }) => {
             newErrors.confirm_password = "يجب تأكيد كلمة المرور";
             valid = false;
         } else if (formData.password !== formData.confirm_password) {
-            newErrors.confirm_password = "كلمتا المرور غير متطابقتين";
+            newErrors.confirm_password = "كلمتا المرور غير متطابقتين!";
             valid = false;
         }
 
         if (!formData.company.trim()) {
-            newErrors.company = "اسم الشركة لا يمكن أن يكون فارغًا";
+            newErrors.company = "!اسم الشركة لا يمكن أن يكون فارغًا";
             valid = false;
         }
 
@@ -78,24 +78,24 @@ export const Register = ({ handleChange, formData }) => {
     };
 
     return (
-        <div className='h-screen w-dvw flex items-center justify-center bg-gray-100'>
-            <div className="wrapper bg-white rounded-lg p-8  px-10 w-full max-w-md  shadow-lg text-center">
-                <header className='text-3xl text-gray-700 font-bold mb-6'>تسجيل حساب</header>
+        <div dir='rtl' className='h-screen w-dvw flex items-center justify-center bg-gray-200'>
+            <div className="wrapper bg-white rounded-lg py-5  px-10 w-full max-w-sm shadow-lg text-center">
+                <header className='text-2xl text-gray-700 font-bold mb-6'>تسجيل حساب</header>
                 <form dir="rtl" ref={formRef} onSubmit={handleSubmit}>
                     {['username', 'email', 'password', 'confirm_password',].map((field, index) => (
-                        <div key={index} className='my-5'>
+                        <div key={index} className='my-1'>
+                            <label className="block text-right text-[0.9em] text-gray-600 mb-1">{field === 'username' ? "إسم المستخدم" : field === 'email' ? "البريد الإلكتروني" : field === 'password' ? "كلمة المرور" : field === 'confirm_password' ? "تأكيد كلمة المرور" : "إسم الشركة"} </label>
                             <input 
-                                className={` py-3 px-4 w-full rounded-lg border border-gray-300 ${errors[field] ? 'border-red-500 ring-2 ring-red-400' : 'focus:border-green-600 focus:ring-2 focus:ring-green-400'}`}
+                                className={` text-[0.9em] w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500`}
                                 type={field.includes('password') ? 'password' : 'text'} 
-                                placeholder={field === 'username' ? "إسم المستخدم" : field === 'email' ? "البريد الإلكتروني" : field === 'password' ? "كلمة المرور" : field === 'confirm_password' ? "تأكيد كلمة المرور" : "إسم الشركة"} 
                                 name={field} 
                                 value={formData[field]} onChange={handleInputChange} 
                             />
-                            {errors[field] && <div className='text-red-500 text-right text-sm'>{errors[field]}</div>}
+                            {errors[field] && <div className='text-red-500 text-[0.8em] text-right my-1  '>{errors[field]}</div>}
                         </div>
                     ))}
-                    <button className='bg-green-600 text-white py-2 w-full rounded-lg font-bold hover:bg-green-700' type="submit">إنشاء حساب</button>
-                    <p className='mt-6 text-gray-700'>لديك حساب بالفعل؟ <Link className='text-green-600 font-medium hover:underline' to='/login'>تسجيل الدخول</Link></p>
+                    <button className='bg-green-600 mt-2 text-white py-2 w-full rounded-lg font-medium hover:bg-green-700' type="submit">إنشاء حساب</button>
+                    <p className='mt-2 text-sm text-gray-700'>لديك حساب بالفعل؟ <Link className='text-green-600 font-medium hover:underline' to='/'>تسجيل الدخول</Link></p>
                 </form>
             </div>
 

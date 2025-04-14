@@ -27,6 +27,8 @@ import AdminFormBuilder from './Components/AdminFormBuilder.jsx';
 import UserHistory from './pages/UserHistory.jsx';
 import { AdminProvider } from './Components/AdminProvider.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
+import { ForgotPassword } from './Components/ForgotPassword.jsx';
+import { Reports } from './Components/Reports.jsx';
 
 
 const router = createBrowserRouter([
@@ -37,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: <ErrorPage />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
   },
   {
     path: "Register/",
@@ -117,16 +123,16 @@ const router = createBrowserRouter([
   {
     path: "Contribution/",
     element: (
-      <ProtectedRoute>
+   
         <Contribution />
-      </ProtectedRoute>
+    
     ),
   },
   {
     path: "kol/",
     element: (
       <ProtectedRoute>
-        <AdminFormBuilder />
+        <Reports />
       </ProtectedRoute>
     ),
   },
@@ -160,7 +166,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <ZakatProvider>  
-    <AdminProvider>  {/* ✅ Now, all pages inside have access to both contexts */}
+    <AdminProvider>  
       <RouterProvider router={router} />
     </AdminProvider>
   </ZakatProvider>

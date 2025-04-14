@@ -22,8 +22,8 @@ export const Contact = () => {
   return (
     <>
       <Header />
-      <div dir="rtl" className="mt-25  flex flex-col items-center justify-center mx-auto bg-gray-100 p-6">
-        <div className="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full text-center">
+      <div dir="rtl" className="  flex flex-col items-center justify-center mx-auto bg-gray-100 p-6">
+        <div className="bg-white mt-20 shadow-lg rounded-lg p-8 max-w-2xl w-full text-center">
           {/* Contact Title */}
           <h1 className="text-2xl font-bold text-green-500 mb-4">
             تواصل معنا
