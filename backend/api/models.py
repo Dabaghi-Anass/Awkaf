@@ -40,7 +40,7 @@ class InputField(models.Model):
         return self.label
 
 class WaqfProject(models.Model):
-    name = models.CharField(max_length=255, default="Unnamed Project")  
+    name = models.CharField(max_length=255, unique=True, default="Unnamed Project") 
     domain = models.CharField(max_length=255, default="General")  
     objectives = models.TextField(default="No objectives specified")  
     partners = models.TextField(default="No partners specified")  

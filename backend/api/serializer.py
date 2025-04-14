@@ -10,6 +10,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from .models import InputField, ZakatHistory, WaqfProject
 from django.db import connection
+from rest_framework.validators import UniqueValidator
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -145,9 +146,14 @@ class ZakatHistorySerializer(serializers.ModelSerializer):
 
 
 class WaqfProjectSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        max_length=255,
+        validators=[UniqueValidator(queryset=WaqfProject.objects.all())]
+    )
+
     class Meta:
         model = WaqfProject
-        fields = '__all__'  # Includes created_at and updated_at fields
+        fields = '__all__'
 
 from rest_framework import serializers
 from .models import CompanyType, CompanyField
