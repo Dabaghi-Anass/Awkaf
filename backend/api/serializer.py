@@ -10,21 +10,39 @@ from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from .models import InputField, ZakatHistory, WaqfProject
 from django.db import connection
+from rest_framework.validators import UniqueValidator
 
+from rest_framework import serializers
+from django.contrib.auth.models import User
+from .models import Employee
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+
+
+from rest_framework import serializers
+from django.contrib.auth.models import User
+from .models import Employee
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 
 class UserSerializer(serializers.ModelSerializer):
     company = serializers.CharField(write_only=True, required=False)
     is_staff = serializers.BooleanField(write_only=True, required=False)
-    is_verified = serializers.BooleanField(source="is_active", read_only=True)  # Track verification via is_active
-    email = serializers.EmailField(required=True)  # ✅ Use EmailField to enforce validation
-
-    date_joined = serializers.SerializerMethodField()  # ✅ Custom field to return only the date
+    is_verified = serializers.BooleanField(source="is_active", read_only=True)
+    email = serializers.EmailField(required=True)
+    date_joined = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             "id", "username", "first_name", "last_name", "email", "password",
-            "company", "is_staff", "is_verified", "date_joined"  # ✅ Include formatted date
+            "company", "is_staff", "is_verified", "date_joined"
         ]
         extra_kwargs = {
             "password": {"write_only": True},
@@ -32,36 +50,32 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def get_date_joined(self, obj):
-        """ ✅ Convert datetime to date (YYYY-MM-DD) """
-        return obj.date_joined.date()  # ✅ Extracts only the date part
+        return obj.date_joined.date()
 
     def validate_email(self, value):
-     if User.objects.filter(email=value).exists():
-        raise serializers.ValidationError("A user with this email already exists.")
-     return value
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return value
 
     def create(self, validated_data):
+        request = self.context.get("request")
         company_name = validated_data.pop("company", None)
         is_staff = validated_data.pop("is_staff", False)
 
-        # 🔥 Ensure non-admin users provide a company name
         if not is_staff and not company_name:
             raise serializers.ValidationError({"company": "A company name is required for non-admin users."})
 
-        # ✅ Create user
         user = User.objects.create_user(**validated_data)
-        user.is_active = False  # Email verification required
+        user.is_active = False
         user.is_staff = is_staff
         user.save()
 
-        # ✅ Save company info in Employee model (if provided)
         if company_name:
             Employee.objects.create(user=user, company=company_name)
 
-        # ✅ Send verification email
-        self.send_verification_email(user)
+        self.send_verification_email(user, request)
 
-        return user  # 🔥 Return the created user
+        return user
 
     def update(self, instance, validated_data):
         company = validated_data.pop("company", None)
@@ -80,19 +94,29 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def send_verification_email(self, user):
-        token = default_token_generator.make_token(user)
+    def send_verification_email(self, user, request=None):
+        request = request or self.context.get("request")
+        host = request.get_host() if request else "localhost:8000"
+
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        verification_link = f"http://127.0.0.1:8000/apif/user/verify-email/{uid}/{token}/"
+        token = default_token_generator.make_token(user)
+        verify_link = f"http://{host}/apif/user/verify-email/{uid}/{token}/"
 
-        send_mail(
-            subject="Verify Your Email",
-            message=f"Click the link to verify your email: {verification_link}",
-            from_email="noreply@yourdomain.com",
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
+        subject = "Verify Your Email Address"
+        from_email = "noreply@yourdomain.com"
+        to_email = [user.email]
 
+        context = {
+            "verify_link": verify_link,
+            "user": user,
+        }
+
+        html_content = render_to_string("verify_email.html", context)
+        text_content = f"Please verify your email: {verify_link}"
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 class InputFieldSerializer(serializers.ModelSerializer):
     class Meta:
         model = InputField
@@ -145,9 +169,14 @@ class ZakatHistorySerializer(serializers.ModelSerializer):
 
 
 class WaqfProjectSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        max_length=255,
+        validators=[UniqueValidator(queryset=WaqfProject.objects.all())]
+    )
+
     class Meta:
         model = WaqfProject
-        fields = '__all__'  # Includes created_at and updated_at fields
+        fields = '__all__'
 
 from rest_framework import serializers
 from .models import CompanyType, CompanyField

@@ -84,7 +84,7 @@ AUTHENTICATION_BACKENDS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+         'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,19 +100,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
+import os
+import platform
+
+IS_WINDOWS = platform.system() == "Windows"
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'awkaf',
         'USER': 'root',
         'PASSWORD': '',
-        'HOST': 'localhost',  # Try using 127.0.0.1 instead of localhost
+        'HOST': 'localhost',
         'PORT': '3306',
-        'OPTIONS': {
-            'unix_socket': '/opt/lampp/var/mysql/mysql.sock',
-        },
     }
 }
+
+if not IS_WINDOWS:
+    DATABASES['default']['OPTIONS'] = {
+        'unix_socket': '/opt/lampp/var/mysql/mysql.sock',
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
