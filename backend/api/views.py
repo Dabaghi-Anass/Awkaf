@@ -69,17 +69,38 @@ from django.db.utils import IntegrityError
 
 
 
+from rest_framework import generics, permissions
+from django.contrib.auth.models import User
+from .serializer import UserSerializer
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]  # Public registration
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_context(self):
+        return {"request": self.request}  # ✅ pass request to serializer via context
 
     def perform_create(self, serializer):
-        print("Incoming Data:", self.request.data)  # 🔥 Debug incoming data
-        user = serializer.save()
-        user.is_active = False
-        user.save()
+        print("Incoming Data:", self.request.data)
+        serializer.save()  # ✅ no request here
+
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
 class UserLoginRequestOTP(APIView):
     permission_classes = [AllowAny]
 
@@ -144,21 +165,24 @@ class UserVerifyOTP(APIView):
             "refresh_token": str(refresh)
         })
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+from .serializer import UserSerializer
+
 class AdminRegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         data = request.data
-        data["is_staff"] = True  # Ensure only admin accounts are created
+        data["is_staff"] = True  # Mark this user as admin
 
-        serializer = UserSerializer(data=data)
+        serializer = UserSerializer(data=data, context={"request": request})  # ✅ Pass request
         if serializer.is_valid():
-            user = serializer.save()
-            user.is_active = False  # Require verification before activation
-            user.save()
-            
-            send_otp_email(user)  # Send OTP for admin verification
-            return Response({"message": "Admin account created. Verify email with OTP."}, status=status.HTTP_201_CREATED)
+            serializer.save()  # Email is sent inside serializer
+            return Response({"message": "Admin account created. Please verify your email."}, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class AdminLoginRequestOTP(APIView):
     permission_classes = [AllowAny]
@@ -521,8 +545,17 @@ def send_contact_email(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+from django.shortcuts import render
+from django.shortcuts import render
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+
 class VerifyEmailView(APIView):
-    permission_classes = [AllowAny]  # ✅ Make sure anyone can access this
+    permission_classes = [AllowAny]
 
     def get(self, request, uidb64, token):
         try:
@@ -532,14 +565,14 @@ class VerifyEmailView(APIView):
             if default_token_generator.check_token(user, token):
                 user.is_active = True
                 user.save()
-                return JsonResponse({"message": "Email verified successfully!"})
+                return render(request, "verify_success.html")  # ✅ styled success page
             else:
-                return JsonResponse({"error": "Invalid or expired token."}, status=400)
+                return render(request, "verify_failed.html")   # ✅ styled fail page
 
         except (User.DoesNotExist, ValueError, TypeError):
-            return JsonResponse({"error": "Invalid verification link."}, status=400)
+            return render(request, "verify_failed.html")    
 class RequestPasswordResetView(APIView):
-    permission_classes = [AllowAny]  # Publicly accessible
+    permission_classes = [AllowAny]
 
     def post(self, request):
         email = request.data.get("email")
@@ -547,18 +580,24 @@ class RequestPasswordResetView(APIView):
             user = User.objects.get(email=email)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-
-            # Dynamically construct the link
             reset_link = f"http://{request.get_host()}/apif/user/reset-password/{uid}/{token}/"
 
+            subject = "Reset Your Password"
+            from_email = "noreply@yourdomain.com"
+            to_email = [email]
 
-            send_mail(
-                subject="Password Reset Request",
-                message=f"Click the link to reset your password: {reset_link}",
-                from_email="noreply@yourdomain.com",
-                recipient_list=[email],
-                fail_silently=False,
-            )
+            context = {
+                "user": user,
+                "reset_link": reset_link,
+            }
+
+            html_content = render_to_string("reset_password_email.html", context)
+            text_content = f"Click the link to reset your password: {reset_link}"
+
+            msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
             return Response({"message": "Password reset email sent!"})
 
         except User.DoesNotExist:
