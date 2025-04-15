@@ -73,7 +73,7 @@ export const CalForm = () => {
 
     return (
         <div dir='rtl' className="flex flex-col p-15 bg-gray-200 ">
-            <div className=" bg-white w-3/4 mx-auto rounded-lg  shadow-lg  p-8 mt-15 "> 
+            <div className=" bg-white w-[45em] mx-auto rounded-lg  shadow-lg  p-8 mt-15 "> 
                 <h1 className="text-center py-3  text-[1.5em] font-bold text-green-500">أدخل بياناتك لمعرفة مقدار الزكاة المستحق</h1>
                 <div className='bg-white p-5 rounded-lg'>
                     <form className="mx-auto  bg-[#fff]  px-10 truncate"
