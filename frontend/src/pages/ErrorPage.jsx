@@ -18,7 +18,7 @@ export default function ErrorPage() {
             الصفحة التي تحاول الوصول إليها غير موجودة أو ليس لديك الصلاحية للوصول إليها.
           </p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/home")}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded"
           >
             العودة إلى الصفحة الرئيسية
