@@ -55,7 +55,7 @@ const UserHistory = () => {
     return (
        <>
         <Header></Header>
-        <div className="max-w-4xl mx-auto mt-20 p-6 bg-white shadow-lg rounded-lg">
+        <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
             
             <h2 className="text-2xl font-bold text-green-900 text-center mb-4">تاريخ حسابات الزكاة</h2>
             {loading ? (

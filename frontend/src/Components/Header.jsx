@@ -1,37 +1,27 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export const Header = () => {
-  const location = useLocation();
-  const navigate = useNavigate(); // Used to redirect after logout
-
-  const handleLogout = () => {
-    // Clear auth data (example: token stored in localStorage)
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-
-    // Redirect to login or home
-    navigate("/"); // Change to "/" if you want to go to the home page
-  };
+  const location = useLocation(); // Get the current path
 
   return (
-    <header dir="rtl" className="bg-green-900 py-2 text-white shadow-md fixed top-0 w-full z-1000">
-      <nav className="bg-green-900 py-3 flex">
-        <div className="mx-auto flex flex-wrap jmd:justify-start gap-6 text-[1em]">
-          <button
-            onClick={handleLogout}
-            className="absolute right-5 px-3 py-2 bg-green-400 rounded-md hover:bg-green-500"
-          >
-            تسجيل الخروج
-          </button>
+    <header dir="rtl" className="bg-green-900 text-white shadow-md mb-8">
+      {/* Top Section - Logo */}
+      <div className="container mx-auto py-4 text-center bg-red md:text-right">
+        <Link to="/" className="text-lg md:text-2xl font-bold tracking-wide hover:text-green-300 transition duration-300">
+          منصة حساب زكاة الشركات وتوجيهها للوقف والتنمية
+        </Link>
+      </div>
 
+      {/* Bottom Section - Navigation */}
+      <nav className="bg-green-800 py-3">
+        <div className="container mx-auto flex flex-wrap justify-center md:justify-start gap-6 text-lg">
           {[
-            { path: "/Home", label: "الرئيسية" },
+            { path: "/", label: "الرئيسية" },
             { path: "/About", label: "عن الزكاة" },
             { path: "/ZakatCalculator", label: "حاسبة الزكاة" },
             { path: "/Awkaf", label: "مشاريع الوقف" },
             { path: "/Contact", label: "تواصل مباشرة معنا" },
-            { path: "/userhistory/", label: "تاريخ الزكاة" },
           ].map(({ path, label }) => (
             <Link
               key={path}
@@ -47,14 +37,8 @@ export const Header = () => {
             </Link>
           ))}
         </div>
-
-        <Link
-          to="/"
-          className="text-3xl ml-7 md:text-1xl font-bold tracking-wide hover:text-green-300 transition duration-300"
-        >
-          أوقاف
-        </Link>
       </nav>
     </header>
   );
 };
+

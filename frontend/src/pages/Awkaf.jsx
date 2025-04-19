@@ -11,7 +11,7 @@ export default function Awkaf() {
   const [projects, setProjects] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
 
-  const projectPerPage = 9;
+  const projectPerPage = 3;
   const pagesVisited = pageNumber * projectPerPage;
 
   const displayProjects = projects.slice(pagesVisited, pagesVisited + projectPerPage);
@@ -54,12 +54,12 @@ export default function Awkaf() {
       <WakfPic />
 
       {/* Projects Section */}
-      <div className="bg-gray-300 py-6 mt-20">
-        <div className="container mx-auto px-4 ">
+      <div className="bg-gray-200 py-6">
+        <div className="container mx-auto px-4">
           <h2 className="text-center text-2xl font-bold text-gray-800 mb-6">مشاريع الوقف</h2>
 
           {/* Project Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayProjects.map((project, id) => (
               <Project key={id} project={project} />
             ))}
@@ -84,7 +84,7 @@ export default function Awkaf() {
 
       {/* Yellow Divider */}
       <div className="flex justify-center my-8">
-        <div className="w-24 h-1 bg-green-500"></div>
+        <div className="w-24 h-1 bg-yellow-500"></div>
       </div>
 
       {/* Footer */}

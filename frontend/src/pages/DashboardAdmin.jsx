@@ -47,13 +47,13 @@ export const DashboardAdmin = () => {
   return (
     <>
      {/* <TopBar />*/}
-      <div className=" flex gap-60  min-h-screen  ">
+      <div className=" flex gap-80  min-h-screen  ">
         <div>
         <SideBar setActiveTab={setActiveTab} activeTab={activeTab} />
         </div>
         <div className=" w-full p-5  " >
           {/* Breadcrumb Section */}
-          <div className="bg-green-700 py-4 pl-3.5 rounded-lg   relative after:absolute after:-bottom-4 after:left-0 after:h-0.5 after:bg-green-700 after:w-full after:rounded-4xl text-white font-[600] text-lg">
+          <div className="bg-green-700 py-4 pl-3.5 rounded-lg mt-5 mb-8 relative after:absolute after:-bottom-4 after:left-0 after:h-0.5 after:bg-green-700 after:w-full after:rounded-4xl text-white font-[600] text-lg">
             Admin - {activeTab}
           </div>
 

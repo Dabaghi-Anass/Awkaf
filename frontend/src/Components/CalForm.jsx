@@ -76,14 +76,14 @@ export const CalForm = () => {
             <div className=" bg-white w-[45em] mx-auto rounded-lg  shadow-lg  p-8 mt-15 "> 
                 <h1 className="text-center py-3  text-[1.5em] font-bold text-green-500">أدخل بياناتك لمعرفة مقدار الزكاة المستحق</h1>
                 <div className='bg-white p-5 rounded-lg'>
-                    <form className="mx-auto  bg-[#fff]  px-10 truncate"
+                    <form className="mx-auto w-[40em] bg-[#fff] py-5 px-10 truncate"
                         onSubmit={(e) => { e.preventDefault(); calculateZakat(); }}>
                         
                         {/* Select Company Type */}
                         <div className="flex flex-col gap-1 mb-5">
-                            <label className="text-gray-700 font-semibold text-sm">نوع الشركة</label>
+                            <label className="text-gray-700 font-semibold text-[1em]">نوع الشركة</label>
                             <select 
-                                className="cal-input text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
+                                className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
                                 onChange={(e) => {
                                     const selected = companyTypes.find(c => c.id === parseInt(e.target.value));
                                     setSelectedCompany(selected ?? null); // Ensure we never set undefined
@@ -102,7 +102,7 @@ export const CalForm = () => {
                         {/* Dynamic Input Fields */}
                         {fields.map((field, index) => (
                             <div className="bg-white flex flex-col gap-1 mb-5" key={index}>
-                                <label className="text-gray-700 text-sm font-semibold">{field.label}</label>
+                                <label className="text-gray-700 text-[1em] font-semibold">{field.label}</label>
                                 <div className="relative w-full">
                                     <input
                                         className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right"
@@ -121,19 +121,18 @@ export const CalForm = () => {
  
                         {/* Select Dropdown */}
                         <div className="flex flex-col gap-1 mb-5">
-                            <label className="text-gray-700 font-semibold text-sm">نوع الحول</label>
+                            <label className="text-gray-700 font-semibold text-[1em]">نوع الحول</label>
                             <select
-                                className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm pr-10 text-right mt-1"
+                                className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right mt-1"
                                 onChange={(e) => setIsUnnaire(e.target.value === "هجري")}
                             >
-                                <option value="هجري">هجري</option>
                                 <option value="ميلادي">ميلادي</option>
-                                
+                                <option value="هجري">هجري</option>
                             </select>
                         </div>
 
                         {/* Submit Button */}
-                        <button className="w-full py-3 mt-6 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600 "
+                        <button className="w-full py-3 mt-6 bg-green-500 text-white text-xl font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600 "
                             type="submit" onClick={(e) => { e.preventDefault(); calculateZakat(); }}>
                             حساب الزكاة
                         </button>

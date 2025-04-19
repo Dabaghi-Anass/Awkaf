@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export const Login = ({ handleChange, formData }) => {
+export const Login = ({ handleChange, data }) => {
     const [loginError, setLoginError] = useState("");
     const [formErrors, setFormErrors] = useState({});
     const [otpSent, setOtpSent] = useState(false);
@@ -21,8 +21,7 @@ export const Login = ({ handleChange, formData }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const errors = validate(formData);
-        console.log("this is formData:",formData);
+        const errors = validate(data);
         setFormErrors(errors);
 
         if (Object.keys(errors).length > 0) return;
@@ -31,7 +30,7 @@ export const Login = ({ handleChange, formData }) => {
             const response = await fetch("http://127.0.0.1:8000/apif/token/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(data),
             });
             const result = await response.json();
 
@@ -49,7 +48,7 @@ export const Login = ({ handleChange, formData }) => {
             setLoginError("حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.");
         }
     };
-    console.log("this is form errors:",formErrors);
+
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
         if (!otpCode.trim()) {
@@ -61,8 +60,7 @@ export const Login = ({ handleChange, formData }) => {
             const response = await fetch("http://127.0.0.1:8000/apif/token/verify/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: formData.username, otp: otpCode }),
-
+                body: JSON.stringify({ username: data.username, otp: otpCode }),
             });
             const tokens = await response.json();
 
@@ -70,7 +68,7 @@ export const Login = ({ handleChange, formData }) => {
                 localStorage.setItem("accessToken", tokens.access_token);
                 localStorage.setItem("refreshToken", tokens.refresh_token);
                 alert("تم التحقق من OTP! تسجيل الدخول ناجح.");
-                navigate("/home");
+                navigate("/");
             } else {
                 alert("فشل التحقق من OTP. حاول مرة أخرى.");
             }
@@ -80,8 +78,8 @@ export const Login = ({ handleChange, formData }) => {
     };
 
     return (
-        <div dir="rtl" className="flex items-center justify-center min-h-screen w-dvw bg-gray-200">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
+        <div dir="rtl" className="flex items-center justify-center min-h-screen w-dvw bg-gray-100">
+            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
                 <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
                     {otpSent ? "تحقق من OTP" : "تسجيل الدخول"}
                 </h2>
@@ -89,30 +87,30 @@ export const Login = ({ handleChange, formData }) => {
                     {!otpSent ? (
                         <>
                             <div>
-                                <label className="block text-[0.9em] text-gray-600 mb-1">إسم المستخدم</label>
+                                <label className="block text-gray-600 mb-1">إسم المستخدم</label>
                                 <input
                                     type="text"
                                     name="username"
-                                    value={formData.username}
+                                    value={data.username}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-[0.9em]"
-                                    
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    required
                                 />
                                 {formErrors.username && <p className="text-red-500 text-sm">{formErrors.username}</p>}
                             </div>
                             <div>
-                                <label className="block text-[0.9em] text-gray-600 mb-1">كلمة المرور</label>
+                                <label className="block text-gray-600 mb-1">كلمة المرور</label>
                                 <input
                                     type="password"
                                     name="password"
-                                    value={formData.password}
+                                    value={data.password}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-[0.9em]"
-                                    
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    required
                                 />
-                                {formErrors.password && <p className="text-red-500 text-[0.8em]">{formErrors.password}</p>}
-                                <Link className="text-sm text-green-600 hover:underline block mt-1" to='/forgot-password'>نسيت كلمة المرور؟</Link>
-                                {loginError && <p className="text-red-500 text-[0.8em] mt-2">{loginError}</p>}
+                                {formErrors.password && <p className="text-red-500 text-sm">{formErrors.password}</p>}
+                                <Link className="text-sm text-green-600 hover:underline block mt-1" to='/'>نسيت كلمة المرور؟</Link>
+                                {loginError && <p className="text-red-500 text-sm mt-2">{loginError}</p>}
                             </div>
                             <button
                                 type="submit"
@@ -130,12 +128,12 @@ export const Login = ({ handleChange, formData }) => {
                                     value={otpCode}
                                     onChange={(e) => setOtpCode(e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    
+                                    required
                                 />
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+                                className="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 transition"
                             >
                                 تحقق من OTP
                             </button>

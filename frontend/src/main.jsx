@@ -26,83 +26,48 @@ import { Contribution } from './pages/Contribution.jsx';
 import AdminFormBuilder from './Components/AdminFormBuilder.jsx';
 import UserHistory from './pages/UserHistory.jsx';
 import { AdminProvider } from './Components/AdminProvider.jsx';
-import ErrorPage from './pages/ErrorPage.jsx';
-import { ForgotPassword } from './Components/ForgotPassword.jsx';
-import { Reports } from './Components/Reports.jsx';
 
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Home />,
+  },
+  {
+    path: "About/",
+    element: <About />,
+  },
+  {
+    path: "manage-project/",
+    element: <ManageAwkaf />,
+  },
+  {
+    path: "Contact/",
+    element: <Contact />,
+  },
+  {
+    path: "Awkaf/",
+    element: <Awkaf />,
+  },
+  {
+    path: "ZakatCalculator/",
+    element: <ZakatCal />,
+  },
+  {
+    path: "Login/",
     element: <LoginPage />,
   },
   {
-    path: "*",
-    element: <ErrorPage />,
-  },
-  {
-    path: "/forgot-password",
-    element: <ForgotPassword />,
+    path: "kol/",
+    element: <AdminFormBuilder />,
   },
   {
     path: "Register/",
     element: <RegisterPage />,
   },
   {
-    path: "AdminLogin/",
-    element: <AdminLogin />,
-  },
-  {
-    path: "AdminRegister/",
-    element: <AdminRegister />,
-  },
-  {
-    path: "Home/",
-    element: (
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "ZakatCalculator/",
-    element: (
-      <ProtectedRoute>
-        <ZakatCal />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "Awkaf/",
-    element: (
-      <ProtectedRoute>
-        <Awkaf />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "About/",
-    element: (
-      <ProtectedRoute>
-        <About />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "Contact/",
-    element: (
-      <ProtectedRoute>
-        <Contact />
-      </ProtectedRoute>
-    ),
-  },
-  {
     path: "userhistory/",
-    element: (
-      <ProtectedRoute>
-        <UserHistory />
-      </ProtectedRoute>
-    ),
+    element: <UserHistory />,
   },
   {
     path: "DashboardAdmin/",
@@ -112,61 +77,40 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "manage-project/",
-    element: (
-      <ProtectedRoute>
-        <ManageAwkaf />
-      </ProtectedRoute>
-    ),
-  },
+  
   {
     path: "Contribution/",
-    element: (
-   
-        <Contribution />
-    
-    ),
-  },
-  {
-    path: "kol/",
-    element: (
-      <ProtectedRoute>
-        <Reports />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "wakf/:id",
-    element: (
-      <ProtectedRoute>
-        <WakfP />
-      </ProtectedRoute>
-    ),
+    element: <Contribution />,
   },
   {
     path: "Admin/",
-    element: (
-      <ProtectedRoute>
-        <Admin />
-      </ProtectedRoute>
-    ),
+    element: <Admin />,
+  },
+  {
+    path: "wakf/:id",  // ✅ Dynamic route to handle specific project ID
+    element: <WakfP />,
+  },
+  {
+    path: "AdminRegister/",
+    element: <AdminRegister />,
+  },
+  {
+    path: "AdminLogin/",
+    element: <AdminLogin />,
   },
   {
     path: "app/",
-    element: (
-      <ProtectedRoute>
-        <App />
-      </ProtectedRoute>
-    ),
+    element: <App />,
   },
 ]);
+ 
+
 
 
 
 createRoot(document.getElementById('root')).render(
   <ZakatProvider>  
-    <AdminProvider>  
+    <AdminProvider>  {/* ✅ Now, all pages inside have access to both contexts */}
       <RouterProvider router={router} />
     </AdminProvider>
   </ZakatProvider>

@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 export const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
@@ -100,13 +100,13 @@ export const ManageUsers = () => {
 
   return (
     <>
-      <div className="w-full mx-auto  p-6  ">
+      <div className="w-full mx-auto  p-6 ">
       
         <table className="w-full border-collapse border border-gray-300">
           <thead>
-            <tr className="bg-green-500 text-[0.8em] font-medium">
+            <tr className="bg-green-400">
               <th className="border border-gray-300 p-2">ID</th>
-              <th className="border border-gray-300 p-2">Username</th>
+              <th className="border border-gray-300 p-2">Usernmae</th>
               <th className="border border-gray-300 p-2">Email</th>
               <th className="border border-gray-300 p-2">Created date</th>
               <th className="border border-gray-300 p-2 text-center">Acions</th>
@@ -115,7 +115,7 @@ export const ManageUsers = () => {
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
-                <tr key={user.id} className="text-center text-[0.7em] border border-gray-300">
+                <tr key={user.id} className="text-center border border-gray-300">
                   <td className="p-2">{user.id}</td>
                   <td className="p-2">{user.username}</td>
                   <td className="p-2">{user.email}</td>
