@@ -69,17 +69,38 @@ from django.db.utils import IntegrityError
 
 
 
+from rest_framework import generics, permissions
+from django.contrib.auth.models import User
+from .serializer import UserSerializer
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]  # Public registration
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_context(self):
+        return {"request": self.request}  # ✅ pass request to serializer via context
 
     def perform_create(self, serializer):
-        print("Incoming Data:", self.request.data)  # 🔥 Debug incoming data
-        user = serializer.save()
-        user.is_active = False
-        user.save()
+        print("Incoming Data:", self.request.data)
+        serializer.save()  # ✅ no request here
+
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
 class UserLoginRequestOTP(APIView):
     permission_classes = [AllowAny]
 
@@ -144,21 +165,24 @@ class UserVerifyOTP(APIView):
             "refresh_token": str(refresh)
         })
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+from .serializer import UserSerializer
+
 class AdminRegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         data = request.data
-        data["is_staff"] = True  # Ensure only admin accounts are created
+        data["is_staff"] = True  # Mark this user as admin
 
-        serializer = UserSerializer(data=data)
+        serializer = UserSerializer(data=data, context={"request": request})  # ✅ Pass request
         if serializer.is_valid():
-            user = serializer.save()
-            user.is_active = False  # Require verification before activation
-            user.save()
-            
-            send_otp_email(user)  # Send OTP for admin verification
-            return Response({"message": "Admin account created. Verify email with OTP."}, status=status.HTTP_201_CREATED)
+            serializer.save()  # Email is sent inside serializer
+            return Response({"message": "Admin account created. Please verify your email."}, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class AdminLoginRequestOTP(APIView):
     permission_classes = [AllowAny]
@@ -521,8 +545,17 @@ def send_contact_email(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+from django.shortcuts import render
+from django.shortcuts import render
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+
 class VerifyEmailView(APIView):
-    permission_classes = [AllowAny]  # ✅ Make sure anyone can access this
+    permission_classes = [AllowAny]
 
     def get(self, request, uidb64, token):
         try:
@@ -532,14 +565,14 @@ class VerifyEmailView(APIView):
             if default_token_generator.check_token(user, token):
                 user.is_active = True
                 user.save()
-                return JsonResponse({"message": "Email verified successfully!"})
+                return render(request, "verify_success.html")  # ✅ styled success page
             else:
-                return JsonResponse({"error": "Invalid or expired token."}, status=400)
+                return render(request, "verify_failed.html")   # ✅ styled fail page
 
         except (User.DoesNotExist, ValueError, TypeError):
-            return JsonResponse({"error": "Invalid verification link."}, status=400)
+            return render(request, "verify_failed.html")    
 class RequestPasswordResetView(APIView):
-    permission_classes = [AllowAny]  # ✅ Publicly accessible
+    permission_classes = [AllowAny]
 
     def post(self, request):
         email = request.data.get("email")
@@ -547,22 +580,48 @@ class RequestPasswordResetView(APIView):
             user = User.objects.get(email=email)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-            reset_link = f"http://127.0.0.1:8000/apif/user/reset-password/{uid}/{token}/"
+            reset_link = f"http://{request.get_host()}/apif/user/reset-password/{uid}/{token}/"
 
-            # ✅ Send Email
-            send_mail(
-                subject="Password Reset Request",
-                message=f"Click the link to reset your password: {reset_link}",
-                from_email="noreply@yourdomain.com",
-                recipient_list=[email],
-                fail_silently=False,
-            )
+            subject = "Reset Your Password"
+            from_email = "noreply@yourdomain.com"
+            to_email = [email]
+
+            context = {
+                "user": user,
+                "reset_link": reset_link,
+            }
+
+            html_content = render_to_string("reset_password_email.html", context)
+            text_content = f"Click the link to reset your password: {reset_link}"
+
+            msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
             return Response({"message": "Password reset email sent!"})
 
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+
 class ResetPasswordView(APIView):
-    permission_classes = [AllowAny]  # ✅ Allow all users to access this endpoint (no auth required)
+    permission_classes = [AllowAny]  # Allow unauthenticated access
+
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            if not default_token_generator.check_token(user, token):
+                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({
+                "message": "Token is valid. You can now send a POST request with your new password.",
+                "uid": uidb64,
+                "token": token
+            }, status=status.HTTP_200_OK)
+
+        except (User.DoesNotExist, DjangoUnicodeDecodeError):
+            return Response({"error": "Invalid link or user not found."}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, uidb64, token):
         try:
@@ -579,21 +638,80 @@ class ResetPasswordView(APIView):
             user.set_password(new_password)
             user.save()
 
-            # ✅ Send email notification
             send_mail(
                 subject="Password Changed Successfully",
-                message="Your password has been changed successfully. If you did not request this change, please contact support immediately.",
+                message="Your password has been changed successfully.",
                 from_email="noreply@yourdomain.com",
                 recipient_list=[user.email],
                 fail_silently=False,
             )
 
-            return Response({"message": "Password reset successful. A confirmation email has been sent."}, status=status.HTTP_200_OK)
+            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+from django.shortcuts import render
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.views import View
+
+from django.shortcuts import render
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.views import View
+
+class ResetPasswordHTMLView(View):
+    def get(self, request, uidb64, token):
+        # Just show the form with the uidb64 and token as hidden fields
+        return render(request, "reset_password_form.html", {"uidb64": uidb64, "token": token})
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            # Validate the token
+            if not default_token_generator.check_token(user, token):
+                return render(request, "reset_password_form.html", {
+                    "error": "Invalid or expired link."
+                })
+
+            password = request.POST.get("password")
+            if not password:
+                return render(request, "reset_password_form.html", {
+                    "error": "Password cannot be empty.",
+                })
+
+            # Set and save the new password
+            user.set_password(password)
+            user.save()
+
+            # Optional: Send confirmation email
+            send_mail(
+                subject="Your password was changed",
+                message="Your password has been successfully reset.",
+                from_email="noreply@yourdomain.com",
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return render(request, "reset_password_form.html", {
+                "success": "Your password has been reset successfully!"
+            })
+
+        except Exception as e:
+            return render(request, "reset_password_form.html", {
+                "error": "Something went wrong. Please try again.",
+            })
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -846,15 +964,23 @@ def delete_table(request, table_name):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from .models import WaqfProject
+from .serializer import WaqfProjectSerializer
+
+
 class WaqfProjectListView(generics.ListAPIView):
     """ ✅ Returns all Waqf projects (paginated or full list) as an array """
 
     serializer_class = WaqfProjectSerializer
-    permission_classes = [AllowAny]  # ✅ Anyone can access
-    pagination_class = None  # ✅ Default: No pagination
+    permission_classes = [AllowAny]
+    pagination_class = None  # Default: No pagination unless requested
 
     def get_queryset(self):
-        """ ✅ Fetch all Waqf projects """
+        """ ✅ Fetch all Waqf projects with selected fields """
         return WaqfProject.objects.all().only(
             "id", "name", "domain", "objectives", "partners", "image", "created_at", "updated_at"
         )
@@ -862,13 +988,8 @@ class WaqfProjectListView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         """ ✅ Return paginated or full list based on request """
         queryset = self.get_queryset()
-
-        # ✅ Serialize data and format dates
         serializer = self.get_serializer(queryset, many=True)
         serialized_data = serializer.data
-        for project in serialized_data:
-            project["created_at"] = project["created_at"].split("T")[0]  # ✅ Keep only YYYY-MM-DD
-            project["updated_at"] = project["updated_at"].split("T")[0]  # ✅ Keep only YYYY-MM-DD
 
         # ✅ Apply pagination if requested
         if "page" in request.GET and "page_size" in request.GET:
@@ -876,8 +997,8 @@ class WaqfProjectListView(generics.ListAPIView):
             paginated_data = paginator.paginate_queryset(serialized_data, request, view=self)
             return paginator.get_paginated_response(paginated_data)
 
-        # ✅ Default: Return all projects (no pagination)
         return Response(serialized_data)
+
 
 
 from django.shortcuts import get_object_or_404
