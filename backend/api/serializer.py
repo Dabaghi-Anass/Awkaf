@@ -269,9 +269,10 @@ class ZakatHistorySerializer(serializers.ModelSerializer):
 from rest_framework import serializers
 from .models import WaqfProject  # Make sure the model path is correct
 
+
 class WaqfProjectSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateField(format="%Y-%m-%d", required=False)
-    updated_at = serializers.DateField(format="%Y-%m-%d", required=False)
+    created_at = serializers.DateTimeField(format="%Y-%m-%d", required=False)
+    updated_at = serializers.DateTimeField(format="%Y-%m-%d", required=False)
 
     class Meta:
         model = WaqfProject
