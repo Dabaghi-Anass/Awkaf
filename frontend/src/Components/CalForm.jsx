@@ -72,9 +72,9 @@ export const CalForm = () => {
     const formatNumber = (num) => (!num ? "" : num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
     return (
-        <div dir='rtl' className="flex flex-col mt-15">
-            <div className="p-10 bg-green-800 w-fit mx-auto rounded-3xl"> 
-                <h1 className="text-center py-3 mb-5 text-2xl font-bold text-white">أدخل بياناتك لمعرفة مقدار الزكاة المستحق</h1>
+        <div dir='rtl' className="flex flex-col p-15 bg-gray-200 ">
+            <div className=" bg-white w-[45em] mx-auto rounded-lg  shadow-lg  p-8 mt-15 "> 
+                <h1 className="text-center py-3  text-[1.5em] font-bold text-green-500">أدخل بياناتك لمعرفة مقدار الزكاة المستحق</h1>
                 <div className='bg-white p-5 rounded-lg'>
                     <form className="mx-auto w-[40em] bg-[#fff] py-5 px-10 truncate"
                         onSubmit={(e) => { e.preventDefault(); calculateZakat(); }}>
