@@ -19,7 +19,6 @@ import { Contact } from './pages/Contact.jsx';
 import { WakfP } from './pages/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 import App from './App.jsx';
-
 import { ProtectedRoute } from './ProtectedRoutes.jsx';
 import { Contribution } from './pages/Contribution.jsx';
 
@@ -29,6 +28,7 @@ import { AdminProvider } from './Components/AdminProvider.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import { ForgotPassword } from './Components/ForgotPassword.jsx';
 import { Reports } from './Components/Reports.jsx';
+import HomePage from './pages/HomePage.jsx';
 
 
 const router = createBrowserRouter([
@@ -47,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "Register/",
     element: <RegisterPage />,
+  },
+  {
+    path: "ho/",
+    element: <HomePage />,
   },
   {
     path: "AdminLogin/",
