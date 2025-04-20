@@ -20,7 +20,7 @@ export const Header = () => {
         <div className="mx-auto flex flex-wrap jmd:justify-start gap-6 text-[1em]">
           <button
             onClick={handleLogout}
-            className="absolute right-5 px-3 py-2 bg-green-400 rounded-md hover:bg-green-500"
+            className="absolute right-5 px-5 py-2 bg-green-400 rounded-3xl hover:bg-green-500"
           >
             تسجيل الخروج
           </button>
@@ -49,7 +49,7 @@ export const Header = () => {
         </div>
 
         <Link
-          to="/"
+          to="/home"
           className="text-3xl ml-7 md:text-1xl font-bold tracking-wide hover:text-green-300 transition duration-300"
         >
           أوقاف

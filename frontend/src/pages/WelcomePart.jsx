@@ -29,6 +29,7 @@ function Welcome() {
                         </defs>
                         
                         <image
+                        
                             href="https://res.cloudinary.com/dbqf0wq9s/image/upload/v1721743014/k8ad75fp3jgy9e235fmr.jpg"
                             width="376"
                             height="383"
