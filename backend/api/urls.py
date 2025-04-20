@@ -6,7 +6,7 @@ from .views import (
     AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,CompanyTypeCreateView,
     send_contact_email, RequestPasswordResetView, ResetPasswordView,
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
-    create_table,  get_table_data ,rename_table, modify_table,ZakatCalculationView,delete_table,WaqfProjectListView ,delete_company,update_company_with_fields
+    create_table,  get_table_data ,rename_table, modify_table,ZakatCalculationView,delete_table,WaqfProjectListView ,delete_company,update_company_with_fields,CheckTokenView
 )
 from .views import CompanyTypeCreateView
 from . import views  # or from your_app_name import views if outside
@@ -18,7 +18,7 @@ urlpatterns = [
     path('admin/delete-user/<int:user_id>/', AdminDeleteUserView.as_view(), name='admin-delete-user'),
     path("save-zakat-history/", views.zakat_history),
     path("waqf-projects/", WaqfProjectListCreateView.as_view(), name="waqfproject-list-create"),
-    #path("waqf-projects/<int:pk>/", WaqfProjectDetailView.as_view(), name="waqfproject-detail"),
+    path("waqf-projects/<int:pk>/", WaqfProjectDetailView.as_view(), name="waqfproject-detail"),
     path("send-email/", send_contact_email, name="send_email"),
     path("user/request-password-reset/", RequestPasswordResetView.as_view(), name="request-password-reset"),
     path("user/reset-password/<str:uidb64>/<str:token>/", ResetPasswordView.as_view(), name="reset-password"),
@@ -41,7 +41,8 @@ urlpatterns = [
     path('get-zakat-history/', views.get_zakat_history),  # GET
     path('get-zakat-history/<int:user_id>/', views.get_zakat_history_by_user),
     path('create-company-with-fields/', CompanyTypeCreateView.as_view()), # ✅ avec .as_view() ici
-    path('calculate-zakat/', ZakatCalculationView.as_view())
+    path('calculate-zakat/', ZakatCalculationView.as_view()),
+    path('check-token/', CheckTokenView.as_view(), name='check-token'),
 
     
 ]
