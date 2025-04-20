@@ -6,7 +6,7 @@ from .views import (
     AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,CompanyTypeCreateView,
     send_contact_email, RequestPasswordResetView, ResetPasswordView,
     WaqfProjectReadOnlyListView, WaqfProjectReadOnlyDetailView,
-    create_table,  get_table_data ,rename_table, modify_table,ZakatCalculationView,delete_table,WaqfProjectListView ,delete_company,update_company_with_fields
+    create_table,  get_table_data ,rename_table, modify_table,ZakatCalculationView,delete_table,WaqfProjectListView ,delete_company,update_company_with_fields,CheckTokenView
 )
 from .views import CompanyTypeCreateView
 from . import views  # or from your_app_name import views if outside
@@ -41,7 +41,8 @@ urlpatterns = [
     path('get-zakat-history/', views.get_zakat_history),  # GET
     path('get-zakat-history/<int:user_id>/', views.get_zakat_history_by_user),
     path('create-company-with-fields/', CompanyTypeCreateView.as_view()), # ✅ avec .as_view() ici
-    path('calculate-zakat/', ZakatCalculationView.as_view())
+    path('calculate-zakat/', ZakatCalculationView.as_view()),
+    path('check-token/', CheckTokenView.as_view(), name='check-token'),
 
     
 ]

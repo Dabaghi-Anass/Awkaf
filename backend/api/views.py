@@ -1237,3 +1237,32 @@ def get_zakat_history_by_user(request, user_id):
     
     serializer = ZakatHistorySerializer(zakat_history, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
+from datetime import datetime
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
+from datetime import datetime
+
+class CheckTokenView(APIView):
+    permission_classes = [AllowAny]  # Allow all users to access this view
+
+    def get(self, request):
+        token = request.GET.get("token")  # Get token from query parameters
+
+        if not token:
+            return Response(False, status=400)  # Return False if no token is provided
+
+        try:
+            access_token = AccessToken(token)  # Decode token
+            exp_time = access_token["exp"]  # Get expiration timestamp
+            is_expired = datetime.fromtimestamp(exp_time) < datetime.utcnow()  # Compare with current time
+
+            return Response(not is_expired)  # Return True if valid, False if expired
+
+        except (TokenError, Exception):  # Handle expired or invalid tokens
+            return Response(False, status=401)  # Return False if the token is invalid or expired
