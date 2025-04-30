@@ -1212,25 +1212,40 @@ from .serializer  import (
 from rest_framework_simplejwt.tokens import AccessToken, TokenError
 
 
+from django.shortcuts      import get_object_or_404
+from rest_framework.decorators import api_view
+from rest_framework.response   import Response
+from rest_framework import status
+
+from .models     import CompanyType
+from .serializer import CompanyTypeSerializer
+
 @api_view(['GET'])
 def get_company_type_fields(request, company_type_id):
     """
-    Get only the name and custom_fields of a CompanyType (name + label).
-    Uses CompanyTypeSimpleSerializer.
+    Return id, name and nested fields (no calculation_method).
     """
     company_type = get_object_or_404(CompanyType, id=company_type_id)
-    serializer = CompanyTypeSimpleSerializer(company_type, context={'request': request})
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer = CompanyTypeSerializer(company_type, context={'request': request})
+    data = serializer.data
+    # keep id, remove calculation_method only
+    data.pop('calculation_method', None)
+    return Response(data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def list_all_company_types(request):
     """
-    List all company types with their IDs, names, and custom_fields.
+    Return all company-types with id, name and nested fields.
     """
-    all_ct = CompanyType.objects.all()
-    serializer = CompanyTypeSimpleSerializer(all_ct, many=True, context={'request': request})
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    qs = CompanyType.objects.all()
+    serializer = CompanyTypeSerializer(qs, many=True, context={'request': request})
+    data = serializer.data
+    for item in data:
+        # keep id, remove calculation_method only
+        item.pop('calculation_method', None)
+    return Response(data, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
