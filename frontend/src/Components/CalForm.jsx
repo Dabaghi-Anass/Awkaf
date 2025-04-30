@@ -73,7 +73,7 @@ export const CalForm = () => {
 
     return (
         <div dir='rtl' className="flex flex-col p-15 bg-gray-200 ">
-            <div className=" bg-white w-3/4 mx-auto rounded-lg  shadow-lg  p-8 mt-15 "> 
+            <div className=" bg-white w-[40em] mx-auto rounded-lg  shadow-lg  p-8 mt-15 "> 
                 <h1 className="text-center py-3  text-[1.5em] font-bold text-green-500">أدخل بياناتك لمعرفة مقدار الزكاة المستحق</h1>
                 <div className='bg-white p-5 rounded-lg'>
                     <form className="mx-auto  bg-[#fff]  px-10 truncate"
@@ -105,7 +105,7 @@ export const CalForm = () => {
                                 <label className="text-gray-700 text-sm font-semibold">{field.label}</label>
                                 <div className="relative w-full">
                                     <input
-                                        className="cal-input w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right"
+                                        className="cal-input h-10 w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 pr-10 text-right"
                                         type="text"
                                         name={field.name}  // Use the field name directly
                                         min={0}
@@ -133,7 +133,7 @@ export const CalForm = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button className="w-full py-3 mt-6 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600 "
+                        <button className="block mx-auto py-3 w-1/2 mt-6 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600 "
                             type="submit" onClick={(e) => { e.preventDefault(); calculateZakat(); }}>
                             حساب الزكاة
                         </button>

@@ -6,25 +6,53 @@ const AdminFormBuilder = () => {
   const [calculationMethod, setCalculationMethod] = useState("");
 
   const addField = () => {
-    setFields([...fields, { name: "", label: "" }]);
+    setFields([...fields, { name: "", label: "", children: [] }]);
   };
 
-  const updateField = (index, key, value) => {
+  const addChildField = (parentIndex) => {
     const updatedFields = [...fields];
-    updatedFields[index][key] = value;
+    if (!updatedFields[parentIndex].children) {
+      updatedFields[parentIndex].children = [];
+    }
+    updatedFields[parentIndex].children.push({ name: "", label: "" });
     setFields(updatedFields);
   };
 
-  const removeField = (index) => {
-    setFields(fields.filter((_, i) => i !== index));
+  const updateField = (index, key, value, isChild = false, childIndex = null) => {
+    const updatedFields = [...fields];
+    if (isChild) {
+      updatedFields[index].children[childIndex][key] = value;
+    } else {
+      updatedFields[index][key] = value;
+    }
+    setFields(updatedFields);
   };
+
+  const removeField = (index, isChild = false, childIndex = null) => {
+    const updatedFields = [...fields];
+    if (isChild) {
+      updatedFields[index].children = updatedFields[index].children.filter(
+        (_, i) => i !== childIndex
+      );
+    } else {
+      updatedFields.splice(index, 1);
+    }
+    setFields(updatedFields);
+  };
+
+  const cleanFields = (fieldsList) =>
+    fieldsList
+      .filter((field) => typeof field.name === "string" && field.name.trim() !== "")
+      .map((field) => ({
+        name: field.name,
+        label: field.label,
+        children: field.children ? cleanFields(field.children) : [],
+      }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const cleanedFields = fields.filter(
-      (field) => typeof field.name === "string" && field.name.trim() !== ""
-    );
+    const cleanedFields = cleanFields(fields);
 
     if (cleanedFields.length === 0) {
       alert("Please add at least one valid field.");
@@ -73,7 +101,7 @@ const AdminFormBuilder = () => {
   };
 
   return (
-    <div className="w-full text-green-400   p-8 bg-gray-100 shadow-md rounded-lg ">
+    <div className="w-full text-green-400 p-8 bg-gray-100 shadow-md rounded-lg">
       <h2 className="text-2xl font-bold text-center mb-6">Create Company Form</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -92,29 +120,76 @@ const AdminFormBuilder = () => {
         <div>
           <h3 className="text-sm font-medium mb-1">Fields</h3>
           {fields.map((field, index) => (
-            <div key={index} className="flex items-center gap-2 mb-1">
-              <input
-                type="text"
-                value={field.label}
-                onChange={(e) => updateField(index, "label", e.target.value)}
-                placeholder="Field label"
-                className="flex-grow p-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                required
-              />
-              <input
-                type="text"
-                value={field.name}
-                onChange={(e) => updateField(index, "name", e.target.value)}
-                placeholder="Variable (for calculations)"
-                className="flex-grow bg-white p-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                required
-              />
+            <div key={index} className="mb-4 p-4 border rounded-md bg-white">
+              <div className="flex items-center gap-2 mb-2">
+                <input
+                  type="text"
+                  value={field.label}
+                  onChange={(e) => updateField(index, "label", e.target.value)}
+                  placeholder="Field label"
+                  className="flex-grow p-2 border text-black rounded"
+                  required
+                />
+                <input
+                  type="text"
+                  value={field.name}
+                  onChange={(e) => updateField(index, "name", e.target.value)}
+                  placeholder="Variable"
+                  className="flex-grow p-2 border text-black rounded"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => removeField(index)}
+                  className="px-3 py-1 bg-red-500 text-white rounded"
+                >
+                  X
+                </button>
+              </div>
+
+              {/* Render child fields */}
+              {field.children && field.children.length > 0 && (
+                <div className="ml-4 space-y-2">
+                  {field.children.map((child, childIndex) => (
+                    <div key={childIndex} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={child.label}
+                        onChange={(e) =>
+                          updateField(index, "label", e.target.value, true, childIndex)
+                        }
+                        placeholder="Child label"
+                        className="flex-grow p-2 border text-black rounded"
+                        required
+                      />
+                      <input
+                        type="text"
+                        value={child.name}
+                        onChange={(e) =>
+                          updateField(index, "name", e.target.value, true, childIndex)
+                        }
+                        placeholder="Child variable"
+                        className="flex-grow p-2 border text-black rounded"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeField(index, true, childIndex)}
+                        className="px-3 py-1 bg-red-400 text-white rounded"
+                      >
+                        x
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <button
                 type="button"
-                onClick={() => removeField(index)}
-                className="px-3 py-1 text-white bg-green-500 rounded-lg hover:bg-red-600 transition"
+                onClick={() => addChildField(index)}
+                className="mt-2 text-sm bg-green-200 px-3 py-1 rounded"
               >
-                X
+                + Add Child Field
               </button>
             </div>
           ))}
@@ -122,18 +197,18 @@ const AdminFormBuilder = () => {
           <button
             type="button"
             onClick={addField}
-            className="mt-3 w-full py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600"
+            className="mt-3 w-full py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md transition hover:bg-green-600"
           >
             + Add Field
           </button>
         </div>
 
         <div>
-          <h3 className="text-sm font-medium  mb-2">Calculation Formula</h3>
+          <h3 className="text-sm font-medium mb-2">Calculation Formula</h3>
           <textarea
             value={calculationMethod}
             onChange={(e) => setCalculationMethod(e.target.value)}
-            placeholder="Example: (variable1 + variable2) - (variable3 + variable4)"
+            placeholder="Example: (variable1 + variable2) - variable3"
             className="w-full p-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-black"
             required
           />
@@ -141,7 +216,7 @@ const AdminFormBuilder = () => {
 
         <button
           type="submit"
-          className="w-full py-3 bg-green-500 text-white text-lg font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600  "
+          className="w-full py-3 bg-green-500 text-white text-lg font-bold rounded-lg shadow-md transition hover:bg-green-600"
         >
           Save Company
         </button>
