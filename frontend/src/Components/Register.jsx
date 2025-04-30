@@ -27,7 +27,14 @@ export const Register = ({ handleChange, formData }) => {
         if (!formData.password.trim()) {
             newErrors.password = "كلمة المرور لا يمكن أن تكون فارغة";
             valid = false;
+        } else if (formData.password.length < 8) {
+            newErrors.password = "كلمة المرور يجب أن تكون أكثر من 7 أحرف";
+            valid = false;
+        } else if (!/(?=.*[0-9])(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?])/.test(formData.password)) {
+            newErrors.password = "يجب أن تحتوي كلمة المرور على رقم ورمز واحد على الأقل";
+            valid = false;
         }
+        
 
         if (!formData.confirm_password.trim()) {
             newErrors.confirm_password = "يجب تأكيد كلمة المرور";

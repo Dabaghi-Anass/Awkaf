@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import {Link} from 'react-router-dom';
 import { createNoise2D } from 'simplex-noise';
 import './Background.css';
 
@@ -189,7 +190,7 @@ function BacEffect ({
             <div className="pic1  rounded-lg py-5 h-[40em] ">
               <div className='pic1-text mt-1 w-4/5 mx-auto  rounded-lg'>
               <h1 className="font-bold text-green-300 text-3xl text-center mb-10">الزكاة: التزام ديني ودعم للتكافل الاجتماعي</h1>
-              <p className=" text-white text-md leading-10 text-center  ">
+              <p className=" text-white text-md leading-10 text-center mb-10  ">
                   على هذا الموقع، يمكن للشركات حساب قيمة الزكاة الواجبة عليها وفقًا للشريعة الإسلامية. وكما جاء في القرآن الكريم، فإن أداء الزكاة يعتبر من أركان الإسلام الأساسية، إذ يقول الله تعالى: "خُذْ مِنْ أَمْوَالِهِمْ صَدَقَةً تُطَهِّرُهُمْ وَتُزَكِّيهِمْ بِهَا" (سورة التوبة، الآية 103). ويقول تعالى أيضًا: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ" (سورة البقرة، الآية 43).
 
                   كل الشركات ملزمة شرعاً بأداء الزكاة المستحقة على أموالها لدعم الفقراء والمحتاجين، وذلك تأكيدًا للتضامن والعدالة الاجتماعية التي يدعو إليها الإسلام. ووفقًا لأحكام الشريعة، يتم حساب نسبة الزكاة على أساس موجودات الشركات وأرباحها السنوية.
@@ -199,46 +200,26 @@ function BacEffect ({
                   
 
               </p>
-              <button className='mt-10 bg-green-400 hover:bg-green-500 text-white  py-4 px-8 text-[1em] rounded-3xl'>Learn more</button>
+              <Link to="/About" className='mt-10 bg-green-400 hover:bg-green-500 text-white  py-4 px-8 text-[1em] rounded-3xl'>اعرف المزيد</Link>
               </div>
               
             </div>
 
           <div className='flex flex-col gap-10'>
-            <div className="flex flex-row mx-auto bg-green-950 mix-blend-plus-darker rounded-3xl overflow-hidden h-[30rem]  p-4 gap-10 mb-15">
-            <div className="flex-1  ">
-              <h2 className="text-2xl font-bold mb-4 text-green-300 text-right">
-              سهولة ودقة في حساب زكاة الشركات وفق الشريعة الإسلامية
-              </h2>
-              <p className="text-white text-right leading-relaxed">
-              يعمل هذا الموقع بطريقة بسيطة وفعالة لمساعدة الشركات في حساب الزكاة المستحقة عليها وفقاً للمعايير الشرعية.  أولاً، يتعين على المستخدم تعريف نوع شركته واختيار القطاع الذي تنتمي إليه. ثم سيُطلب منه الإجابة على بعض الأسئلة المتعلقة بالشركة ووضعها المالي، مثل قيمة الأصول، حجم الإيرادات السنوية، وقيمة رأس المال العامل، وغيرها من المعلومات المالية المهمة.  استنادًا إلى هذه المعلومات المدخلة، سيقوم الموقع بتحديد الصيغة المناسبة لحساب الزكاة وفقًا لنوع الشركة ومعايير الشريعة الإسلامية. يقوم الموقع تلقائيًا بحساب المبلغ المستحق من الزكاة بناءً على البيانات المقدمة من المستخدم، ليتمكن المستخدم من معرفة المبلغ الواجب دفعه.  هذه العملية تسهل على الشركات الامتثال لأحكام الزكاة وتساعدها على أداء واجباتها الدينية بسهولة ودقة، مع ضمان توجيه الأموال إلى مستحقيها وفقاً لأحكام الشريعة الإسلامية.
-              </p>
-              <button className='mt-10 bg-green-400 hover:bg-green-500 text-white  py-4 px-8 text-[1em] rounded-3xl'>Learn more</button>
-            </div>
-
-             
-              <div className="w-3/7">
-                <img
-                  src="src\assets\images\ZkatPics\company.jpg"
-                  alt="Card Image"
-                  className="h-full rounded-2xl w-full object-cover"
-                />
-              </div>
           
-          </div>
 
           <div className="flex flex-row-reverse bg-green-950 rounded-3xl mix-blend-plus-darker overflow-hidden h-[30rem] p-4 gap-10">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-4 text-green-300 text-right">
               نحو مجتمع أكثر تماسكًا: دور الشركات في دعم الفئات الأقل حظًا وتحقيق الأثر الإيجابي
               </h2>
-              <p className="text-white text-right leading-relaxed">
+              <p className="text-white text-right leading-relaxed mb-10">
               تُعَدُّ هذه المبادرة خطوةً هامة تُحقّق العديد من الفوائد للمجتمع، من خلال تعزيز التضامن الاجتماعي وتلبية احتياجات الفئات الأقل حظًا. بالإضافة إلى ذلك، فإن لها تأثيرًا إيجابيًا مباشرًا على صورة الشركات المشاركة.
 
 ومن خلال وضع علامة اعتماد لهذه الشركات، نوفر رمزًا يعكس التزامها بالمسؤولية الاجتماعية. كما نخطط لإنشاء مقاطع فيديو تُظهر التغيرات الإيجابية والمشاريع التي تم تمويلها بفضل هذه التبرعات، مما يُبرز الأثر الواقعي لهذه المساهمات.
 
 وبذلك، يمكن للشركات تعزيز سياساتها في مجال المسؤولية الاجتماعية (CSR)، وإظهار اهتمامها الحقيقي بالمجتمع. علاوة على ذلك، يمكن لهذه الشركات الاستفادة من ميزة خصم هذه التبرعات من الضرائب، مما يشجعها أكثر على المشاركة الفعالة في هذا العمل النبيل.  </p>
-              <button className='mt-10 bg-green-400 hover:bg-green-500 text-white  py-4 px-8 text-[1em] rounded-3xl'>Learn more</button>
+              <Link to="/Awkaf"  className='mt-10 bg-green-400 hover:bg-green-500 text-white  py-4 px-8 text-[1em] rounded-3xl'>اعرف المزيد</Link >
             </div>
 
              
@@ -251,7 +232,27 @@ function BacEffect ({
               </div>
           
           </div>
+          <div className="flex flex-row mx-auto bg-green-950 mix-blend-plus-darker rounded-3xl overflow-hidden h-[30rem]  p-4 gap-10 mb-15">
+            <div className="flex-1  ">
+              <h2 className="text-2xl font-bold mb-4 text-green-300 text-right">
+              سهولة ودقة في حساب زكاة الشركات وفق الشريعة الإسلامية
+              </h2>
+              <p className="text-white text-right leading-relaxed mb-10">
+              يعمل هذا الموقع بطريقة بسيطة وفعالة لمساعدة الشركات في حساب الزكاة المستحقة عليها وفقاً للمعايير الشرعية.  أولاً، يتعين على المستخدم تعريف نوع شركته واختيار القطاع الذي تنتمي إليه. ثم سيُطلب منه الإجابة على بعض الأسئلة المتعلقة بالشركة ووضعها المالي، مثل قيمة الأصول، حجم الإيرادات السنوية، وقيمة رأس المال العامل، وغيرها من المعلومات المالية المهمة.  استنادًا إلى هذه المعلومات المدخلة، سيقوم الموقع بتحديد الصيغة المناسبة لحساب الزكاة وفقًا لنوع الشركة ومعايير الشريعة الإسلامية. يقوم الموقع تلقائيًا بحساب المبلغ المستحق من الزكاة بناءً على البيانات المقدمة من المستخدم، ليتمكن المستخدم من معرفة المبلغ الواجب دفعه.  هذه العملية تسهل على الشركات الامتثال لأحكام الزكاة وتساعدها على أداء واجباتها الدينية بسهولة ودقة، مع ضمان توجيه الأموال إلى مستحقيها وفقاً لأحكام الشريعة الإسلامية.
+              </p>
+              <Link to="/ZakatCalculator" className='mt-10 bg-green-400 hover:bg-green-500 text-white  py-4 px-8 text-[1em] rounded-3xl'>ابدأ الآن</Link>
+            </div>
 
+             
+              <div className="w-3/7">
+                <img
+                  src="src\assets\images\ZkatPics\company.jpg"
+                  alt="Card Image"
+                  className="h-full rounded-2xl w-full object-cover"
+                />
+              </div>
+          
+          </div>
         </div>
 
           </div>

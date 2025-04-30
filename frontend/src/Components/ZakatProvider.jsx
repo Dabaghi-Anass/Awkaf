@@ -130,7 +130,7 @@ useEffect(() => {
             alert(error.message);
         }
     };
-    console.log("Updated zakatFormInfos:", zakatFormInfos);
+    
     
 
     return (

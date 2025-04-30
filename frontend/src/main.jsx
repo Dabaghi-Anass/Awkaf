@@ -29,6 +29,9 @@ import ErrorPage from './pages/ErrorPage.jsx';
 import { ForgotPassword } from './Components/ForgotPassword.jsx';
 import { Reports } from './Components/Reports.jsx';
 import HomePage from './pages/HomePage.jsx';
+import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
+import { Ma7acil } from './Components/Ma7acil.jsx';
+
 
 
 const router = createBrowserRouter([
@@ -50,7 +53,7 @@ const router = createBrowserRouter([
   },
   {
     path: "ho/",
-    element: <HomePage />,
+    element: <Ma7acil/>,
   },
   {
     path: "AdminLogin/",
@@ -136,7 +139,7 @@ const router = createBrowserRouter([
     path: "kol/",
     element: (
       <ProtectedRoute>
-        <Reports />
+        <ZakatSelectionPage />
       </ProtectedRoute>
     ),
   },

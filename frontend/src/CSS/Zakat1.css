@@ -23,3 +23,17 @@
     backdrop-filter: blur(3px);
     padding: 2em 2em;
 }
+.category{
+    position: relative;
+    overflow: none;
+}
+.category-text{
+    display: inline-block;
+    position: relative;
+    overflow: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    height: 0;
+}
