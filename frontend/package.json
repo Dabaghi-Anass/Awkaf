@@ -15,7 +15,7 @@
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.11",
     "@mui/styled-engine-sc": "^7.0.2",
-    "@mui/x-charts": "^7.28.0",
+    "@mui/x-charts": "^7.29.1",
     "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/vite": "^4.0.13",

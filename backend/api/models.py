@@ -67,10 +67,20 @@ class CompanyType(models.Model):
     calculation_method = models.TextField()
 
 class CompanyField(models.Model):
-    company_type = models.ForeignKey(CompanyType, related_name='fields', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)  # Used in formulas
-    label = models.CharField(max_length=255)  # Display label, always provided in view
-    
+    company_type = models.ForeignKey(
+        CompanyType,
+        related_name='fields',
+        on_delete=models.CASCADE
+    )
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=100)   # utilisé dans les formules
+    label = models.CharField(max_length=255)  # étiquette d’affichage
 class ZakatHistory(models.Model):
     user = models.ForeignKey(
         User,

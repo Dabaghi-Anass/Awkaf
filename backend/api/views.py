@@ -61,10 +61,23 @@ from api.models import User
 from api.serializer import UserSerializer
 from api.permissions import IsStaffUser
 from .models import CompanyType, CompanyField
-from .serializer import CompanyTypeSerializer, CompanyFieldSerializer
+from .serializer import CompanyTypeSerializer
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.utils.timezone import now
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from .serializer import (
+    
+    CompanyTypeSerializer
+    
+)
 
 
 
@@ -1009,7 +1022,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from .models import CompanyType, CompanyField
-from .serializer import CompanyTypeSerializer, CompanyFieldSerializer
+from .serializer import CompanyTypeSerializer
 
 import json
 import re
@@ -1075,23 +1088,37 @@ class ZakatCalculationView(APIView):
 
     def calculate_zakat_logic(self, company_type_id, user_inputs, moon, nissab):
         company_type = get_object_or_404(CompanyType, id=company_type_id)
-        fields = CompanyField.objects.filter(company_type=company_type)
 
-        user_inputs = {re.sub(r'\s+', '_', k.strip()): v for k, v in user_inputs.items()}
-        required_fields = {field.name for field in fields}
-        name_to_label = {field.name: field.label or field.name for field in fields}
+        # ← only the bottom-level fields (no children) are real inputs
+        leaf_fields = CompanyField.objects.filter(
+            company_type=company_type,
+            children__isnull=True
+        )
 
-        missing_fields = required_fields - user_inputs.keys()
-        if missing_fields:
-            missing_labels = [name_to_label[name] for name in missing_fields]
-            raise ValueError(f"Missing required fields: {', '.join(missing_labels)}")
+        # normalize keys
+        user_inputs = {
+            re.sub(r'\s+', '_', k.strip()): v
+            for k, v in user_inputs.items()
+        }
 
-        formula_symbols = {name: symbols(name) for name in required_fields}
-        expression = sympify(company_type.calculation_method, locals=formula_symbols)
-        zakat_base = round(float(expression.evalf(subs=user_inputs)), 2)
-        zakat_result = zakat_base * moon if zakat_base > nissab else 0
+        # required = exactly those leaf names
+        required = { f.name for f in leaf_fields }
+        labels   = { f.name: f.label for f in leaf_fields }
 
-        return zakat_base, zakat_result
+        missing = required - set(user_inputs.keys())
+        if missing:
+            raise ValueError(
+                "Missing required fields: " +
+                ", ".join(labels[n] for n in missing)
+            )
+
+        # only create symbols for the leaves
+        syms = { name: symbols(name) for name in required }
+        expr = sympify(company_type.calculation_method, locals=syms)
+
+        base   = round(float(expr.evalf(subs=user_inputs)), 2)
+        result = base * moon if base > nissab else 0
+        return base, result
 from django.db import IntegrityError
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
@@ -1164,79 +1191,110 @@ def update_company_with_fields(request, company_type_id):
 
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-from .serializer import CompanyTypeSimpleSerializer
+
+# api/views.py
+
+from django.shortcuts      import get_object_or_404
+from django.utils.timezone import now
+
+from rest_framework         import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response   import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views      import APIView
+
+from .models      import CompanyType, CompanyField, ZakatHistory
+from .serializer  import (
+    CompanyTypeSimpleSerializer,
+    ZakatHistorySerializer
+)
+
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
+
 
 @api_view(['GET'])
 def get_company_type_fields(request, company_type_id):
     """
-    Get only the name and fields of a CompanyType (name + label)
+    Get only the name and custom_fields of a CompanyType (name + label).
+    Uses CompanyTypeSimpleSerializer.
     """
     company_type = get_object_or_404(CompanyType, id=company_type_id)
     serializer = CompanyTypeSimpleSerializer(company_type, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 def list_all_company_types(request):
     """
-    Get all company types with their IDs, names, and fields
+    List all company types with their IDs, names, and custom_fields.
     """
-    all_companies = CompanyType.objects.all()
-    serializer = CompanyTypeSimpleSerializer(all_companies, many=True)
-    return Response(serializer.data)
+    all_ct = CompanyType.objects.all()
+    serializer = CompanyTypeSimpleSerializer(all_ct, many=True, context={'request': request})
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-from .models import ZakatHistory
-from .serializer import ZakatHistorySerializer
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def zakat_history(request):
     """
-    Save zakat calculations in the database with authenticated user.
+    Save zakat calculation in the database for the authenticated user.
     """
     data = request.data
-
-    zakat_base = data.get('zakat_base')
-    zakat_result = data.get('zakat_result')
-    month_type = data.get('month_type')
-    nissab = data.get('nissab')
-
-    if zakat_base is None or zakat_result is None or month_type is None or nissab is None:
+    required = ['zakat_base', 'zakat_result', 'month_type', 'nissab']
+    if any(data.get(k) is None for k in required):
         return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
 
-    zakat_record = ZakatHistory.objects.create(
-        user=request.user,  # ✅ Enregistre l'utilisateur connecté
-        zakat_base=zakat_base,
-        zakat_result=zakat_result,
-        month_type=month_type,
-        calculation_date=now().date(),
-        nissab=nissab
+    record = ZakatHistory.objects.create(
+        user             = request.user,
+        zakat_base       = data['zakat_base'],
+        zakat_result     = data['zakat_result'],
+        month_type       = data['month_type'],
+        calculation_date = now().date(),
+        nissab           = data['nissab']
     )
-
-    serializer = ZakatHistorySerializer(zakat_record)
+    serializer = ZakatHistorySerializer(record, context={'request': request})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 @api_view(['GET'])
 def get_zakat_history(request):
     """
-    Retrieve all Zakat history records (with user info).
+    Retrieve all Zakat history records.
     """
-    zakat_history = ZakatHistory.objects.all().order_by('-calculation_date')
-    serializer = ZakatHistorySerializer(zakat_history, many=True)
+    qs = ZakatHistory.objects.all().order_by('-calculation_date')
+    serializer = ZakatHistorySerializer(qs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 @api_view(['GET'])
 def get_zakat_history_by_user(request, user_id):
     """
-    Retrieve all Zakat history records for a specific user ID.
+    Retrieve Zakat history for a specific user.
     """
-    zakat_history = ZakatHistory.objects.filter(user__id=user_id).order_by('-calculation_date')
-    
-    if not zakat_history.exists():
-        return Response({"message": "No zakat history found for this user."}, status=status.HTTP_404_NOT_FOUND)
-    
-    serializer = ZakatHistorySerializer(zakat_history, many=True)
+    qs = ZakatHistory.objects.filter(user_id=user_id).order_by('-calculation_date')
+    if not qs.exists():
+        return Response({"message": "No zakat history found for this user."},
+                        status=status.HTTP_404_NOT_FOUND)
+    serializer = ZakatHistorySerializer(qs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CheckTokenView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        token = request.GET.get("token")
+        if not token:
+            return Response(False, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            access = AccessToken(token)
+            exp = access["exp"]
+            valid = (now().timestamp() < exp)
+            return Response(valid, status=status.HTTP_200_OK)
+        except (TokenError, Exception):
+            return Response(False, status=status.HTTP_401_UNAUTHORIZED)
+
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
