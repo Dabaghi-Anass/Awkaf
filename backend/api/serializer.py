@@ -11,6 +11,11 @@ from django.urls import reverse
 from .models import InputField, ZakatHistory, WaqfProject
 from django.db import connection
 from rest_framework.validators import UniqueValidator
+from rest_framework import serializers
+from .models import CompanyType, CompanyField
+
+
+
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
@@ -187,77 +192,60 @@ from .models import CompanyField
 from rest_framework import serializers
 from .models import CompanyType, CompanyField
 
-class CompanyFieldSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CompanyField
-        fields = ['name']
-
-
-from rest_framework import serializers
-from .models import CompanyType, CompanyField
-
-
-from rest_framework import serializers
-from .models import CompanyType, CompanyField
-
-
-
-from rest_framework import serializers
-from .models import CompanyType, CompanyField
+class CompanyFieldInputSerializer(serializers.Serializer):
+    name     = serializers.CharField()
+    label    = serializers.CharField()
+    children = serializers.ListField(child=serializers.DictField(), required=False)
 
 class CompanyFieldOutputSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
     class Meta:
-        model = CompanyField
-        fields = ['name', 'label']
+        model  = CompanyField
+        fields = ['name', 'label', 'children']
+
+    def get_children(self, obj):
+        return CompanyFieldOutputSerializer(obj.children.all(), many=True).data
 
 class CompanyTypeSerializer(serializers.ModelSerializer):
-    fields = serializers.ListField(
-        child=serializers.DictField(child=serializers.CharField()),
-        write_only=True
-    )
-    output_fields = CompanyFieldOutputSerializer(many=True, source='fields', read_only=True)
+    # incoming
+    fields = CompanyFieldInputSerializer(many=True, write_only=True)
+    # outgoing
+    output_fields = serializers.SerializerMethodField()
 
     class Meta:
-        model = CompanyType
+        model  = CompanyType
         fields = ['id', 'name', 'calculation_method', 'fields', 'output_fields']
 
+    def get_output_fields(self, obj):
+        # only top-level fields
+        roots = obj.fields.filter(parent__isnull=True)
+        return CompanyFieldOutputSerializer(roots, many=True).data
+
     def create(self, validated_data):
-        fields_data = validated_data.pop('fields', [])
+        tree = validated_data.pop('fields', [])
         company_type = CompanyType.objects.create(**validated_data)
 
-        new_fields = []
-        for field in fields_data:
-            name = field.get('name', '').strip().replace(' ', '_')
-            label = field.get('label', '').strip() or name
-            new_fields.append(CompanyField(company_type=company_type, name=name, label=label))
+        def recurse(nodes, parent=None):
+            for node in nodes:
+                nm  = node['name'].strip().replace(' ', '_')
+                lb  = node['label'].strip() or nm
+                cf  = CompanyField.objects.create(
+                    company_type=company_type,
+                    parent=parent,
+                    name=nm,
+                    label=lb
+                )
+                recurse(node.get('children', []), parent=cf)
 
-        CompanyField.objects.bulk_create(new_fields)
+        recurse(tree)
         return company_type
 
     def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep['fields'] = rep.pop('output_fields', [])
-        return rep
-
-from rest_framework import serializers
-from .models import CompanyType
-
-class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
-    custom_fields = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CompanyType
-        fields = ['id', 'name', 'custom_fields']
-
-    def get_custom_fields(self, obj):
-        return [
-            {
-                "name": field.name,
-                "label": field.label
-            } for field in obj.fields.all()
-        ]
-
-from .models import ZakatHistory  # ✅ Updated model import
+        data = super().to_representation(instance)
+        # rename for client
+        data['fields'] = data.pop('output_fields', [])
+        return data
 
 class ZakatHistorySerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source='user.id', read_only=True)
@@ -285,4 +273,23 @@ class WaqfProjectSerializer(serializers.ModelSerializer):
             "image",
             "created_at",
             "updated_at"
+        ]
+    from rest_framework import serializers
+
+class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
+    """
+    Only id, name and a flat list of the top-level fields (name + label).
+    """
+    custom_fields = serializers.SerializerMethodField()
+
+    class Meta:
+        model  = CompanyType
+        fields = ['id', 'name', 'custom_fields']
+
+    def get_custom_fields(self, obj):
+        # only root (parent=None) fields
+        roots = obj.fields.filter(parent__isnull=True)
+        return [
+            {'name': f.name, 'label': f.label}
+            for f in roots
         ]
