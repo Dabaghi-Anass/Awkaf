@@ -1,6 +1,8 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import path
+from .views import CurrentUserView
 from .views import (
     InputFieldListCreate, BulkInputFieldUpdate, BulkInputFieldDelete,AdminDeleteUserView,
     AdminNonStaffUserListView, WaqfProjectListCreateView, WaqfProjectDetailView,CompanyTypeCreateView,
@@ -43,6 +45,7 @@ urlpatterns = [
     path('create-company-with-fields/', CompanyTypeCreateView.as_view()), # ✅ avec .as_view() ici
     path('calculate-zakat/', ZakatCalculationView.as_view()),
     path('check-token/', CheckTokenView.as_view(), name='check-token'),
+     path('me/', CurrentUserView.as_view(), name='current-user'),
 
     
 ]

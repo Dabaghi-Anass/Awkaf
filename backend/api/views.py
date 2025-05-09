@@ -1340,3 +1340,16 @@ class CheckTokenView(APIView):
 
         except (TokenError, Exception):  # Handle expired or invalid tokens
             return Response(False, status=401)  # Return False if the token is invalid or expired
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .serializer import UserInfoSerializer
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserInfoSerializer(request.user)
+        return Response(serializer.data)
