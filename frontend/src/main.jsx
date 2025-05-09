@@ -21,17 +21,15 @@ import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 import App from './App.jsx';
 import { ProtectedRoute } from './ProtectedRoutes.jsx';
 import { Contribution } from './pages/Contribution.jsx';
-
-import AdminFormBuilder from './Components/AdminFormBuilder.jsx';
 import UserHistory from './pages/UserHistory.jsx';
 import { AdminProvider } from './Components/AdminProvider.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import { ForgotPassword } from './Components/ForgotPassword.jsx';
-import { Reports } from './Components/Reports.jsx';
-import HomePage from './pages/HomePage.jsx';
+
 import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Ma7acil } from './Components/Ma7acil.jsx';
 
+import { Settings } from './Components/Settings.jsx';
 
 
 const router = createBrowserRouter([
@@ -68,6 +66,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Home />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "settings-page/",
+    element: (
+      <ProtectedRoute>
+        <Settings />
       </ProtectedRoute>
     ),
   },

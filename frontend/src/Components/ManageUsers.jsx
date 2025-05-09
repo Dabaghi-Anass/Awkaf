@@ -100,11 +100,11 @@ export const ManageUsers = () => {
 
   return (
     <>
-      <div className="w-full mx-auto  p-6  ">
+      <div className="w-full mx-auto    ">
       
         <table className="w-full border-collapse border border-gray-300">
           <thead>
-            <tr className="bg-green-500 text-[0.8em] font-medium">
+            <tr className="bg-gray-800 text-white text-[0.8em] font-medium">
               <th className="border border-gray-300 p-2">ID</th>
               <th className="border border-gray-300 p-2">Username</th>
               <th className="border border-gray-300 p-2">Email</th>
@@ -115,7 +115,7 @@ export const ManageUsers = () => {
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
-                <tr key={user.id} className="text-center text-[0.7em] border border-gray-300">
+                <tr key={user.id} className="text-left text-[0.7em] border border-gray-300">
                   <td className="p-2">{user.id}</td>
                   <td className="p-2">{user.username}</td>
                   <td className="p-2">{user.email}</td>
@@ -123,9 +123,9 @@ export const ManageUsers = () => {
                   <td className="p-2">
                     <button
                       onClick={(e) => { e.preventDefault(); deleteUser(user.id); }}
-                      className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-800"
+                      className="px-4 py-1 custom-input bg-gray-600 text-white rounded hover:bg-gray-800"
                     >
-                      حذف
+                      delete
                     </button>
                   </td>
                 </tr>
@@ -139,29 +139,29 @@ export const ManageUsers = () => {
         </table>
       </div>
       <div className="flex justify-center mt-5">
-        <Stack spacing={2} className="flex">
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(_, value) => setPage(value)}
-            variant="outlined"
-            shape="rounded-2xl"
-            sx={{
-              "& .MuiPaginationItem-root": {
-                color: "#035116",
-                borderColor: "#035116",
-              },
-              "& .MuiPaginationItem-root:hover": {
-                backgroundColor: "#e6f5ea",
-              },
-              "& .Mui-selected": {
-                backgroundColor: "#035116 !important",
-                color: "white !important",
-              },
-            }}
-          />
-        </Stack>
-      </div>
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={(_, value) => setPage(value)}
+              variant="outlined"
+              shape="rounded-lg"
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  color: "#22C55E",
+                  borderColor: "#22C55E",
+                },
+                "& .MuiPaginationItem-root:hover": {
+                  backgroundColor: "#15803D",
+                },
+                "& .Mui-selected": {
+                  backgroundColor: "#22C55E !important",
+                  color: "white !important",
+                },
+              }}
+            />
+          </Stack>
+        </div>
     </>
   );
 };

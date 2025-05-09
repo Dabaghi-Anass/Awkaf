@@ -5,13 +5,14 @@ export const SideBar = ({ activeTab, setActiveTab }) => {
     { name: "Users", label: "Manage Users" },
     { name: "Projects", label: "Manage Projects" },
     { name: "Form", label: "Manage Form" },
+    { name: "Settings", label: "Settings" },
 
   ];
 
   return (
-    <div className="w-[15em]  p-4 bg-gray-800 shadow-lg fixed top-0 left-0 h-full">
+    <div className="w-[15em]  p-4 bg-gray-800 shadow-lg fixed top-0 left-0 h-full test">
       <h2 className="text-[1.7em] font-bold text-white mb-4">Admin Panel</h2>
-      <ul className="space-y-2">
+      <ul className="space-y-2  rounded-[10px]  mt-15">
         {menuItems.map((item) => (
           <li
             key={item.name}

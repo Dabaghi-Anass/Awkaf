@@ -8,7 +8,7 @@ export const ProjectsTable = () => {
   const { activeTab, setActiveTab, setProjectData, setIsEditing } = useContext(AdminContext);
   const [projects, setProjects] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
@@ -93,14 +93,14 @@ export const ProjectsTable = () => {
 
   return (
     <>
-      <div className="w-full mx-auto  p-6">
+      <div className="w-full mx-auto  ">
         
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border-collapse  border border-gray-950 ">
           <thead>
-            <tr className="bg-green-400">
+            <tr className="bg-gray-800 text-[0.8em] text-white">
               <th className="border border-gray-300 p-2">ID</th>
               <th className="border border-gray-300 p-2">Project Name</th>
-              <th className="border border-gray-300 p-2">Objectives</th>
+              <th className="border border-gray-300 p-2">Partners</th>
               <th className="border border-gray-300 p-2">Created Date</th>
               <th className="border border-gray-300 p-2">Updated Date</th>
               <th className="border border-gray-300 p-2 text-center">Actions</th>
@@ -109,22 +109,22 @@ export const ProjectsTable = () => {
           <tbody>
             {projects.length > 0 ? (
               projects.map((project) => (
-                <tr key={project.id} className="text-center border border-gray-300 hover:bg-gray-100 transition duration-300">
+                <tr key={project.id} className="text-left text-[0.8em] border border-gray-300 hover:bg-gray-100 transition duration-300">
                   <td className="p-2">{project.id}</td>
                   <td className="p-2">{project.name}</td>
-                  <td className="p-2">{project.objectives}</td>
+                  <td className="p-2">{project.partners}</td>
                   <td className="p-2">{project.created_at}</td>
                   <td className="p-2">{project.updated_at}</td>
                   <td className="p-2">
                     <button
                       onClick={() => handleEdit(project)}
-                      className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-800"
+                      className="px-4 py-1 custom-button rounded-[8px]"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => deleteProject(project.id)}
-                      className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-800 ml-2"
+                      className="px-4 py-1 bg-gray-600 text-white rounded-[8px] hover:bg-gray-800 ml-2"
                     >
                       Delete
                     </button>
@@ -146,17 +146,17 @@ export const ProjectsTable = () => {
               page={page}
               onChange={(_, value) => setPage(value)}
               variant="outlined"
-              shape="rounded-2xl"
+              shape="rounded-lg"
               sx={{
                 "& .MuiPaginationItem-root": {
-                  color: "#035116",
-                  borderColor: "#035116",
+                  color: "#22C55E",
+                  borderColor: "#22C55E",
                 },
                 "& .MuiPaginationItem-root:hover": {
-                  backgroundColor: "#e6f5ea",
+                  backgroundColor: "#15803D",
                 },
                 "& .Mui-selected": {
-                  backgroundColor: "#035116 !important",
+                  backgroundColor: "#22C55E !important",
                   color: "white !important",
                 },
               }}
