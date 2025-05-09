@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 export const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {

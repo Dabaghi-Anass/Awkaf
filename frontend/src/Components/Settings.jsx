@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-
 
 export const Settings = () => {
   const [formData, setFormData] = useState({
@@ -14,16 +12,40 @@ export const Settings = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // Fetch current admin info
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    if (token) {
-      const decoded = jwtDecode(token);
-      setFormData((prev) => ({
-        ...prev,
-        username: decoded.username || "",
-        email: decoded.email || "",
-      }));
+    if (!token) {
+      setError("No token found.");
+      return;
     }
+
+    const fetchUserInfo = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/apif/me/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to load user info");
+
+        const data = await res.json();
+
+        setFormData((prev) => ({
+          ...prev,
+          username: data.username || "",
+          first_name: data.first_name || "",
+          last_name: data.last_name || "",
+          email: data.email || "",
+        }));
+      } catch (err) {
+        console.error(err);
+        setError("Could not fetch admin data.");
+      }
+    };
+
+    fetchUserInfo();
   }, []);
 
   const handleChange = (e) => {
@@ -35,11 +57,16 @@ export const Settings = () => {
     e.preventDefault();
     setMessage("");
     setError("");
+
     const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setError("No token found.");
+      return;
+    }
 
     try {
       const response = await fetch("http://127.0.0.1:8000/apif/user/update/", {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -51,7 +78,7 @@ export const Settings = () => {
 
       if (!response.ok) {
         if (data.old_password) {
-          setError(data.old_password);
+          setError(data.old_password[0]);
         } else {
           setError("Failed to update profile.");
         }
@@ -66,7 +93,7 @@ export const Settings = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white shadow p-6 rounded-xl">
+    <div className="max-w-md mx-auto mt-10 bg-white shadow p-6 rounded-xl border-3 border-gray-800">
       <h2 className="text-xl font-semibold mb-4 text-center text-green-700">Admin Settings</h2>
 
       {message && <p className="text-green-600 mb-2">{message}</p>}
