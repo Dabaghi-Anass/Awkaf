@@ -280,13 +280,15 @@ class UpdateDeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        # always operate on the authenticated user
+        # Always operate on the authenticated user
         return self.request.user
 
     def put(self, request, *args, **kwargs):
+        # Full update: all writable fields should be provided
         return self.update_user(request, partial=False)
 
     def patch(self, request, *args, **kwargs):
+        # Partial update: only provided fields will change
         return self.update_user(request, partial=True)
 
     def update_user(self, request, partial):
@@ -305,6 +307,7 @@ class UpdateDeleteUserView(APIView):
         user = self.get_object()
         user.delete()
         return Response({"message": "Account deleted successfully."}, status=204)
+
 
 
 
