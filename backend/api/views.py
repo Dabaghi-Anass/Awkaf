@@ -264,44 +264,45 @@ class AdminVerifyOTP(APIView):
             "refresh_token": str(refresh)
         })
         
-class UpdateDeleteUserView(APIView):
-    permission_classes = [IsAuthenticated]  # Only logged-in users
+# views.py
 
-    def get_object(self, request):
-        """Get the logged-in user's object"""
-        return request.user
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from .serializer import UserSerializer
+
+User = get_user_model()
+
+class UpdateDeleteUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # always operate on the authenticated user
+        return self.request.user
 
     def put(self, request, *args, **kwargs):
-        """Full update of user profile"""
         return self.update_user(request, partial=False)
 
     def patch(self, request, *args, **kwargs):
-        """Partial update of user profile"""
         return self.update_user(request, partial=True)
 
     def update_user(self, request, partial):
-        """Handles both PUT and PATCH updates"""
-        user = self.get_object(request)
-        serializer = UserSerializer(user, data=request.data, partial=partial)
-
-        if serializer.is_valid():
-            serializer.save()
-
-            # Update company if the user has one
-            if hasattr(user, "employee") and "company" in request.data:
-                user.employee.company = request.data["company"]
-                user.employee.save()
-
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        user = self.get_object()
+        serializer = UserSerializer(
+            user,
+            data=request.data,
+            partial=partial,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        """Allow users to delete their own account"""
-        user = self.get_object(request)
-
-        # Delete Employee record if it exists
-        Employee.objects.filter(user=user).delete()
-
+        user = self.get_object()
         user.delete()
         return Response({"message": "Account deleted successfully."}, status=204)
 
