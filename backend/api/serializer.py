@@ -66,26 +66,28 @@ from django.core.mail import EmailMultiAlternatives
 
 
 class UserSerializer(serializers.ModelSerializer):
-    company = serializers.CharField(write_only=True, required=False)
-    is_staff = serializers.BooleanField(write_only=True, required=False)
+    """
+    Serializer for Django User, with optional old_password enforcement when changing own password.
+    """
+    # remove company logic if not needed
     is_verified = serializers.BooleanField(source="is_active", read_only=True)
-    email = serializers.EmailField(required=True)
-    date_joined = serializers.SerializerMethodField()  # Format the date here
+    date_joined = serializers.SerializerMethodField()
+    old_password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
         fields = [
-            "id", "username", "first_name", "last_name", "email", "password",
-            "company", "is_staff", "is_verified", "date_joined"
+            "id", "username", "first_name", "last_name",
+            "email", "password", "old_password",
+            "is_verified", "date_joined"
         ]
         extra_kwargs = {
-            "password": {"write_only": True},
-            "is_staff": {"read_only": True},
+            "password": {"write_only": True, "required": False},
         }
 
     def get_date_joined(self, obj):
-        # Ensure date_joined is returned as a string in the desired format
-        return obj.date_joined.strftime("%Y-%m-%d")  # Format it correctly
+        # Return ISO date string
+        return obj.date_joined.strftime("%Y-%m-%d")
 
     def validate_email(self, value):
         qs = User.objects.filter(email=value)
@@ -97,47 +99,41 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context.get("request")
-        old = data.get("old_password")  # Safe assignment to avoid UnboundLocalError
-
-        # Check if the password is being changed and validate the old password
+        # Enforce old_password only when changing own password
         if "password" in data and request and request.user == self.instance:
+            old = data.get("old_password")
             if not old:
-                raise serializers.ValidationError({"old_password": "Required when changing password."})
+                raise serializers.ValidationError({
+                    "old_password": "Required when changing password."
+                })
             if not self.instance.check_password(old):
-                raise serializers.ValidationError({"old_password": "Incorrect current password."})
-
+                raise serializers.ValidationError({
+                    "old_password": "Incorrect current password."
+                })
         return data
 
     def create(self, validated_data):
-        # Determine if the user is an admin based on the data passed
-        is_staff = validated_data.pop('is_staff', False)  # Default to False for regular users
+        # Signup: set password, deactivate until verification
         pwd = validated_data.pop("password", None)
-
         user = User.objects.create(**validated_data)
-
-        # If user is admin, mark is_staff as True
-        user.is_staff = is_staff
         if pwd:
             user.set_password(pwd)
-        
-        user.is_active = False  # User must verify email before being activated
+        user.is_active = False
         user.save()
-
-        self.send_verification_email(user)
+        # Optionally send verification email
+        # self.send_verification_email(user)
         return user
 
     def update(self, instance, validated_data):
-        # Determine if the user is an admin based on the data passed
-        is_staff = validated_data.pop('is_staff', instance.is_staff)  # Default to current value if not passed
-        new_pw = validated_data.pop("password", None)
+        # Remove old_password so it isn't treated as field
         validated_data.pop("old_password", None)
+        new_pw = validated_data.pop("password", None)
 
+        # Update other fields
         for attr, val in validated_data.items():
             setattr(instance, attr, val)
 
-        # If user is admin, mark is_staff as True
-        instance.is_staff = is_staff
-
+        # Finally set new password if provided
         if new_pw:
             instance.set_password(new_pw)
 
@@ -156,22 +152,13 @@ class UserSerializer(serializers.ModelSerializer):
         from_email = "noreply@yourdomain.com"
         to_email = [user.email]
 
-        context = {
-            "verify_link": verify_link,
-            "user": user,
-        }
-
-        # Correctly reference the template based on its location
-        html_content = render_to_string("verify_email.html", context)  # or "emails/verify_email.html"
+        context = {"verify_link": verify_link, "user": user}
+        html_content = render_to_string("verify_email.html", context)
         text_content = f"Please verify your email: {verify_link}"
 
         msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
         msg.attach_alternative(html_content, "text/html")
-
-        try:
-            msg.send()
-        except Exception as e:
-            print("EMAIL SEND ERROR:", e)
+        msg.send()
 
 class InputFieldSerializer(serializers.ModelSerializer):
     class Meta:
