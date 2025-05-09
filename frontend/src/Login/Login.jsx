@@ -95,7 +95,7 @@ export const Login = ({ handleChange, formData }) => {
                                     name="username"
                                     value={formData.username}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-[0.9em]"
+                                    className="custom-input w-full py-2 px-3"
                                     
                                 />
                                 {formErrors.username && <p className="text-red-500 text-sm">{formErrors.username}</p>}
@@ -107,7 +107,7 @@ export const Login = ({ handleChange, formData }) => {
                                     name="password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-[0.9em]"
+                                    className="custom-input w-full py-2 px-3"
                                     
                                 />
                                 {formErrors.password && <p className="text-red-500 text-[0.8em]">{formErrors.password}</p>}

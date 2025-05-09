@@ -39,7 +39,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                         name="first_name" 
                         value={userMessage.first_name} 
                         onChange={handleChange} 
-                        className="w-1/2 p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                        className="custom-input w-full p-3"
                     />
                     <input 
                         type="text" 
@@ -47,7 +47,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                         name="last_name" 
                         value={userMessage.last_name} 
                         onChange={handleChange} 
-                        className="w-1/2 p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                        className="custom-input w-full p-3"
                     />
                 </div>
 
@@ -57,7 +57,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="sender_email" 
                     value={userMessage.sender_email} 
                     onChange={handleChange} 
-                    className="w-full p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="custom-input w-full p-3"
                 />
 
                 <input 
@@ -66,7 +66,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="phone" 
                     value={userMessage.phone} 
                     onChange={handleChange} 
-                    className="w-full p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="custom-input w-full p-3"
                 />
 
                 <textarea 
@@ -74,12 +74,12 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="message" 
                     value={userMessage.message} 
                     onChange={handleChange} 
-                    className="w-full p-3 border text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 resize-none min-h-[120px] outline-none"
+                    className="custom-input w-full p-3 min-h-[10em] "
                 ></textarea>
 
                 <button 
                     type="submit" 
-                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-200"
+                    className="custom-button w-full py-2 rounded-[10px]"
                 >
                     إرسال
                 </button>

@@ -60,7 +60,7 @@ export const CalForm = () => {
       <div key={index}>
         {field.children && field.children.length > 0 ? (
           <>
-            <div className="font-semibold text-gray-700 mt-4">{field.label}</div>
+            <div className="font-semibold text-green-700 text-[1.2em] mt-4">{field.label}</div>
             <div className="ml-4">{renderInputs(field.children)}</div>
           </>
         ) : (
@@ -68,7 +68,7 @@ export const CalForm = () => {
             <label className="text-gray-700 text-sm font-semibold">{field.label}</label>
             <div className="relative w-full">
               <input
-                className="w-full h-10 p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 pr-10"
+                className="w-full h-10 p-2 border custom-input pr-10"
                 type="text"
                 name={field.name}
                 value={formatNumber(zakatFormInfos[field.name] || "")}
@@ -121,7 +121,7 @@ export const CalForm = () => {
           </div>
 
           <button
-            className="block mx-auto py-3 w-1/2 mt-6 bg-green-500 text-white text-lg font-semibold rounded-lg hover:bg-green-600"
+            className="block mx-auto py-3 w-1/2 mt-6 custom-button rounded-[10px]"
             type="submit"
           >
             حساب الزكاة

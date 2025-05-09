@@ -98,3 +98,27 @@ a{
   text-decoration: none;
 }
 
+.custom-input {
+  
+  border: 1px solid #D1D5DB; /* border, border-gray-300 */
+  font-size: 0.875rem; /* text-sm (14px) */
+  border-radius: 0.5rem; /* rounded-lg (8px) */
+  outline: none; /* outline-none */
+  transition: box-shadow 0.2s, border-color 0.2s;
+  resize: none;
+   /* for smooth focus ring effect */
+}
+
+.custom-input:focus {
+  box-shadow: 0 0 0 1px #22C55E; /* focus:ring-2 + focus:ring-green-500 */
+  border-color: #22C55E;
+}
+.custom-button {
+  background-color: #16A34A; /* bg-green-600 */
+  color: #ffffff; /* text-white *//* rounded-lg (8px) */ /* font-semibold */
+  transition: background-color 0.2s; /* transition duration-200 */
+}
+
+.custom-button:hover {
+  background-color: #15803D; /* hover:bg-green-700 */
+}

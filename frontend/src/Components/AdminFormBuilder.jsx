@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-
+import {Trash} from '../assets/icons/trash.jsx';
+import {Add} from '../assets/icons/Add.jsx';
+import '../CSS/DashboardAdmin.css';
 const AdminFormBuilder = () => {
   const [companyName, setCompanyName] = useState("");
   const [fields, setFields] = useState([]);
@@ -57,29 +59,36 @@ const AdminFormBuilder = () => {
             placeholder="Label"
             value={field.label}
             onChange={(e) => updateField(currentPath, "label", e.target.value)}
-            className="mb-1 mr-2 p-2 border text-black"
+            className="mb-1 mr-2 custom-input py-2 px-3 w-[40%]"
           />
           <input
             type="text"
             placeholder="Name"
             value={field.name}
             onChange={(e) => updateField(currentPath, "name", e.target.value)}
-            className="mb-1 p-2 border text-black"
+            className="mb-1 custom-input py-2 px-3"
           />
-          <button
-            type="button"
-            onClick={() => removeField(currentPath)}
-            className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
-          >
-            Remove
-          </button>
-          <button
-            type="button"
-            onClick={() => addField(index)}
-            className="ml-2 bg-blue-500 text-white px-2 py-1 rounded"
-          >
-            + Sub-field
-          </button>
+         <div className="inline-flex align-middle gap-2.5">
+  <button
+    type="button"
+    onClick={() => removeField(currentPath)}
+    className="ml-2 text-white  px-2 py-1 rounded"
+  >
+    <Trash></Trash>
+  </button>
+
+  {/* Only allow adding sub-fields if it's a top-level field */}
+  {path.length === 0 && (
+    <button
+      type="button"
+      onClick={() => addField(index)}
+      className="ml-2 flex items-center text-white text-[15px] custom-button rounded-[10px] px-2 py-1"
+    >
+      <Add></Add>Sub-field
+    </button>
+  )}
+</div>
+
           {field.children && field.children.length > 0 && renderFields(field.children, currentPath)}
         </div>
       );
@@ -122,33 +131,34 @@ const AdminFormBuilder = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white shadow rounded">
-      <h2 className="text-xl font-bold mb-4">Create Company Form</h2>
+    <div className="w-full bg-white border-gray-800 border-3 p-6 mt-10  mx-auto  shadow rounded-[15px]">
+      <h2 className="text-3xl text-blue-950 font-bold mb-6 text-center">Create Company Form</h2>
       <form onSubmit={handleSubmit}>
         <input
-          className="w-full mb-4 p-2 border text-black"
+          className="custom-input w-full py-2 px-3 mb-3"
           placeholder="Company Name"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
         />
-        <textarea
-          className="w-full mb-4 p-2 border text-black"
-          placeholder="Calculation formula"
-          value={calculationMethod}
-          onChange={(e) => setCalculationMethod(e.target.value)}
-        />
+        
         <div>
-          <h3 className="font-semibold mb-2">Fields</h3>
+          <h3 className="font-semibold text-blue-950  mb-2">Fields</h3>
           {renderFields(fields)}
           <button
             type="button"
             onClick={() => addField(null)}
-            className="bg-green-600 text-white px-4 py-2 rounded"
+            className="custom-button flex items-center py-2 px-5 rounded-[10px]"
           >
-            + Add Field
+            <Add></Add> Add Field
           </button>
         </div>
-        <button type="submit" className="block mt-6 bg-green-600 text-white px-4 py-2 rounded">
+        <textarea
+          className="custom-input mt-8 w-full py-2 px-3"
+          placeholder="Calculation formula"
+          value={calculationMethod}
+          onChange={(e) => setCalculationMethod(e.target.value)}
+        />
+        <button type="submit" className="block mt-6 custom-button  py-2 px-5 rounded-[10px] font-bold">
           Save Company
         </button>
       </form>

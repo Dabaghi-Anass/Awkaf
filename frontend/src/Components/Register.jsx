@@ -93,7 +93,7 @@ export const Register = ({ handleChange, formData }) => {
                         <div key={index} className='my-1'>
                             <label className="block text-right text-[0.9em] text-gray-600 mb-1">{field === 'username' ? "إسم المستخدم" : field === 'email' ? "البريد الإلكتروني" : field === 'password' ? "كلمة المرور" : field === 'confirm_password' ? "تأكيد كلمة المرور" : "إسم الشركة"} </label>
                             <input 
-                                className={` text-[0.9em] w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500`}
+                                className={` text-[0.9em] custom-input w-full py-2 px-3 `}
                                 type={field.includes('password') ? 'password' : 'text'} 
                                 name={field} 
                                 value={formData[field]} onChange={handleInputChange} 

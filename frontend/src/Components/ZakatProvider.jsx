@@ -14,12 +14,21 @@ const [selectedCompany, setSelectedCompany] = useState(null);
 
 // Update form fields dynamically when company type changes
 useEffect(() => {
-    if (selectedCompany && Array.isArray(selectedCompany.custom_fields)) {
-        setZakatFormInfos(prevData => ({
-            ...Object.fromEntries(selectedCompany.custom_fields.map(field => [field.name, ""]))
-        }));
+    if (selectedCompany && Array.isArray(selectedCompany.fields)) {
+        const extractLeafFields = (nodes) => {
+            return nodes.flatMap(field =>
+                field.children && field.children.length > 0
+                    ? extractLeafFields(field.children)
+                    : [field]
+            );
+        };
+
+        const leafFields = extractLeafFields(selectedCompany.fields);
+        const initialValues = Object.fromEntries(leafFields.map(field => [field.name, ""]));
+        setZakatFormInfos(initialValues);
     }
 }, [selectedCompany]);
+
 
 
 
