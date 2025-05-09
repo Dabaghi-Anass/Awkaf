@@ -620,55 +620,101 @@ class RequestPasswordResetView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+# views.py
+
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+
+User = get_user_model()
+
 class ResetPasswordView(APIView):
-    permission_classes = [AllowAny]  # Allow unauthenticated access
+    permission_classes = [AllowAny]
+    # Only JSONRenderer + TemplateHTMLRenderer → no DRF browsable API
+    renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
+    # When rendering HTML, use this template:
+    template_name = "reset_password_form.html"
 
     def get(self, request, uidb64, token):
+        # decode & verify token
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
-
-            if not default_token_generator.check_token(user, token):
-                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
-
-            return Response({
-                "message": "Token is valid. You can now send a POST request with your new password.",
-                "uid": uidb64,
-                "token": token
-            }, status=status.HTTP_200_OK)
-
-        except (User.DoesNotExist, DjangoUnicodeDecodeError):
-            return Response({"error": "Invalid link or user not found."}, status=status.HTTP_400_BAD_REQUEST)
-
-    def post(self, request, uidb64, token):
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-
-            if not default_token_generator.check_token(user, token):
-                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
-
-            new_password = request.data.get("password")
-            if not new_password:
-                return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-            user.set_password(new_password)
-            user.save()
-
-            send_mail(
-                subject="Password Changed Successfully",
-                message="Your password has been changed successfully.",
-                from_email="noreply@yourdomain.com",
-                recipient_list=[user.email],
-                fail_silently=False,
+        except Exception:
+            return Response(
+                {"error": "Invalid link."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
             )
 
-            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+        if not default_token_generator.check_token(user, token):
+            return Response(
+                {"error": "Token invalid or expired."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
 
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # token valid → render form, passing uidb64 & token into context
+        return Response(
+            {"uidb64": uidb64, "token": token},
+            template_name=self.template_name
+        )
+
+    def post(self, request, uidb64, token):
+        # decode & verify
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except Exception:
+            return Response(
+                {"error": "Invalid link."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
+
+        if not default_token_generator.check_token(user, token):
+            return Response(
+                {"error": "Token invalid or expired."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
+
+        # get new password (works for JSON or form POST)
+        new_password = request.data.get("password") or request.POST.get("password")
+        if not new_password:
+            return Response(
+                {"error": "Password cannot be empty."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        # optional confirmation email
+        send_mail(
+            "Your password was changed",
+            "Your password has been successfully reset.",
+            "noreply@yourdomain.com",
+            [user.email],
+            fail_silently=False,
+        )
+
+        return Response(
+            {"success": "Your password has been reset!"},
+            template_name=self.template_name
+        )
+
 from django.shortcuts import render
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
