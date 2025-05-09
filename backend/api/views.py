@@ -770,11 +770,9 @@ class AdminNonStaffUserListView(generics.ListAPIView):
         """ ✅ Return paginated or full user list based on request """
         queryset = self.get_queryset()
 
-        # ✅ Serialize data and format `date_joined`
+        # ✅ Serialize data
         serializer = self.get_serializer(queryset, many=True)
         serialized_data = serializer.data
-        for user in serialized_data:
-            user["date_joined"] = user["date_joined"].strftime("%Y-%m-%d")  # Format date properly
 
         # ✅ Apply pagination if requested
         if "page" in request.GET and "page_size" in request.GET:
@@ -1340,3 +1338,16 @@ class CheckTokenView(APIView):
 
         except (TokenError, Exception):  # Handle expired or invalid tokens
             return Response(False, status=401)  # Return False if the token is invalid or expired
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .serializer import UserInfoSerializer
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserInfoSerializer(request.user)
+        return Response(serializer.data)
