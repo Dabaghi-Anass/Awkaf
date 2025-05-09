@@ -770,11 +770,9 @@ class AdminNonStaffUserListView(generics.ListAPIView):
         """ ✅ Return paginated or full user list based on request """
         queryset = self.get_queryset()
 
-        # ✅ Serialize data and format `date_joined`
+        # ✅ Serialize data
         serializer = self.get_serializer(queryset, many=True)
         serialized_data = serializer.data
-        for user in serialized_data:
-            user["date_joined"] = user["date_joined"].strftime("%Y-%m-%d")  # Format date properly
 
         # ✅ Apply pagination if requested
         if "page" in request.GET and "page_size" in request.GET:
