@@ -114,7 +114,7 @@ export const AdminLogin = () => {
                                     name="username"
                                     value={data.username}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="w-full px-3 py-2 custom-input"
                                 />
                                 {formErrors.username && <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>}
                             </div>
@@ -125,7 +125,7 @@ export const AdminLogin = () => {
                                     name="password"
                                     value={data.password}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="w-full px-3 py-2 custom-input"
                                 />
                                 {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
                             </div>
@@ -136,13 +136,13 @@ export const AdminLogin = () => {
                                     name="secretKey"
                                     value={data.secretKey}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="w-full px-3 py-2 custom-input"
                                 />
                                 {formErrors.secretKey && <p className="text-red-500 text-sm mt-1">{formErrors.secretKey}</p>}
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+                                className="w-full custom-button py-2 rounded-[8px]"
                             >
                                 تسجيل الدخول
                             </button>
@@ -155,7 +155,7 @@ export const AdminLogin = () => {
                                     type="text"
                                     value={otpCode}
                                     onChange={handleOtpChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="w-full px-3 py-2 custom-input"
                                 />
                                 {otpError && <p className="text-red-500 text-sm mt-1">{otpError}</p>}
                             </div>

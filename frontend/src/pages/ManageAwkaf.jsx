@@ -82,8 +82,8 @@ export const ManageAwkaf = () => {
   
 
   return (
-    <div className="w-full  bg-green-800 p-8 shadow-lg rounded-lg o">
-      <h2 className="text-3xl font-bold text-center text-white mb-6">
+    <div className="w-full border-3 border-gray-800  p-8 shadow-lg rounded-[15px]">
+      <h2 className="text-3xl font-bold text-center text-blue-950 mb-6">
         {isEditing ? "Edit Project" : "Add New Project"}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -94,7 +94,7 @@ export const ManageAwkaf = () => {
     
         ].map(({ label, name, type }) => (
           <div key={name}>
-            <label className="block text-green-400 font-medium">{label}</label>
+            <label className="block text-blue-950 font-medium">{label}</label>
             {type === "text" ? (
               <input
                 type="text"
@@ -102,7 +102,7 @@ export const ManageAwkaf = () => {
                 value={projectData[name]}
                 onChange={handleChange}
                 required
-                className="w-full p-3 bg-white border border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218]"
+                className="w-full p-3 custom-input"
               />
             ) : (
               <textarea
@@ -110,7 +110,7 @@ export const ManageAwkaf = () => {
                 value={projectData[name]}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border bg-white border-gray-300 rounded-md focus:ring-[#118218] focus:border-[#118218] resize-y"
+                className="w-full p-3 custom-input"
               />
             )}
           </div>
@@ -118,7 +118,7 @@ export const ManageAwkaf = () => {
 
         {/* Image Upload */}
         <div>
-          <label className="block text-green-400 font-medium">Project Image</label>
+          <label className="block text-blue-950 font-medium">Project Image</label>
           <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-[#118218] transition">
             <input
               type="file"
