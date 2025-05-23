@@ -25,34 +25,35 @@ export const WakfP = () => {
   }, [id]);
 
   if (!project) return <p className="text-center mt-10 text-gray-600">جارٍ التحميل...</p>;
-
+   const imageUrl = project.image?.startsWith("http") ? project.image : `http://localhost:8000${project.image}`;
+    console.log("Project Image URL:", imageUrl);
   return (
     <>
       <Header />
-      <div className="container mx-auto p-6" dir="rtl">
-        {/* زر الرجوع */}
-        <Link
+      <div className="container mx-auto mt-10 p-6" dir="rtl">
+       
+       
+       <Link
           to="/Awkaf"
-          className="text-green-700 hover:underline flex items-center gap-2"
+          className="text-green-700 hover:underline mt-10 flex items-center gap-2"
         >
-          <span className="text-2xl">&larr;</span> العودة إلى المشاريع
+          <span className="text-xs  ">العودة إلى المشاريع</span> 
         </Link>
-
         {/* عنوان المشروع */}
-        <h1 className="text-4xl font-extrabold text-center text-green-900 mt-6">
+        <h1 className="text-4xl font-extrabold text-center text-green-900 ">
           {project.name}
         </h1>
-
+        
         {/* صورة المشروع */}
-        {project.image && (
-          <div className="mt-6 mx-auto w-full max-w-3xl rounded-lg overflow-hidden shadow-lg">
-            <img
-              src={project.image}
-              alt={project.name}
-              className="w-full h-80 object-cover"
-            />
-          </div>
-        )}
+      
+        
+            <div 
+                className="project-pic bg-cover bg-center h-[25em] rounded-t-xl mt-6 mx-auto w-[50em] rounded-lg overflow-hidden shadow-lg"
+                style={{ backgroundImage: `url(${imageUrl})` }}
+            ></div>
+            
+        
+      
 
         {/* تفاصيل المشروع */}
         <div className="">
@@ -75,7 +76,7 @@ export const WakfP = () => {
 
         {/* CTA (اختياري) */}
         <div className="text-center mt-10">
-          <button  className="bg-amber-400 text-green-900 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-500 transition"  onClick={() => navigate('/Contact')}>
+          <button  className="custom-button py-2 px-4 rounded-[8px]"  onClick={() => navigate('/Contact')}>
             دعم المشروع
           </button>
         </div>

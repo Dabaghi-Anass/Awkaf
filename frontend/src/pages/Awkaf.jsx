@@ -87,7 +87,6 @@ export default function Awkaf() {
         <div className="w-24 h-1 bg-green-500"></div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </>
   );

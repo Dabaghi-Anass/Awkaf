@@ -8,7 +8,7 @@ export default function Project({ project }) {
     console.log("Project Image URL:", imageUrl);
 
     return (
-        <div dir='rtl' className="project-container bg-white h-[30em] w-full rounded-xl shadow-lg translate-0.2 transition-transform transform hover:scale-105 hover:shadow-2xl">
+        <div dir='rtl' className="project-container bg-white h-[25em] w-full rounded-xl shadow-lg translate-0.2 transition-transform transform hover:scale-105 hover:shadow-2xl">
             
             {/* Project Image */}
             <div 
