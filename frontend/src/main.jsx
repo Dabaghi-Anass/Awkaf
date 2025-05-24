@@ -48,10 +48,7 @@ const router = createBrowserRouter([
     path: "Register/",
     element: <RegisterPage />,
   },
-  {
-    path: "userInfos/",
-    element:<UserInfos/>
-  },
+  
   {
     path: "AdminLogin/",
     element: <AdminLogin />,
@@ -82,6 +79,14 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <ZakatCal />
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: "userInfos/",
+    element:(
+      <ProtectedRoute>
+    <UserInfos/>
+    </ProtectedRoute>
     ),
   },
   {
