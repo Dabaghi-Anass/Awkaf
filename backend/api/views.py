@@ -549,7 +549,7 @@ def send_contact_email(request):
             Message:
             {message}
             """
-            receiver_email = "amine.dizo123@gmail.com"  # Replace with actual email
+            receiver_email = "amine.dizo123@gmail.com" 
 
             send_mail(subject, full_message, sender_email, [receiver_email])
 
@@ -618,7 +618,7 @@ class RequestPasswordResetView(APIView):
             return Response({"message": "Password reset email sent!"})
 
         except User.DoesNotExist:
-            return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "لا يوجد مستخدم بهذا البريد الإلكتروني"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

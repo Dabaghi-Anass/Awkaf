@@ -100,49 +100,50 @@ export const AdminLogin = () => {
 
     return (
         <div dir="rtl" className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-                <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
+            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-[22em]">
+                <h2 className="ttext-[1.2em] font-bold text-center text-gray-700 mb-6">
                     {otpSent ? "تحقق من OTP" : "تسجيل دخول المشرف"}
                 </h2>
                 <form onSubmit={otpSent ? handleOtpSubmit : handleSubmit} noValidate className="space-y-4">
                     {!otpSent ? (
                         <>
                             <div>
-                                <label className="block text-gray-600 mb-1">إسم المستخدم</label>
+                                <label className="block text-[0.8em] text-gray-600 mb-1">إسم المستخدم</label>
                                 <input
                                     type="text"
                                     name="username"
                                     value={data.username}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 custom-input"
+                                    className="w-full px-3 py-1 custom-input"
                                 />
-                                {formErrors.username && <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>}
+                                {formErrors.username && <p className="text-red-500 text-[0.7em] mt-1">{formErrors.username}</p>}
                             </div>
                             <div>
-                                <label className="block text-gray-600 mb-1">كلمة المرور</label>
+                                <label className="block text-[0.8em] text-gray-600 mb-1">كلمة المرور</label>
                                 <input
                                     type="password"
                                     name="password"
                                     value={data.password}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 custom-input"
+                                    className="w-full px-3 py-1 custom-input"
                                 />
-                                {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
+                                {formErrors.password && <p className="text-red-500 text-[0.7em] mt-1">{formErrors.password}</p>}
+                                <Link className="text-[0.7em] text-green-600 hover:underline block mt-1" to='/forgot-password'>نسيت كلمة المرور؟</Link>
                             </div>
                             <div>
-                                <label className="block text-gray-600 mb-1">المفتاح السري</label>
+                                <label className="block text-[0.8em] text-gray-600 mb-1">المفتاح السري</label>
                                 <input
                                     type="password"
                                     name="secretKey"
                                     value={data.secretKey}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 custom-input"
+                                    className="w-full px-3 py-1 custom-input"
                                 />
-                                {formErrors.secretKey && <p className="text-red-500 text-sm mt-1">{formErrors.secretKey}</p>}
+                                {formErrors.secretKey && <p className="text-red-500 text-[0.7em] mt-1">{formErrors.secretKey}</p>}
                             </div>
                             <button
                                 type="submit"
-                                className="w-full custom-button py-2 rounded-[8px]"
+                                className="w-full custom-button py-1 rounded-[5px]"
                             >
                                 تسجيل الدخول
                             </button>
@@ -150,18 +151,18 @@ export const AdminLogin = () => {
                     ) : (
                         <>
                             <div>
-                                <label className="block text-gray-600 mb-1">أدخل رمز OTP</label>
+                                <label className="block text-[0.8em] text-gray-600 mb-1">أدخل رمز OTP</label>
                                 <input
                                     type="text"
                                     value={otpCode}
                                     onChange={handleOtpChange}
-                                    className="w-full px-3 py-2 custom-input"
+                                    className="w-full px-3 py-1 custom-input"
                                 />
-                                {otpError && <p className="text-red-500 text-sm mt-1">{otpError}</p>}
+                                {otpError && <p className="text-red-500 text- mt-1">{otpError}</p>}
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+                                className="w-full bg-green-500 text-white py-1 rounded-md hover:bg-green-600 transition"
                             >
                                 تحقق من OTP
                             </button>

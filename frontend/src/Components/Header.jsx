@@ -16,11 +16,11 @@ export const Header = () => {
 
   return (
     <header dir="rtl" className="bg-green-900 py-2 text-white shadow-md fixed top-0 w-full z-1000">
-      <nav className="bg-green-900 py-3 flex">
+      <nav className="bg-green-900 py-2 flex">
         <div className="mx-auto flex flex-wrap jmd:justify-start gap-6 text-[1em]">
           <button
             onClick={handleLogout}
-            className="absolute right-5 px-5 py-2 bg-green-400 rounded-3xl hover:bg-green-500"
+            className="absolute text-[0.8em] right-5 px-5 py-2 bg-green-400 rounded-3xl hover:bg-green-500"
           >
             تسجيل الخروج
           </button>
@@ -32,11 +32,12 @@ export const Header = () => {
             { path: "/Awkaf", label: "مشاريع الوقف" },
             { path: "/Contact", label: "تواصل مباشرة معنا" },
             { path: "/userhistory/", label: "تاريخ الزكاة" },
+             { path: "/userInfos", label: "معلومات المستخدم" },
           ].map(({ path, label }) => (
             <Link
               key={path}
               to={path}
-              className={`relative px-3 py-1 hover:text-green-300 transition duration-300 ${
+              className={`relative text-[0.7em] px-1 py-1 hover:text-green-300 transition duration-300 ${
                 location.pathname === path ? "text-green-300 font-semibold" : ""
               }`}
             >

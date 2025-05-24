@@ -81,42 +81,42 @@ export const Login = ({ handleChange, formData }) => {
 
     return (
         <div dir="rtl" className="flex items-center justify-center min-h-screen w-dvw bg-gray-200">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
-                <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
+            <div className="bg-white shadow-lg rounded-lg py-4 px-8 w-full max-w-[22em]">
+                <h2 className="text-[1.2em] font-bold text-center text-gray-700 mb-6">
                     {otpSent ? "تحقق من OTP" : "تسجيل الدخول"}
                 </h2>
                 <form onSubmit={otpSent ? handleOtpSubmit : handleSubmit} className="space-y-4">
                     {!otpSent ? (
                         <>
                             <div>
-                                <label className="block text-[0.9em] text-gray-600 mb-1">إسم المستخدم</label>
+                                <label className="block text-[0.7em] text-gray-600 mb-1 ">إسم المستخدم</label>
                                 <input
                                     type="text"
                                     name="username"
                                     value={formData.username}
                                     onChange={handleChange}
-                                    className="custom-input w-full py-2 px-3"
+                                    className="custom-input w-full py-1 px-3"
                                     
                                 />
-                                {formErrors.username && <p className="text-red-500 text-sm">{formErrors.username}</p>}
+                                {formErrors.username && <p className="text-red-500 text-[0.6em]">{formErrors.username}</p>}
                             </div>
                             <div>
-                                <label className="block text-[0.9em] text-gray-600 mb-1">كلمة المرور</label>
+                                <label className="block text-[0.7em] text-gray-600 mb-1">كلمة المرور</label>
                                 <input
                                     type="password"
                                     name="password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="custom-input w-full py-2 px-3"
+                                    className="custom-input w-full py-1 px-3"
                                     
                                 />
-                                {formErrors.password && <p className="text-red-500 text-[0.8em]">{formErrors.password}</p>}
-                                <Link className="text-sm text-green-600 hover:underline block mt-1" to='/forgot-password'>نسيت كلمة المرور؟</Link>
-                                {loginError && <p className="text-red-500 text-[0.8em] mt-2">{loginError}</p>}
+                                {formErrors.password && <p className="text-red-500 text-[0.6em]">{formErrors.password}</p>}
+                                <Link className="text-[0.7em] text-green-600 hover:underline block mt-1" to='/forgot-password'>نسيت كلمة المرور؟</Link>
+                                {loginError && <p className="text-red-500 text-[0.7em] mt-2">{loginError}</p>}
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+                                className='custom-button text-[0.9em] py-1 px-2 w-full mt-0 rounded-[5px]'
                             >
                                 تسجيل الدخول
                             </button>
@@ -135,14 +135,14 @@ export const Login = ({ handleChange, formData }) => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+                                className="w-full cutom-button bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
                             >
                                 تحقق من OTP
                             </button>
                         </>
                     )}
                 </form>
-                <p className="mt-4 text-center text-gray-600">
+                <p className="mt-2 text-center text-[0.7em] text-gray-600">
                     لا تملك حساب؟ <Link className="text-green-600 hover:underline" to='/register'>إنشاء حساب</Link>
                 </p>
             </div>

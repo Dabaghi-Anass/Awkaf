@@ -6,7 +6,7 @@ export  default function WakfPic(){
              <div className='green'></div>
 
          <div className="text text-center">
-            <h1 className='title text-green-400'>اقتراح إدارة صندوق الوقف</h1>
+            <h1 className='title text-green-400 text-[1em]'>اقتراح إدارة صندوق الوقف</h1>
             <p className='paragraph'>يقدم هذا الاقتراح خيارات متنوعة لإدارة صندوق الوقف من أجل تحقيق الأهداف الخيرية والتنموية. <br /> نلتزم بتنفيذ مشاريع تساهم في تحسين جودة الحياة وتطوير قطاعات حيوية، مع التركيز على  <br /> المشاريع التي تخدم المجتمع وتحقق الأثر الإيجابي المستدام.</p>
 
             <h1 className='title text-green-400'>المشاريع المجتمعية والتنمية القطاعية</h1>
