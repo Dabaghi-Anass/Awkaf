@@ -29,7 +29,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
     };
 
     return (
-        <div dir='rtl' className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
+        <div dir='rtl' className="max-w-lg mx-auto bg-white   ">
 
             <form onSubmit={sendMessage} className="space-y-4">
                 <div className="flex gap-4">
@@ -39,7 +39,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                         name="first_name" 
                         value={userMessage.first_name} 
                         onChange={handleChange} 
-                        className="custom-input w-full p-3"
+                        className="custom-input w-full p-2"
                     />
                     <input 
                         type="text" 
@@ -47,7 +47,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                         name="last_name" 
                         value={userMessage.last_name} 
                         onChange={handleChange} 
-                        className="custom-input w-full p-3"
+                        className="custom-input w-full p-2"
                     />
                 </div>
 
@@ -57,7 +57,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="sender_email" 
                     value={userMessage.sender_email} 
                     onChange={handleChange} 
-                    className="custom-input w-full p-3"
+                    className="custom-input w-full p-2"
                 />
 
                 <input 
@@ -66,7 +66,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="phone" 
                     value={userMessage.phone} 
                     onChange={handleChange} 
-                    className="custom-input w-full p-3"
+                    className="custom-input w-full p-2"
                 />
 
                 <textarea 
@@ -74,7 +74,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     name="message" 
                     value={userMessage.message} 
                     onChange={handleChange} 
-                    className="custom-input w-full p-3 min-h-[10em] "
+                    className="custom-input w-full p-2 min-h-[10em] "
                 ></textarea>
 
                 <button 

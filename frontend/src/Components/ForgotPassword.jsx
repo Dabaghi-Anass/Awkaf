@@ -49,8 +49,8 @@ export const ForgotPassword = () => {
                     >
                         إرسال الرابط
                     </button>
-                    {message && <p className="text-green-600 text-sm">{message}</p>}
-                    {error && <p className="text-red-500 text-[0.7em]">{error}</p>}
+                    {message && <p className="text-green-600 text-[0.7em] mt-2">{message}</p>}
+                    {error && <p className="text-red-500 text-[0.7em] mt-2" >{error}</p>}
                 </form>
             </div>
         </div>
