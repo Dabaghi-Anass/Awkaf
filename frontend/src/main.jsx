@@ -30,6 +30,7 @@ import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Ma7acil } from './Components/Ma7acil.jsx';
 
 import { Settings } from './Components/Settings.jsx';
+import { reset } from './Components/reset.jsx';
 
 
 const router = createBrowserRouter([
@@ -51,7 +52,7 @@ const router = createBrowserRouter([
   },
   {
     path: "ho/",
-    element: <Ma7acil/>,
+    element: <reset/>,
   },
   {
     path: "AdminLogin/",
