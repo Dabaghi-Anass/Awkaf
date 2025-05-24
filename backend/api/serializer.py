@@ -113,16 +113,22 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        # Signup: set password, deactivate until verification
-        pwd = validated_data.pop("password", None)
-        user = User.objects.create(**validated_data)
-        if pwd:
-            user.set_password(pwd)
-        user.is_active = False
-        user.save()
-        # Optionally send verification email
-        # self.send_verification_email(user)
-        return user
+    # Extract and remove password from validated data
+     password = validated_data.pop("password", None)
+
+    # Create the user (inactive by default until email verification)
+     user = User.objects.create(**validated_data)
+     if password:
+        user.set_password(password)
+
+     user.is_active = False  # Mark user as inactive (email not verified yet)
+     user.save()
+ 
+    # ✅ Send verification email
+     self.send_verification_email(user)
+
+     return user
+
 
     def update(self, instance, validated_data):
         # Remove old_password so it isn't treated as field
@@ -140,25 +146,25 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def send_verification_email(self, user, request=None):
-        request = request or self.context.get("request")
-        host = request.get_host() if request else "localhost:8000"
+def send_verification_email(self, user, request=None):
+    request = request or self.context.get("request")
+    host = request.get_host() if request else "localhost:8000"
 
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
-        verify_link = f"http://{host}/apif/user/verify-email/{uid}/{token}/"
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    verify_link = f"http://{host}/apif/user/verify-email/{uid}/{token}/"
 
-        subject = "Verify Your Email Address"
-        from_email = "noreply@yourdomain.com"
-        to_email = [user.email]
+    subject = "Verify Your Email Address"
+    from_email = "noreply@yourdomain.com"
+    to_email = [user.email]
 
-        context = {"verify_link": verify_link, "user": user}
-        html_content = render_to_string("verify_email.html", context)
-        text_content = f"Please verify your email: {verify_link}"
+    context = {"verify_link": verify_link, "user": user}
+    html_content = render_to_string("verify_email.html", context)
+    text_content = f"Please verify your email: {verify_link}"
 
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+    msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 class InputFieldSerializer(serializers.ModelSerializer):
     class Meta:
