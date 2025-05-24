@@ -336,7 +336,13 @@ class CompanyTypeSimpleSerializer(serializers.ModelSerializer):
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
+
 class UserInfoSerializer(serializers.ModelSerializer):
+    is_staff = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_staff']
+
+    def get_is_staff(self, obj):
+        return 1 if obj.is_staff else 0
