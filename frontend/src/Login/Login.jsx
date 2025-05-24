@@ -135,7 +135,7 @@ export const Login = ({ handleChange, formData }) => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+                                className="w-full cutom-button bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
                             >
                                 تحقق من OTP
                             </button>
