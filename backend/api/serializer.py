@@ -69,7 +69,6 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for Django User, with optional old_password enforcement when changing own password.
     """
-    # remove company logic if not needed
     is_verified = serializers.BooleanField(source="is_active", read_only=True)
     date_joined = serializers.SerializerMethodField()
     old_password = serializers.CharField(write_only=True, required=False)
@@ -86,7 +85,6 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def get_date_joined(self, obj):
-        # Return ISO date string
         return obj.date_joined.strftime("%Y-%m-%d")
 
     def validate_email(self, value):
@@ -99,7 +97,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context.get("request")
-        # Enforce old_password only when changing own password
         if "password" in data and request and request.user == self.instance:
             old = data.get("old_password")
             if not old:
@@ -113,58 +110,57 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-    # Extract and remove password from validated data
-     password = validated_data.pop("password", None)
+        password = validated_data.pop("password", None)
+        user = User.objects.create(**validated_data)
+        if password:
+            user.set_password(password)
+        user.is_active = False
+        user.save()
 
-    # Create the user (inactive by default until email verification)
-     user = User.objects.create(**validated_data)
-     if password:
-        user.set_password(password)
+        # ✅ Send email verification
+        self._send_verification_email(user)
 
-     user.is_active = False  # Mark user as inactive (email not verified yet)
-     user.save()
- 
-    # ✅ Send verification email
-     self.send_verification_email(user)
-
-     return user
-
+        return user
 
     def update(self, instance, validated_data):
-        # Remove old_password so it isn't treated as field
         validated_data.pop("old_password", None)
         new_pw = validated_data.pop("password", None)
 
-        # Update other fields
         for attr, val in validated_data.items():
             setattr(instance, attr, val)
 
-        # Finally set new password if provided
         if new_pw:
             instance.set_password(new_pw)
 
         instance.save()
         return instance
 
-def send_verification_email(self, user, request=None):
-    request = request or self.context.get("request")
-    host = request.get_host() if request else "localhost:8000"
+    def _send_verification_email(self, user):
+        from django.utils.http import urlsafe_base64_encode
+        from django.utils.encoding import force_bytes
+        from django.contrib.auth.tokens import default_token_generator
+        from django.template.loader import render_to_string
+        from django.core.mail import EmailMultiAlternatives
 
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = default_token_generator.make_token(user)
-    verify_link = f"http://{host}/apif/user/verify-email/{uid}/{token}/"
+        request = self.context.get("request")
+        host = request.get_host() if request else "localhost:8000"
 
-    subject = "Verify Your Email Address"
-    from_email = "noreply@yourdomain.com"
-    to_email = [user.email]
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        verify_link = f"http://{host}/apif/user/verify-email/{uid}/{token}/"
 
-    context = {"verify_link": verify_link, "user": user}
-    html_content = render_to_string("verify_email.html", context)
-    text_content = f"Please verify your email: {verify_link}"
+        subject = "Verify Your Email Address"
+        from_email = "noreply@yourdomain.com"
+        to_email = [user.email]
 
-    msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+        context = {"verify_link": verify_link, "user": user}
+        html_content = render_to_string("verify_email.html", context)
+        text_content = f"Please verify your email: {verify_link}"
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
 
 class InputFieldSerializer(serializers.ModelSerializer):
     class Meta:
