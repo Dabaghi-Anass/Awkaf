@@ -618,7 +618,7 @@ class RequestPasswordResetView(APIView):
             return Response({"message": "Password reset email sent!"})
 
         except User.DoesNotExist:
-            return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "لا يوجد مستخدم بهذا البريد الإلكتروني"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -31,7 +31,7 @@ export default function ErrorPage() {
         <div className="w-24 h-1 bg-green-500"></div>
       </div>
 
-      <Footer />
+      
     </>
   );
 }

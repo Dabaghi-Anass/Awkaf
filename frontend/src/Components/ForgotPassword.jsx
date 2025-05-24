@@ -30,14 +30,14 @@ export const ForgotPassword = () => {
 
     return (
         <div dir="rtl" className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-4 text-center text-gray-700">إعادة تعيين كلمة المرور</h2>
+            <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-[25em]">
+                <h2 className="text-[1.2em] font-bold mb-4 text-center text-gray-700">إعادة تعيين كلمة المرور</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-gray-600 mb-1">البريد الإلكتروني</label>
+                        <label className="block text-[0.7em] text-gray-600 mb-1">البريد الإلكتروني</label>
                         <input
                             type="email"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            className="w-full px-3 py-1 custom-input"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -45,12 +45,12 @@ export const ForgotPassword = () => {
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+                        className="custom-button text-[0.9em] py-1 px-2 w-full mt-0 rounded-[5px]"
                     >
                         إرسال الرابط
                     </button>
                     {message && <p className="text-green-600 text-sm">{message}</p>}
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {error && <p className="text-red-500 text-[0.7em]">{error}</p>}
                 </form>
             </div>
         </div>
