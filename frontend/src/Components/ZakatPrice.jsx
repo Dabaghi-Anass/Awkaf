@@ -115,25 +115,7 @@ export const ZakatPrice = () => {
       <span>{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
     </div>
   </div>
-    {selectedCompany && (
-  <div className="mt-6">
-    <h3 className="text-center text-green-600 font-bold mb-3">تفاصيل المعلومات المدخلة</h3>
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm border border-green-600 text-right">
-        <thead className="bg-green-100">
-          <tr>
-            <th className="border border-green-600 p-2">البيان</th>
-            <th className="border border-green-600 p-2">القيمة (د.ج)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {renderTableRows(selectedCompany.fields)}
-        </tbody>
-      </table>
-    </div>
-  </div>
-)}
-
+   
   <div className="mt-10 text-center">
     <p>توقيع المكلف: _________________________</p>
   </div>

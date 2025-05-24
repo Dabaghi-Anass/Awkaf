@@ -88,7 +88,7 @@ export const AdminLogin = () => {
                 localStorage.setItem("accessToken", result.access_token);
                 localStorage.setItem("refreshToken", result.refresh_token);
                 alert("OTP Verified! You are logged in.");
-                navigate("/home");
+                navigate("/DashboardAdmin");
             } else {
                 setOtpError(result.error || "فشل التحقق من OTP!");
             }
