@@ -6,6 +6,7 @@ export const Register = ({ handleChange, formData }) => {
     const navigate = useNavigate();
     const [showSuccess, setShowSuccess] = useState(false);
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const validateForm = () => {
         let valid = true;
@@ -72,27 +73,32 @@ export const Register = ({ handleChange, formData }) => {
         }
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if (!validateForm()) return;
+   const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateForm()) return;
 
-        try {
-            const response = await fetch("http://127.0.0.1:8000/apif/user/register/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
+    setLoading(true); // 🔄 Active le chargement
 
-            if (response.ok) {
-                setShowSuccess(true);
-                setTimeout(() => navigate('/login'), 3000);
-            } else {
-                console.error("فشل التسجيل");
-            }
-        } catch (error) {
-            console.error("خطأ:", error);
+    try {
+        const response = await fetch("http://127.0.0.1:8000/apif/user/register/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            setShowSuccess(true);
+            setTimeout(() => navigate('/'), 3000);
+        } else {
+            console.error("فشل التسجيل");
         }
-    };
+    } catch (error) {
+        console.error("خطأ:", error);
+    } finally {
+        setLoading(false); // ✅ Stoppe le chargement
+    }
+};
+
 
     return (
         <div dir='rtl' className='h-screen w-dvw flex items-center justify-center bg-gray-200'>
@@ -135,7 +141,14 @@ export const Register = ({ handleChange, formData }) => {
                             {errors[field] && <div className='text-red-500 text-[0.6em] text-right my-1  '>{errors[field]}</div>}
                         </div>
                     ))}
-                    <button className='custom-button text-[0.9em] py-1 px-2 w-full mt-2 rounded-[5px]' type="submit">إنشاء حساب</button>
+                    <button
+                            className='custom-button text-[0.9em] py-1 px-2 w-full mt-2 rounded-[5px] disabled:opacity-50'
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? "جاري التسجيل..." : "إنشاء حساب"}
+                    </button>
+
                     <p className='mt-2 text-[0.7em] text-gray-700'>لديك حساب بالفعل؟ <Link className='text-green-600 font-medium hover:underline' to='/'>تسجيل الدخول</Link></p>
                 </form>
             </div>

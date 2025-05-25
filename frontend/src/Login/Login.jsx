@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { Loader } from "../Components/Loader";
 export const Login = ({ handleChange, formData }) => {
     const [loginError, setLoginError] = useState("");
     const [formErrors, setFormErrors] = useState({});
     const [otpSent, setOtpSent] = useState(false);
     const [otpCode, setOtpCode] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false); 
 
     const validate = (values) => {
         const errors = {};
@@ -22,11 +24,11 @@ export const Login = ({ handleChange, formData }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const errors = validate(formData);
-        console.log("this is formData:",formData);
         setFormErrors(errors);
 
         if (Object.keys(errors).length > 0) return;
 
+        setIsLoading(true);
         try {
             const response = await fetch("http://127.0.0.1:8000/apif/token/", {
                 method: "POST",
@@ -47,9 +49,11 @@ export const Login = ({ handleChange, formData }) => {
             }
         } catch (error) {
             setLoginError("حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.");
+        } finally {
+            setIsLoading(false);
         }
     };
-    console.log("this is form errors:",formErrors);
+
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
         if (!otpCode.trim()) {
@@ -57,12 +61,12 @@ export const Login = ({ handleChange, formData }) => {
             return;
         }
 
+        setIsLoading(true);
         try {
             const response = await fetch("http://127.0.0.1:8000/apif/token/verify/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username: formData.username, otp: otpCode }),
-
             });
             const tokens = await response.json();
 
@@ -76,8 +80,12 @@ export const Login = ({ handleChange, formData }) => {
             }
         } catch (error) {
             alert("حدث خطأ أثناء التحقق من OTP.");
+        } finally {
+            setIsLoading(false);
         }
     };
+    if (isLoading) return <Loader />;
+    
 
     return (
         <div dir="rtl" className="flex items-center justify-center min-h-screen w-dvw bg-gray-200">
@@ -96,7 +104,6 @@ export const Login = ({ handleChange, formData }) => {
                                     value={formData.username}
                                     onChange={handleChange}
                                     className="custom-input w-full py-1 px-3"
-                                    
                                 />
                                 {formErrors.username && <p className="text-red-500 text-[0.6em]">{formErrors.username}</p>}
                             </div>
@@ -108,7 +115,6 @@ export const Login = ({ handleChange, formData }) => {
                                     value={formData.password}
                                     onChange={handleChange}
                                     className="custom-input w-full py-1 px-3"
-                                    
                                 />
                                 {formErrors.password && <p className="text-red-500 text-[0.6em]">{formErrors.password}</p>}
                                 <Link className="text-[0.7em] text-green-600 hover:underline block mt-1" to='/forgot-password'>نسيت كلمة المرور؟</Link>
@@ -117,8 +123,9 @@ export const Login = ({ handleChange, formData }) => {
                             <button
                                 type="submit"
                                 className='custom-button text-[0.9em] py-1 px-2 w-full mt-0 rounded-[5px]'
+                                disabled={isLoading}
                             >
-                                تسجيل الدخول
+                                {isLoading ? "جاري التحميل..." : "تسجيل الدخول"}
                             </button>
                         </>
                     ) : (
@@ -130,14 +137,14 @@ export const Login = ({ handleChange, formData }) => {
                                     value={otpCode}
                                     onChange={(e) => setOtpCode(e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    
                                 />
                             </div>
                             <button
                                 type="submit"
                                 className="w-full cutom-button bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+                                disabled={isLoading}
                             >
-                                تحقق من OTP
+                                {isLoading ? "جاري التحقق..." : "تحقق من OTP"}
                             </button>
                         </>
                     )}

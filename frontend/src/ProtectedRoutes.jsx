@@ -1,31 +1,49 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import React, { useEffect, useState } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 
-export const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const token = localStorage.getItem("accessToken");
+export const ProtectedRoute = ({ children }) => {
+  const [authorized, setAuthorized] = useState(null); // null = loading
+  const location = useLocation();
 
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
 
-  try {
-    const decoded = jwtDecode(token);
-    const currentTime = Math.floor(Date.now() / 1000);
-
-    if (decoded.exp && decoded.exp < currentTime) {
-      localStorage.removeItem("accessToken");
-      return <Navigate to="/login" replace />;
+    if (!token) {
+      setAuthorized(false);
+      return;
     }
 
-    // Si la page est réservée aux admins et l'utilisateur n'est pas admin
-    if (adminOnly && !decoded.is_admin) {
-      return <Navigate to="/home" replace />;
-    }
+    // Fetch user data from /me/
+    fetch("http://127.0.0.1:8000/apif/me/", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then(user => {
+        const isStaff = user.is_staff === 1 || user.is_staff === true;
+        console.log("is_staff:", user.is_staff, "is admin?", isStaff);
 
-    return children;
-  } catch (err) {
-    localStorage.removeItem("accessToken");
-    return <Navigate to="/dashboard" replace />;
-  }
+        // If trying to access DashboardAdmin and not admin
+        if (location.pathname === "/DashboardAdmin" && !isStaff) {
+          setAuthorized(false);
+        } else {
+          setAuthorized(true);
+        }
+      })
+      .catch(err => {
+        console.error("Fetch failed:", err);
+        localStorage.removeItem("accessToken");
+        setAuthorized(false);
+      });
+  }, [location.pathname]);
+
+  if (authorized === null) return <div>Loading...</div>;
+
+  return authorized ? children : <Navigate to="/" replace />;
 };
