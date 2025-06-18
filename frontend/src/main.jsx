@@ -30,7 +30,7 @@ import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './Components/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
-PrivateRouterAdmin
+
 
 const router = createBrowserRouter([
   {

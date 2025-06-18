@@ -123,7 +123,7 @@ export const ManageUsers = () => {
                   <td className="p-2">
                     <button
                       onClick={(e) => { e.preventDefault(); deleteUser(user.id); }}
-                      className="px-4 py-1 custom-input bg-gray-600 text-white rounded hover:bg-gray-800"
+                      className="px-4 mx-auto py-1 custom-input bg-gray-600 text-white rounded hover:bg-gray-800"
                     >
                       delete
                     </button>
