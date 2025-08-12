@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import {Loader} from "../Components/Loader";
 import { Header } from "../Components/Header";
 import Project from "../Components/Project";
 import WakfPic from "../Components/WakfPic";
@@ -10,7 +10,7 @@ import Footer from "../Components/Footer";
 export default function Awkaf() {
   const [projects, setProjects] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
-
+  const [loading, setLoading] = useState("");
   const projectPerPage = 9;
   const pagesVisited = pageNumber * projectPerPage;
 
@@ -23,6 +23,7 @@ export default function Awkaf() {
 
   // Fetch projects from the backend
   const fetchProjects = async () => {
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:8000/apif/public/waqf-projects/", {
         method: "GET",
@@ -41,6 +42,7 @@ export default function Awkaf() {
       console.error("Error fetching projects:", error);
       alert("Failed to fetch projects");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -49,9 +51,11 @@ export default function Awkaf() {
 
   return (
     <>
-      {/* Header & Hero Section */}
       <Header />
-      <WakfPic />
+      {loading ? <Loader/> :(
+       <WakfPic />
+      ) }
+      
 
       {/* Projects Section */}
       <div className="bg-gray-300 py-6 mt-20">

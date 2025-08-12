@@ -95,7 +95,7 @@ export const Register = ({ handleChange, formData }) => {
     } catch (error) {
         console.error("خطأ:", error);
     } finally {
-        setLoading(false); // ✅ Stoppe le chargement
+        setLoading(false); //
     }
 };
 

@@ -11,7 +11,8 @@ const [isUnnaire, setIsUnnaire] = useState(false);
 const [showResult, setShowResult] = useState(false);
 const [totalAmount, setTotalAmount] = useState(0);
 const [selectedCompany, setSelectedCompany] = useState(null);
-
+const [isLoading,setIsLoading]=useState('');
+const [popup,setPopup]=useState({message:'',type:''});
 // Update form fields dynamically when company type changes
 useEffect(() => {
     if (selectedCompany && Array.isArray(selectedCompany.fields)) {
@@ -64,13 +65,13 @@ useEffect(() => {
                 throw new Error("Failed to save Zakat history");
             }
 
-            alert("Zakat history saved successfully!");
+            setPopup({message:"تم حفظ الزكاة بنجاح!",type:"success"});
             setZakatFormInfos({});
             setShowResult(false);
           
         } catch (error) {
             console.error("Error:", error);
-            alert(error.message);
+           setPopup({message:"حدث خطاء",type:"error"})
         }
     };
 
@@ -79,7 +80,7 @@ useEffect(() => {
         const token = localStorage.getItem("accessToken");
     
         if (!token || !selectedCompany) {
-            alert("Please select a company type and log in.");
+            setPopup({ message: "Authentication required! Please log in.", type: "error" });
             return;
         }
     
@@ -149,7 +150,7 @@ useEffect(() => {
             calculateZakat, 
             showResult, setShowResult,
             saveZakatHistory, 
-           
+            isLoading, setIsLoading,
             totalAmount, setTotalAmount,
             selectedCompany, setSelectedCompany,
             nissab,setNissab

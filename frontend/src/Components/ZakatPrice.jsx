@@ -88,8 +88,7 @@ export const ZakatPrice = () => {
         </div>
       </div>
 
-      {/* Printable section */}
-    {/* Printable section (only visible in print) */}
+    
 <div id="printable-receipt" className="hidden print:block p-8 text-black border border-gray-300 bg-white">
   <h1 className="text-2xl font-bold text-center mb-6">وصل دفع الزكاة</h1>
 

@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link,useNavigate } from "react-router-dom";
 import { Header } from "../Components/Header";
 import Footer from "../Components/Footer";
+import { ZakatContext } from "../Components/ZakatProvider";
+import { Loader } from "../Components/Loader";
 
 export const WakfP = () => {
+  const {isLoading,setIsLoading}=useContext(ZakatContext);
   const { id } = useParams();
   const [project, setProject] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchProject = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch(
           `http://localhost:8000/apif/public/waqf-projects/${id}/`
@@ -19,43 +23,39 @@ export const WakfP = () => {
       } catch (error) {
         console.error("خطأ في جلب المشروع:", error);
       }
+      setIsLoading(false);
     };
 
     fetchProject();
   }, [id]);
 
-  if (!project) return <p className="text-center mt-10 text-gray-600">جارٍ التحميل...</p>;
+  if (!project) return <Loader/>;
    const imageUrl = project.image?.startsWith("http") ? project.image : `http://localhost:8000${project.image}`;
-    console.log("Project Image URL:", imageUrl);
+    
   return (
     <>
       <Header />
       <div className="container mx-auto mt-10 p-6" dir="rtl">
-       
-       
-       <Link
+       {isLoading ? <Loader/> :(<>
+        <Link
           to="/Awkaf"
           className="text-green-700 hover:underline mt-10 flex items-center gap-2"
         >
           <span className="text-xs  ">العودة إلى المشاريع</span> 
         </Link>
-        {/* عنوان المشروع */}
+       
         <h1 className="text-4xl font-extrabold text-center text-green-900 ">
           {project.name}
         </h1>
         
-        {/* صورة المشروع */}
       
-        
+
             <div 
                 className="project-pic bg-cover bg-center h-[25em] rounded-t-xl mt-6 mx-auto w-[50em] rounded-lg overflow-hidden shadow-lg"
                 style={{ backgroundImage: `url(${imageUrl})` }}
             ></div>
             
         
-      
-
-        {/* تفاصيل المشروع */}
         <div className="">
           {[
            
@@ -74,12 +74,14 @@ export const WakfP = () => {
           )}
         </div>
 
-        {/* CTA (اختياري) */}
         <div className="text-center mt-10">
           <button  className="custom-button py-2 px-4 rounded-[8px]"  onClick={() => navigate('/Contact')}>
             دعم المشروع
           </button>
         </div>
+       </>)}
+       
+       
       </div>
       <Footer />
     </>

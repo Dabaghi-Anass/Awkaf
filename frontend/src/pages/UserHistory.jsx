@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../Components/Header";
 import Footer from "../Components/Footer";
-
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 const UserHistory = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -55,9 +63,9 @@ const UserHistory = () => {
     return (
        <>
         <Header></Header>
-        <div className="max-w-4xl  mx-auto mt-25 p-6 bg-white   shadow-lg rounded-lg">
+        <div className="  mx-auto mt-25 p-6 bg-white  ">
             
-            <h2 className="text-2xl font-bold text-green-400 text-center mb-2">تاريخ حسابات الزكاة</h2>
+           
             {loading ? (
                 <p className="text-center text-gray-600">جاري التحميل...</p>
             ) : error ? (
@@ -65,29 +73,28 @@ const UserHistory = () => {
             ) : history.length === 0 ? (
                 <p className="text-center text-gray-600">لا يوجد سجل للزكاة</p>
             ) : (
-                <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr className="bg-green-400">
-                            <th className="border border-gray-300 p-2">التاريخ</th>
-                            <th className="border border-gray-300 p-2">الوعاء الزكوي</th>
-                            <th className="border border-gray-300 p-2">قيمة الزكاة</th>
-                            <th className="border border-gray-300 p-2">نوع الحول</th>
-                           
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
+                  <Table className={"mt-4 w-[50em] mx-auto "}>
+                   
+                    <TableHeader>
+                        <TableRow className={"bg-green-400 hover:bg-green-400 text-[1.2em] "}>
+                        <TableHead className="  text-center">التاريخ</TableHead>
+                        <TableHead className="text-center">الوعاء الزكوي</TableHead>
+                        <TableHead className="  text-center">قيمة الزكاة</TableHead>
+                        <TableHead className="text-center">نوع الحول</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
                         {history.map((item, index) => (
-                            <tr key={index} className="text-center border border-gray-300">
-                                <td className="p-2">{item.calculation_date}</td>
-                                <td className="p-2">{item.zakat_base.toLocaleString("fr-FR")} د.ج</td>
-                                <td className="p-2 text-green-700 font-bold">{item.zakat_result.toLocaleString("fr-FR")} د.ج</td>
-                                <td className="p-2">{item.month_type}</td>
-                               
-                            </tr>
+                                        
+                        <TableRow key={index}  className="text-center row-table  ">
+                        <TableCell className="font-medium">{item.calculation_date}</TableCell>
+                        <TableCell>{item.zakat_base.toLocaleString("fr-FR")} د.ج</TableCell>
+                        <TableCell>{item.zakat_result.toLocaleString("fr-FR")} د.ج</TableCell>
+                        <TableCell className="text-right">{item.month_type}</TableCell>
+                        </TableRow>
                         ))}
-                    </tbody>
-                </table>
+                    </TableBody>
+                </Table>
             )}
         </div>
         <Footer></Footer>

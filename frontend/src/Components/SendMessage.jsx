@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { MessagePopup } from './MessagePopup';
 
 export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMessage }) => {
     const [loading, setLoading] = useState(false);
-
+    const [popup,setPopup]=useState({message:"",type:""});
     const sendMessage = async (event) => {
         event.preventDefault();
         setLoading(true);
@@ -20,14 +21,13 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
             console.log("Response data:", data);
 
             if (response.ok) {
-                alert("تم إرسال الرسالة بنجاح!");
+                setPopup({message:"تم إرسال الرسالة بنجاح!",type:"success"});
                 setUserMessage(defaultValue);
             } else {
-                alert("حدث خطأ: " + JSON.stringify(data));
+                setPopup({message:"حدث خطاء",type:"error"});
             }
         } catch (error) {
-            console.error("Error during form submission:", error);
-            alert("حدث خطأ أثناء إرسال الرسالة.");
+            setPopup({message:"حدث خطاء",type:"error"});
         } finally {
             setLoading(false);
         }
@@ -93,6 +93,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     className={`custom-button w-full py-2 rounded-[10px] ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
                     disabled={loading}
                 >
+                    
                     {loading ? "جاري الإرسال..." : "إرسال"}
                 </button>
 
@@ -100,6 +101,11 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                     بالاتصال بنا، فإنك توافق على <span className="text-green-600 font-semibold cursor-pointer">شروط الخدمة</span> و <span className="text-green-600 font-semibold cursor-pointer">سياسة الخصوصية</span> الخاصة بنا.
                 </p>
             </form>
+            <MessagePopup
+                    message={popup.message}
+                    type={popup.type}
+                    onClose={() => setPopup({ message: "", type: "" })}
+             />
         </div>
     );
 };

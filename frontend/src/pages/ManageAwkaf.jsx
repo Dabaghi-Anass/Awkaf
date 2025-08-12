@@ -8,17 +8,6 @@ export const ManageAwkaf = () => {
  
 
   
- 
-
- /* useEffect(() => {
-    if (location.state?.project) {
-      setProjectData(location.state.project);
-      setProjectId(location.state.project.id);
-      setIsEditing(true);  // 🔥 Set editing mode if project exists
-    } else {
-      setIsEditing(false); // 🔥 Reset editing state if there's no project
-    }
-  }, [location.state]);*/
   
 
   const handleChange = (e) => {

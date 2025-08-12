@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Loader } from "../Components/Loader";
+import { MessagePopup } from '../Components/MessagePopup';
+
 export const Login = ({ handleChange, formData }) => {
     const [loginError, setLoginError] = useState("");
     const [formErrors, setFormErrors] = useState({});
     const [otpSent, setOtpSent] = useState(false);
     const [otpCode, setOtpCode] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState("");
+    const [popup,setPopup]=useState({message:'',type:''});
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false); 
+    
 
     const validate = (values) => {
         const errors = {};
@@ -39,7 +42,7 @@ export const Login = ({ handleChange, formData }) => {
 
             if (response.ok && result.message === "OTP sent to your email. Enter OTP to proceed.") {
                 setOtpSent(true);
-                alert("تم إرسال رمز OTP إلى بريدك الإلكتروني.");
+                setPopup({message:"تم إرسال رمز OTP إلى بريدك الإلكتروني.",type:"success"});
             } else if (result.access && result.refresh) {
                 localStorage.setItem("accessToken", result.access);
                 localStorage.setItem("refreshToken", result.refresh);
@@ -73,18 +76,18 @@ export const Login = ({ handleChange, formData }) => {
             if (response.ok) {
                 localStorage.setItem("accessToken", tokens.access_token);
                 localStorage.setItem("refreshToken", tokens.refresh_token);
-                alert("تم التحقق من OTP! تسجيل الدخول ناجح.");
+                setPopup({message:"تم التحقق من OTP بنجاح.",type:"success"});
                 navigate("/home");
             } else {
-                alert("فشل التحقق من OTP. حاول مرة أخرى.");
+                setPopup({message:"فشل التحقق من OTP. حاول مرة أخرى.",type:"error"});
             }
         } catch (error) {
-            alert("حدث خطأ أثناء التحقق من OTP.");
+            setPopup({message:"حدث خطاء غير متوقع. حاول مرة أخرى لاحقًا.",type:"error"});
         } finally {
             setIsLoading(false);
         }
     };
-    if (isLoading) return <Loader />;
+    
     
 
     return (
@@ -131,17 +134,17 @@ export const Login = ({ handleChange, formData }) => {
                     ) : (
                         <>
                             <div>
-                                <label className="block text-gray-600 mb-1">أدخل رمز OTP</label>
+                                <label className="block text-[0.8em] text-gray-600 mb-1">أدخل رمز OTP</label>
                                 <input
                                     type="text"
                                     value={otpCode}
                                     onChange={(e) => setOtpCode(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="w-full px-3 py-1 custom-input"
                                 />
                             </div>
                             <button
                                 type="submit"
-                                className="w-full cutom-button bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+                                className="w-full bg-green-500 text-white py-1 rounded-md hover:bg-green-600 transition"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "جاري التحقق..." : "تحقق من OTP"}
@@ -153,6 +156,11 @@ export const Login = ({ handleChange, formData }) => {
                     لا تملك حساب؟ <Link className="text-green-600 hover:underline" to='/register'>إنشاء حساب</Link>
                 </p>
             </div>
+           <MessagePopup
+                   message={popup.message}
+                   type={popup.type}
+                   onClose={() => setPopup({ message: "", type: "" })}
+                 />
         </div>
     );
 };

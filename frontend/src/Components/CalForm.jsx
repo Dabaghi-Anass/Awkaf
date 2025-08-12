@@ -1,17 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { ZakatContext } from '../Components/ZakatProvider';
 import { ZakatPrice } from './ZakatPrice';
+import { MessagePopup } from './MessagePopup';
 
 export const CalForm = () => {
   const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResult, selectedCompany, setSelectedCompany } = useContext(ZakatContext);
   const [companyTypes, setCompanyTypes] = useState([]);
+  const [popup,setPopup]=useState({message:"",type:""});
   const [fields, setFields] = useState([]);
 
   useEffect(() => {
     const fetchCompanyTypes = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        if (!token) return alert("Authentication required!");
+        if (!token) return setPopup({ message: "No authentication token found. Please log in.", type: "error" });
 
         const response = await fetch("http://localhost:8000/apif/company-types/", {
           headers: {
@@ -28,9 +30,10 @@ export const CalForm = () => {
         const data = await response.json();
         setCompanyTypes(data);
       } catch (error) {
-        alert(`Error: ${error.message}`);
+        setPopup({ message: `Error: ${error.message}`, type: "error" });
       }
     };
+   
 
     fetchCompanyTypes();
   }, []);
@@ -130,6 +133,11 @@ export const CalForm = () => {
 
         {showResult && <ZakatPrice />}
       </div>
+      <MessagePopup
+        message={popup.message}
+        type={popup.type}
+        onClose={() => setPopup({ message: "", type: "" })}
+      />
     </div>
   );
 };
