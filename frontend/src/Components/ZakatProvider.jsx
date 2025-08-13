@@ -153,7 +153,8 @@ useEffect(() => {
             isLoading, setIsLoading,
             totalAmount, setTotalAmount,
             selectedCompany, setSelectedCompany,
-            nissab,setNissab
+            nissab,setNissab,
+            popup,setPopup
         }}>
             {children}
         </ZakatContext.Provider>

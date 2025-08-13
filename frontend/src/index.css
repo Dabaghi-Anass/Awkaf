@@ -113,7 +113,7 @@ a{
 }
 .custom-form-input{
   @apply  border-gray-300 text-sm rounded-[8px] outline-none transition-[box-shadow,border-color] duration-200 resize-none
-  focus:ring-1 focus:ring-green-500 focus:border-green-500  w-full h-9 p-2 border  pr-10;
+  focus:ring-1 focus:ring-green-500 focus:border-green-500   w-full h-9 p-2 border  pr-10;
 }
 
 .custom-input:focus {

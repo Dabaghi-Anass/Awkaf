@@ -30,6 +30,7 @@ import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './Components/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
+import { Maliki } from './Components/Maliki.jsx';
 
 
 const router = createBrowserRouter([
@@ -174,7 +175,7 @@ const router = createBrowserRouter([
     path: "app/",
     element: (
       <ProtectedRoute>
-        <App />
+        <Maliki />
       </ProtectedRoute>
     ),
   },

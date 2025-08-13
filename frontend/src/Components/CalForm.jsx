@@ -4,9 +4,8 @@ import { ZakatPrice } from './ZakatPrice';
 import { MessagePopup } from './MessagePopup';
 
 export const CalForm = () => {
-  const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResult, selectedCompany, setSelectedCompany } = useContext(ZakatContext);
+  const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResult, selectedCompany, setSelectedCompany,popup,setPopup } = useContext(ZakatContext);
   const [companyTypes, setCompanyTypes] = useState([]);
-  const [popup,setPopup]=useState({message:"",type:""});
   const [fields, setFields] = useState([]);
 
   useEffect(() => {
@@ -87,6 +86,7 @@ export const CalForm = () => {
    
   return (
     <div dir="rtl" className="flex flex-col p-15 bg-gray-200 ">
+      
       <div className="bg-white w-[40em] mx-auto rounded-lg shadow-lg p-8 mt-15">
         <h1 className="text-center text-[1.5em] font-bold text-green-500">
           أدخل بياناتك لمعرفة مقدار الزكاة المستحق

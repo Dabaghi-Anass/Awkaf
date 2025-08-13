@@ -31,7 +31,8 @@ export const ZakatPrice = () => {
   return (
     <>
       {/* Visible part (on screen only) */}
-      <div className="border-2 border-green-500 rp-6 rounded-lg shadow-md shadow-amber-100 relative mx-auto mt-10 p-4 print:hidden">
+      <div className="fixed inset-0 flex items-center justify-center  bg-opacity-50 z-50">
+        <div className="bg-white  border-green-600  rounded-lg p-6 shadow-lg max-w-sm w-full text-center border relative">
         <h2 className="text-2xl font-bold text-green-600 text-center mb-10">
           تفاصيل الحساب
         </h2>
@@ -86,6 +87,7 @@ export const ZakatPrice = () => {
             طباعة
           </button>
         </div>
+      </div>
       </div>
 
     
