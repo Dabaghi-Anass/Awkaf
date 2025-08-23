@@ -1,9 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
-import { AdminContext } from "./AdminProvider";
 
+
+import { AdminContext } from "./AdminProvider";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 export const ProjectsTable = () => {
   const { activeTab, setActiveTab, setProjectData, setIsEditing } = useContext(AdminContext);
   const [projects, setProjects] = useState([]);
@@ -103,13 +111,13 @@ export const ProjectsTable = () => {
               <th className="border border-gray-300 p-2">Partners</th>
               <th className="border border-gray-300 p-2">Created Date</th>
               <th className="border border-gray-300 p-2">Updated Date</th>
-              <th className="border border-gray-300 p-2 text-center">Actions</th>
+              <th className="border border-gray-300 p-2 ">Actions</th>
             </tr>
           </thead>
           <tbody>
             {projects.length > 0 ? (
               projects.map((project) => (
-                <tr key={project.id} className="text-left text-[0.8em] border border-gray-300 hover:bg-gray-100 transition duration-300">
+                <tr key={project.id} className="text-center  text-[0.7em]  border border-gray-300 hover:bg-gray-100 transition duration-300">
                   <td className="p-2">{project.id}</td>
                   <td className="p-2">{project.name}</td>
                   <td className="p-2">{project.partners}</td>
@@ -118,13 +126,13 @@ export const ProjectsTable = () => {
                   <td className="p-2">
                     <button
                       onClick={() => handleEdit(project)}
-                      className="px-4 py-1 custom-button rounded-[8px]"
+                      className="py-2 px-4 rounded-[8px] bg-green-500 mr-1"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => deleteProject(project.id)}
-                      className="px-4 py-1 bg-gray-600 text-white rounded-[8px] hover:bg-gray-800 ml-2"
+                      className="py-2 px-4 rounded-[8px] bg-gray-500"
                     >
                       Delete
                     </button>
@@ -140,28 +148,50 @@ export const ProjectsTable = () => {
         </table>
 
         <div className="flex justify-center mt-5">
-          <Stack spacing={2}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-              variant="outlined"
-              shape="rounded-lg"
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  color: "#22C55E",
-                  borderColor: "#22C55E",
-                },
-                "& .MuiPaginationItem-root:hover": {
-                  backgroundColor: "#15803D",
-                },
-                "& .Mui-selected": {
-                  backgroundColor: "#22C55E !important",
-                  color: "white !important",
-                },
-              }}
-            />
-          </Stack>
+          <Pagination >
+              <PaginationContent >
+                {/* Previous Button */}
+                <PaginationItem  >
+                  <PaginationPrevious
+                    className={"border-pagin border-1"}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (page > 1) setPage(page - 1);
+                    }}
+                  />
+              </PaginationItem>
+
+            {/* Render page numbers dynamically */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <PaginationItem key={p}>
+                <PaginationLink
+                  className={p===page ? "border-pagin  text-pagin bg-gray-300 ":"pagin-btn"}
+                  href="#"
+                  isActive={p === page}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(p);
+                  }}
+                >
+                  {p}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+         {/* Next Button */}
+              <PaginationItem>
+                <PaginationNext
+                  className={"border-pagin border-1"}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (page < totalPages) setPage(page + 1);
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </>

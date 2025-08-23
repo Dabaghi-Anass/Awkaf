@@ -31,6 +31,7 @@ import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './Components/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
 import { Maliki } from './Components/Maliki.jsx';
+import { TestForm } from './Components/TestForm.jsx';
 
 
 const router = createBrowserRouter([
@@ -175,7 +176,7 @@ const router = createBrowserRouter([
     path: "app/",
     element: (
       <ProtectedRoute>
-        <Maliki />
+        <TestForm />
       </ProtectedRoute>
     ),
   },

@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
 
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 export const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
@@ -100,7 +108,7 @@ export const ManageUsers = () => {
 
   return (
     <>
-      <div className="w-full mx-auto    ">
+      <div className="w-full mx-auto  ">
       
         <table className="w-full border-collapse border border-gray-300">
           <thead>
@@ -115,12 +123,12 @@ export const ManageUsers = () => {
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
-                <tr key={user.id} className="text-left text-[0.7em] border border-gray-300">
+                <tr key={user.id} className="text-center text-[0.7em] border border-gray-300 hover:bg-gray-100 transition ">
                   <td className="p-2">{user.id}</td>
                   <td className="p-2">{user.username}</td>
                   <td className="p-2">{user.email}</td>
                   <td className="p-2">{user.date_joined}</td>
-                  <td className="p-2">
+                  <td className="p-2  flex justify-center">
                     <button
                       onClick={(e) => { e.preventDefault(); deleteUser(user.id); }}
                       className="px-4 mx-auto py-1 custom-input bg-gray-600 text-white rounded hover:bg-gray-800"
@@ -139,28 +147,52 @@ export const ManageUsers = () => {
         </table>
       </div>
       <div className="flex justify-center mt-5">
-          <Stack spacing={2}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-              variant="outlined"
-              shape="rounded-lg"
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  color: "#22C55E",
-                  borderColor: "#22C55E",
-                },
-                "& .MuiPaginationItem-root:hover": {
-                  backgroundColor: "#15803D",
-                },
-                "& .Mui-selected": {
-                  backgroundColor: "#22C55E !important",
-                  color: "white !important",
-                },
-              }}
-            />
-          </Stack>
+              <Pagination >
+                            <PaginationContent >
+                              {/* Previous Button */}
+                              <PaginationItem  >
+                                <PaginationPrevious
+                                  className={"border-pagin border-1"}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    if (page > 1) setPage(page - 1);
+                                  }}
+                                />
+                            </PaginationItem>
+              
+                          {/* Render page numbers dynamically */}
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                            <PaginationItem key={p}>
+                              <PaginationLink
+                                className={p===page ? "border-pagin  text-pagin bg-gray-300 ":"pagin-btn"}
+                                href="#"
+                                isActive={p === page}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setPage(p);
+                                }}
+                              >
+                                {p}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ))}
+              
+                       {/* Next Button */}
+                            <PaginationItem>
+                              <PaginationNext
+                                className={"border-pagin border-1"}
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  if (page < totalPages) setPage(page + 1);
+                                }}
+                              />
+                            </PaginationItem>
+                          </PaginationContent>
+                        </Pagination>
+
+           
         </div>
     </>
   );

@@ -32,6 +32,7 @@ body{
   }
 }
 @theme{
+  --color-pagin:#1e2939;
   --color-primary: #035116;
   --color-secondary: #F2CB05;
   --color-graay:#e7e5eb;
@@ -127,6 +128,10 @@ a{
 }
 .custom-form-label{
   @apply text-gray-700 text-sm font-[400] text-[13px];
+}
+
+.pagin-btn{
+  @apply text-pagin bg-gray-200  border-1  hover:border-pagin
 }
 
 
