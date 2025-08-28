@@ -15,7 +15,7 @@ import { Settings } from "../Components/Settings.jsx";
 export const DashboardAdmin = () => {
   
   const navigate = useNavigate();
-  const { isEditing, setIsEditing,activeTab,setActiveTab} = useContext(AdminContext);
+  const {setIsEditing,activeTab,setActiveTab} = useContext(AdminContext);
 
   const tabComponents = {
     Users: <ManageUsers />,
@@ -25,25 +25,8 @@ export const DashboardAdmin = () => {
     ManageProject: <ManageAwkaf />,
   };
 
-  // Handle "Add New" Button Click
-  const handleAddNew = () => {
-    switch (activeTab) {
-      case "Users":
-        navigate("/add-user");
-        break;
-      case "Projects":
-        setActiveTab("ManageProject");
-        break;
-      case "Reports":
-        navigate("/generate-report");
-        break;
-      case "Settings":
-        navigate("/settings-page");
-        break;
-      default:
-        break;
-    }
-  };
+  
+ 
 
   return (
     <>
@@ -64,8 +47,10 @@ export const DashboardAdmin = () => {
             {activeTab === "Projects" && (
               <button
               onClick={() => {
-                handleAddNew();
                 setIsEditing(false);
+                setActiveTab("ManageProject");
+               
+                
               }}  
                 className="custom-button mt-5 py-2 px-1 text-[0.9em] rounded-[8px] flex items-center"
               >

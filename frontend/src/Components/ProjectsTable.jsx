@@ -23,7 +23,7 @@ export const ProjectsTable = () => {
   useEffect(() => {
     fetchProjects(page, pageSize);
   }, [page]);
-
+  
   useEffect(() => {
     fetchTotalPages();
   }, []);

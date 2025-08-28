@@ -85,7 +85,7 @@ export const CalForm = () => {
     ));
    
   return (
-    <div dir="rtl" className="flex flex-col p-15 bg-gray-200 ">
+    <div  className="flex flex-col p-15 bg-gray-200 ">
       
       <div className="bg-white w-[40em] mx-auto rounded-lg shadow-lg p-8 mt-15">
         <h1 className="text-center text-[1.5em] font-bold text-green-500">

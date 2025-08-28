@@ -123,7 +123,7 @@ a{
 }
 .custom-button {
   @apply bg-green-600 text-white rounded-[6px] transition-[background-color] px-4 py-2  duration-200 hover:bg-green-700
-  mt-5 mb-5;
+  ;
  
 }
 .custom-form-label{

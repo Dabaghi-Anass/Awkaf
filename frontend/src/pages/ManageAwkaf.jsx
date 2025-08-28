@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AdminContext } from "../Components/AdminProvider";
 
 export const ManageAwkaf = () => {
-  const { isEditing, setIsEditing,setActiveTab,projectData,setProjectData,defaultProject} = useContext(AdminContext);
-  console.log("isEditing:", isEditing);
+  const { isEditing,setActiveTab,projectData,setProjectData,defaultProject} = useContext(AdminContext);
+ 
  
 
   
@@ -68,11 +68,18 @@ export const ManageAwkaf = () => {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+  if (!isEditing) {
+    setProjectData(defaultProject);
+  }
+}, [isEditing]);
+
   
 
   return (
     <div className="w-full border-3 border-gray-800  p-8 shadow-lg rounded-[15px]">
-      <h2 className="text-3xl font-bold text-center text-blue-950 mb-6">
+      <h2 className="text-2xl font-bold text-center text-blue-950 mb-6">
         {isEditing ? "Edit Project" : "Add New Project"}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -83,7 +90,7 @@ export const ManageAwkaf = () => {
     
         ].map(({ label, name, type }) => (
           <div key={name}>
-            <label className="block text-blue-950 font-medium">{label}</label>
+            <label className="text-[0.8em] block text-blue-950 ">{label}</label>
             {type === "text" ? (
               <input
                 type="text"
@@ -91,7 +98,7 @@ export const ManageAwkaf = () => {
                 value={projectData[name]}
                 onChange={handleChange}
                 required
-                className="w-full p-3 custom-input"
+                className="w-full p-2  custom-input"
               />
             ) : (
               <textarea
@@ -107,7 +114,7 @@ export const ManageAwkaf = () => {
 
         {/* Image Upload */}
         <div>
-          <label className="block text-blue-950 font-medium">Project Image</label>
+          <label className="block text-blue-950 text-[0.8em]">Project Image</label>
           <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-[#118218] transition">
             <input
               type="file"

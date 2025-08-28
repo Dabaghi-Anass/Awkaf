@@ -14,7 +14,7 @@ export const SideBar = ({ activeTab, setActiveTab }) => {
 
   const handleItemClick = (name) => {
     if (name === "Logout") {
-      // Clear token and redirect to login
+      
       localStorage.removeItem("accessToken");
       navigate("/");
     } else {
