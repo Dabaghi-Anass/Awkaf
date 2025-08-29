@@ -5,7 +5,7 @@ export const ZakatContext = createContext();
 export const ZakatProvider = ({ children }) => {
     
     
-const [nissab, setNissab] = useState(800000);
+const [nissab, setNissab] = useState(8000);
 const [zakatFormInfos, setZakatFormInfos] = useState();
 const [isUnnaire, setIsUnnaire] = useState(false);
 const [showResult, setShowResult] = useState(false);

@@ -1,43 +1,32 @@
 import React, { useContext, useState } from "react";
 import { ZakatContext } from "./ZakatProvider";
 import { Trash } from "../assets/icons/trash";
+import { Link } from "react-router-dom";
 
 export const ZakatPrice = () => {
-  const { zakatFormInfos, selectedCompany, setShowResult, saveZakatHistory, isUnnaire, nissab } = useContext(ZakatContext);
-  const [showDetails, setShowDetails] = useState(false);
+  const { zakatFormInfos, setShowResult, saveZakatHistory, isUnnaire, nissab } = useContext(ZakatContext);
+
+  const zakatTax = zakatFormInfos.zakatAmount * 1.26;
+
 
   const formatNumber = (num) => (!num ? "0" : num.toLocaleString("fr-FR"));
   const handlePrint = () => window.print();
 
   const today = new Date().toISOString().split("T")[0];
 
-  const renderTableRows = (fieldsList) => {
-  return fieldsList.flatMap((field) => {
-    if (field.children && field.children.length > 0) {
-      return renderTableRows(field.children);
-    }
-
-    const value = zakatFormInfos[field.name];
-    return value ? (
-      <tr key={field.name}>
-        <td className="border border-green-600 p-2">{field.label}</td>
-        <td className="border border-green-600 p-2 text-left">{formatNumber(Number(value))}</td>
-      </tr>
-    ) : [];
-  });
-};
+ 
 
 
   return (
     <>
       {/* Visible part (on screen only) */}
-      <div className="fixed inset-0 flex items-center justify-center  bg-opacity-50 z-50">
-        <div className="bg-white  border-green-600  rounded-lg p-6 shadow-lg max-w-sm w-full text-center border relative">
-        <h2 className="text-2xl font-bold text-green-600 text-center mb-10">
+      <div className="fixed  inset-0 flex items-center justify-center  bg-opacity-50 z-50">
+        <div className="bg-white  border-green-600  rounded-lg p-6 shadow-lg  w-1/4 text-center border relative">
+        <h2 className="text-1xl font-bold text-green-600 text-center mb-10">
           تفاصيل الحساب
         </h2>
 
-        <div className="space-y-3 text-[0.9em] text-gray-800">
+        <div className="space-y-3 text-[0.8em] text-gray-800">
           <div className="flex justify-between">
             <span>قيمة النصاب:</span>
             <span className="font-bold">{formatNumber(nissab)} د.ج</span>
@@ -52,6 +41,10 @@ export const ZakatPrice = () => {
             <span>قيمة الزكاة:</span>
             <span>{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
           </div>
+          <div className="flex justify-between text-red-800 font-bold">
+            <span>  قيمة الزكاة بالضريبة:</span>
+            <span>{formatNumber(zakatTax)} د.ج</span>
+          </div>
 
           <div className="flex justify-between">
             <span>التاريخ:</span>
@@ -64,6 +57,8 @@ export const ZakatPrice = () => {
           </div>
         </div>
 
+         
+
         {/* Buttons */}
         <button
           className="absolute top-0 right-0 p-2 text-white rounded-bl-lg rounded-tr-lg"
@@ -75,18 +70,19 @@ export const ZakatPrice = () => {
         <div className="flex justify-between mt-6">
           <button
             onClick={saveZakatHistory}
-            className="py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
+            className="bg-green-600  text-white text-[0.8em] px-2 py-1 rounded-[8px]"
           >
             حفظ
           </button>
 
           <button
             onClick={handlePrint}
-            className="py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
+            className="bg-green-600  text-white text-[0.8em] px-2 py-1 rounded-[8px]"
           >
             طباعة
           </button>
         </div>
+         <div className="text-right  text-[12px] mt-2">إن أردت إخراج الزكاة دون ضريبة <Link to="/contact" className="text-green-600">إتصل بنا</Link></div>
       </div>
       </div>
 

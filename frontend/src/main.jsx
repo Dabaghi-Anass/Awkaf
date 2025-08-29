@@ -176,7 +176,7 @@ const router = createBrowserRouter([
     path: "app/",
     element: (
       <ProtectedRoute>
-        <TestForm />
+        <App />
       </ProtectedRoute>
     ),
   },
