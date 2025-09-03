@@ -21,7 +21,7 @@ export const ZakatPrice = () => {
     <>
       {/* Visible part (on screen only) */}
       <div className="fixed  inset-0 flex items-center justify-center  bg-opacity-50 z-50">
-        <div className="bg-white  border-green-600  rounded-lg p-6 shadow-lg  w-1/4 text-center border relative">
+        <div className="bg-white  border-green-600  rounded-lg p-6 shadow-lg  w-[25em] text-center border relative">
         <h2 className="text-1xl font-bold text-green-600 text-center mb-10">
           تفاصيل الحساب
         </h2>
@@ -37,12 +37,12 @@ export const ZakatPrice = () => {
             <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
           </div>
 
-          <div className="flex justify-between text-green-800 font-bold">
-            <span>قيمة الزكاة:</span>
+          <div className="flex justify-between text-green-800 font-bold text-[1.2em]">
+            <span>قيمة الزكاة (معنا):</span>
             <span>{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
           </div>
-          <div className="flex justify-between text-red-800 font-bold">
-            <span>  قيمة الزكاة بالضريبة:</span>
+          <div className="flex justify-between text-red-600 font-bold text-[1.2em]">
+            <span >  قيمة الزكاة بالضريبة Ibs (من دوننا):</span>
             <span>{formatNumber(zakatTax)} د.ج</span>
           </div>
 

@@ -1,143 +1,261 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { ZakatContext } from '../Components/ZakatProvider';
-import { ZakatPrice } from './ZakatPrice';
-import { MessagePopup } from './MessagePopup';
+import React, { useContext,useEffect, useState } from "react";
+import { ZakatPrice } from "./ZakatPrice";
+import { MessagePopup } from "./MessagePopup";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { ZakatContext } from "./ZakatProvider";
 
-export const CalForm = () => {
-  const { zakatFormInfos, setZakatFormInfos, setIsUnnaire, calculateZakat, showResult, selectedCompany, setSelectedCompany,popup,setPopup } = useContext(ZakatContext);
-  const [companyTypes, setCompanyTypes] = useState([]);
-  const [fields, setFields] = useState([]);
+export const CalForm =()=> {
 
-  useEffect(() => {
-    const fetchCompanyTypes = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) return setPopup({ message: "No authentication token found. Please log in.", type: "error" });
+  const { nissab, setZakatFormInfos,setShowResult,showResult,setPopup,popup } = useContext(ZakatContext);
 
-        const response = await fetch("http://localhost:8000/apif/company-types/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+  const [methodCalcul,setMethodCalcul]=useState("Maliki");
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch companies");
-        }
+  const [formData, setFormData] = useState([
+    {name:"1",label:"النقود وما في حكمها",children:[
+      {name: 'x1', label: 'نقدية بالصندوق', children: Array(0)},
+      {name: 'x2', label: 'نقدية لدى المصارف (جارية/تحت الطلب)', children: Array(0)},
+      {name: 'x3', label: 'شيكات مصادق عليها', children: Array(0)},   
+      {name: 'x4', label: 'العملات الأجنبية', children: Array(0)},
+      {name: 'x5', label: 'أصول رقمية/نقود مشفّرة متاحة', children: Array(0)},
+      {name: 'x6', label: 'ودائع أمانة/حسابات ثابتة يمكن التصرف فيها', children: Array(0)},
+      {name: 'x7', label: 'قرض حسن مُقرض (حتى يُقبض)', children: Array(0)},
+      {name: 'x8', label: 'إيرادات مستحقة غير مقبوضة', children: Array(0)},
+      {name: 'x9', label: 'نقود من بيع أصول غير زكوية', children: Array(0)},
+    ]},
 
-        const data = await response.json();
-        setCompanyTypes(data);
-      } catch (error) {
-        setPopup({ message: `Error: ${error.message}`, type: "error" });
-      }
-    };
+    {name: '2', label: 'الذمم المدينة (الديون المرجوّة)',children:[
+      {name: 'y1', label: 'ديون حالّة مرجوّة على العملاء', children: Array(0)},
+      {name: 'y2', label: 'ديون مؤجّلة مرجوّة', children: Array(0)},
+      {name: 'y3', label: 'أوراق قبض', children: Array(0)},
+      {name: 'y4', label: 'ديون لي مرجوّة (قرض حسن/بيع احتكاري)', children: Array(0)},
+      {name: 'y5', label: 'ديون عن بيع أصول غير زكوية/غير تجارية', children: Array(0)},
+      {name: 'y6', label: 'إيرادات إيجار/كراء حل أجلها', children: Array(0)},
+      {name: 'y7', label: 'ديون مشكوك فيها/ميؤوس منها', children: Array(0)},
+    ]},
+
+    {name: '3', label: 'الاستثمارات الزكوية',children:[
+      {name: 'z1', label: 'أسهم/صكوك/حصص للتجارة', children: Array(0)},
+      {name: 'z2', label: 'حصص عقارية للتجارة', children: Array(0)},
+      {name: 'z3', label: 'استثمارات سندات/أذون خزينة', children: Array(0)},
+      {name: 'z4', label: 'أسهم بنية العائد (احتفاظ)', children: Array(0)},
+    ]},
+
+    {name: '4', label: 'عروض التجارة والمخزون',children:[
+      {name: 'a1', label: 'بضاعة تامة الصنع', children: Array(0)},
+      {name: 'a2', label: 'بضاعة تحت التشغيل', children: Array(0)},
+      {name: 'a3', label: 'مواد أولية', children: Array(0)},
+      {name: 'a4', label: 'بضاعة في الطريق', children: Array(0)},
+      {name: 'a5', label: 'بضاعة أمانة لدى الغير', children: Array(0)},
+      {name: 'a6', label: 'قطع غيار بقصد المتاجرة', children: Array(0)},
+      {name: 'a7', label: 'عروض تجارة بهبة/إرث', children: Array(0)},
+      {name: 'a8', label: 'عقارات محتكرة للتجارة', children: Array(0)},
+      {name: 'a9', label: 'بضاعة كاسدة/غير معدّة للبيع', children: Array(0)},
+    ]},
+
+    /*{name: '5', label: 'البنود الزكوية الخاصة',children:[
+      {name: 'b1', label: 'للتجارة', children: Array(0)},
+      {name: 'b2', label: 'المحتكرة', children: Array(0)},
+      {name: 'b3', label: 'عروض كاسدة مخزنة', children: Array(0)},
+      {name: 'b4', label: 'محصل عليها بهبة أو إرث', children: Array(0)},
+    ]},
+ */
+    {name: '6', label: 'الالتزامات واجبة الخصم',children:[
+      {name: 'c1', label: 'قروض قصيرة الأجل مستحقة خلال الحول', children: Array(0)},
+      {name: 'c2', label: 'أوراق دفع/دائنون', children: Array(0)},
+      {name: 'c3', label: 'حقوق موظفين (أجور/إجازات)', children: Array(0)},
+      {name: 'c4', label: 'ضرائب مستحقة خلال الحول', children: Array(0)},
+      {name: 'c5', label: 'أرباح مضاربة للغير', children: Array(0)},
+      {name: 'c6', label: 'تأمينات العملاء للرد', children: Array(0)},
+      {name: 'c7', label: 'احتياطيات عامة/مخصصات تقديرية', children: Array(0)},
+    ]},
+
+    
    
+  ]);
 
-    fetchCompanyTypes();
-  }, []);
-  console.log("Fetched Company:", companyTypes);
-
-  useEffect(() => {
-    if (selectedCompany) {
-      setFields(selectedCompany.fields || []);
-    } else {
-      setFields([]);
-    }
-  }, [selectedCompany]);
+  
+  const updateFieldValue = (fields, targetName, newValue) => {
+    return fields.map(field => {
+      if (field.name === targetName) {
+        return { ...field, value: newValue };
+      }
+      if (field.children && field.children.length > 0) {
+        return { ...field, children: updateFieldValue(field.children, targetName, newValue) };
+      }
+      return field;
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     const rawValue = value.replace(/,/g, "");
     if (!isNaN(rawValue) && rawValue >= 0) {
-      setZakatFormInfos(prev => ({ ...prev, [name]: rawValue }));
+      setFormData(prev => updateFieldValue(prev, name, rawValue));
     }
   };
+
+const flattenData = (fields, acc = {}) => {
+  fields.forEach(field => {
+    if (field.children && field.children.length > 0) {
+      flattenData(field.children, acc);
+    } else {
+      acc[field.name] = Number(field.value) || 0;
+    }
+  });
+  return acc;
+};
+
+
+const calcZakat = (method) => {
+  const values = flattenData(formData);
+  console.log("Values:", values);
+
+  const commonAssets = 
+    (values.x1 || 0) + (values.x2 || 0) + (values.x3 || 0) +
+    (values.x4 || 0) + (values.x5 || 0) + (values.x6 || 0) +
+    (values.a1 || 0) + (values.a4 || 0) + (values.a5 || 0) ;
+    
+  let zakatBase = 0;
+
+    switch(method){
+      case "Maliki":
+        
+        break;
+      case "AAOIFI":
+        zakatBase = commonAssets + (values.y1 || 0) + (values.y2 || 0) + (values.y3 || 0) + (values.y4 || 0) +
+        (values.z2 || 0) + (values.z3 || 0) + (values.z4 || 0) + (values.a1 || 0)+ (values.z1 || 0) +
+        (values.a2 || 0) + (values.a3 || 0) + (values.a4 || 0) + (values.a5 || 0) + (values.a6 || 0) +
+        (values.a7 || 0) + (values.a8 || 0) - ((values.c1 || 0) + (values.c2 || 0) + (values.c4 || 0) +
+        (values.c5 || 0) + (values.c6 || 0) );
+        
+        break;
+      case "Alioua":
+
+        zakatBase = commonAssets + (values.x7 || 0) + (values.x8 || 0) + (values.x9 || 0) + (values.y1 || 0) +
+        (values.y2 || 0) + (values.y3 || 0) + (values.y4 || 0) + (values.y5 || 0)+ (values.y6 || 0) +
+        (values.y7 || 0) + (values.z1 || 0) + (values.z2 || 0) + (values.z3 || 0) + (values.z4 || 0) +
+        (values.a1 || 0) + (values.a2 || 0) +(values.a3 || 0) + (values.a4 || 0)+(values.a5 || 0) + (values.a6 || 0) +
+        (values.a7 || 0) + (values.a8 || 0) -  ((values.c1 || 0) + (values.c2 || 0) + (values.c4 || 0) +
+        (values.c5 || 0) + (values.c6 || 0)+(values.c3 || 0)  );
+       
+
+        break;
+      case"Net":
+        zakatBase = commonAssets + (values.a1 || 0) + (values.a4 || 0) + (values.a5 || 0) ;
+        break;
+    }
+    
+
+
+  
+  const zakat = zakatBase > nissab ? zakatBase*0.025 :0; 
+
+  const calculationDate = new Date().toISOString().split("T")[0]; 
+    
+            setZakatFormInfos(prevState => ({
+                ...prevState,
+                zakatAmount:zakat.toFixed(3),  
+                totalAmount: zakatBase.toFixed(3),  
+                calculationDate: calculationDate,
+               
+            }));
+
+  setShowResult(true);
+ 
+};
+
 
   const formatNumber = (num) =>
     !num ? "" : num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
+  // Recursive rendering
   const renderInputs = (fieldList) =>
     fieldList.map((field, index) => (
       <div key={index}>
         {field.children && field.children.length > 0 ? (
           <>
-            <div className="font-semibold text-green-700 text-[1.2em] mt-4">{field.label}</div>
+            <div className="font-semibold text-green-600 text-[1em] mb-4">
+              {field.label}
+            </div>
             <div className="ml-4">{renderInputs(field.children)}</div>
           </>
         ) : (
-          <div className="mb-4">
-            <label className="text-gray-700 text-sm font-semibold">{field.label}</label>
+          <div className="mb-4 ">
+            <div className="flex items-center">
+               <label className="custom-form-label ml-3">{field.label}</label>
+           
+             <Tooltip className="max-w-xs whitespace-normal text-sm leading-relaxed">
+          <TooltipTrigger><img src="./211757_help_icon.svg" alt="search" className='w-6 h-6 text-red-600' /></TooltipTrigger>
+          <TooltipContent className={"bg-green-500"}>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit
+              . Tempora mollitia perspiciatis, quas esse pla <br />
+              ceat accusantium ipsa sed
+              , voluptas aut, quae modi! Molestiae, voluptatem <br />
+               inventore!
+               Velit vitae rerum dolorem voluptatum culpa.</p>
+          </TooltipContent>
+          </Tooltip>
+            </div>
+           
+          
             <div className="relative w-full">
               <input
-                className="w-full h-10 p-2 border custom-input pr-10"
+                className="custom-form-input"
                 type="text"
                 name={field.name}
-                value={formatNumber(zakatFormInfos[field.name] || "")}
+                value={formatNumber(field.value || "")}
                 onChange={handleChange}
                 placeholder="00,000"
               />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">دج</span>
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[0.8em]">دج</span>
             </div>
           </div>
         )}
       </div>
     ));
+
+
    
+
   return (
-    <div dir="rtl" className="flex flex-col p-15 bg-gray-200 ">
-      
-      <div className="bg-white w-[40em] mx-auto rounded-lg shadow-lg p-8 mt-15">
-        <h1 className="text-center text-[1.5em] font-bold text-green-500">
-          أدخل بياناتك لمعرفة مقدار الزكاة المستحق
-        </h1>
-        <form onSubmit={(e) => { e.preventDefault(); calculateZakat(); }} className="bg-white p-5 rounded-lg">
+     <div dir="rtl" className="w-full  mx-auto  ">
+      <div className=" mt-20 w-3/4 mx-auto my-3 py-2 px-3 border-2 rounded-[10px] border-gray-700 bg-white  ">
+        <div className="form-pattern mx-auto    rounded-lg " >
+        
+          {renderInputs(formData)}
           <div className="mb-5">
-            <label className="text-gray-700 font-semibold text-sm">نوع الشركة</label>
+            <label className="font-semibold text-green-600 text-[1em]">إختر طريقة الحساب</label>
             <select
-              className="w-full p-2 border border-gray-300 rounded-lg text-sm text-right mt-1"
-              onChange={(e) => {
-                const selected = companyTypes.find(c => c.id === parseInt(e.target.value));
-                setSelectedCompany(selected ?? null);
-              }}
+              className="w-full custom-form-label p-2 border border-gray-300 rounded-lg text-sm pr-10 text-right mt-1"
+              onChange={(e) => setMethodCalcul(e.target.value)}
+              
             >
-              <option value="">{companyTypes.length === 0 ? "لا توجد شركات متاحة" : "اختر نوع الشركة"}</option>
-              {companyTypes.map(company => (
-                <option key={company.id} value={company.id}>{company.name}</option>
-              ))}
+              <option value="Maliki" >معادلة حساب زكاة الشركات مالكي</option>
+              <option value="AAOIFI">معادلة حساب زكاة الشركات AAOIFI </option>
+              <option value="Alioua">معادلة باسم عليوة</option>
+              <option value="Net">معادلة طريقة صافي الغنى</option>
+              
             </select>
           </div>
-         
+          <button className="custom-button mx-auto block rounded-md" onClick={() => calcZakat(methodCalcul)}>حساب</button>
 
-          {/* Render Nested Fields */}
-          {renderInputs(fields)}
-
-          <div className="mb-5">
-            <label className="text-gray-700 font-semibold text-sm">نوع الحول</label>
-            <select
-              className="w-full p-2 border border-gray-300 rounded-lg text-sm pr-10 text-right mt-1"
-              onChange={(e) => setIsUnnaire(e.target.value === "هجري")}
-            >
-              <option value="هجري">هجري</option>
-              <option value="ميلادي">ميلادي</option>
-            </select>
-          </div>
-
-          <button
-            className="block mx-auto py-3 w-1/2 mt-6 custom-button rounded-[10px]"
-            type="submit"
-          >
-            حساب الزكاة
-          </button>
-        </form>
-
+        </div>
         {showResult && <ZakatPrice />}
+    
       </div>
-      <MessagePopup
-        message={popup.message}
-        type={popup.type}
-        onClose={() => setPopup({ message: "", type: "" })}
-      />
+       <MessagePopup
+              message={popup.message}
+              type={popup.type}
+              onClose={() => setPopup({ message: "", type: "" })}
+            />
+
+       
     </div>
   );
-};
+}
+
+
