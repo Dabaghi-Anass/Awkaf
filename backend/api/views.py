@@ -114,7 +114,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 
-class UserLoginRequestOTP(APIView):
+class UserLoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -131,14 +131,17 @@ class UserLoginRequestOTP(APIView):
         if not user.is_active:
             return Response({"error": "Email not verified. Please verify your email."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Authenticate after checking if the user is active
+        # Authenticate the user
         user = authenticate(username=username, password=password)
         if not user:
             return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Send OTP email
-        send_otp_email(user)
-        return Response({"message": "OTP sent to your email. Enter OTP to proceed."})
+        # Generate JWT tokens directly without OTP
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh)
+        })
 
 class UserVerifyOTP(APIView):
     permission_classes = [AllowAny]
@@ -197,7 +200,7 @@ class AdminRegisterView(APIView):
             return Response({"message": "Admin account created. Please verify your email."}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-class AdminLoginRequestOTP(APIView):
+class AdminLoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -205,7 +208,7 @@ class AdminLoginRequestOTP(APIView):
         password = request.data.get("password")
         secret_key = request.data.get("secret_key")
 
-        # First, check if the user exists
+        # First, check if the user exists and is staff
         user = User.objects.filter(username=username).first()
         
         if not user or not user.is_staff:
@@ -215,7 +218,7 @@ class AdminLoginRequestOTP(APIView):
         if not user.is_active:
             return Response({"error": "User is not verified. Please verify your email first."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Authenticate after checking if the user is active
+        # Authenticate the admin user
         user = authenticate(username=username, password=password)
         if not user:
             return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
@@ -224,8 +227,12 @@ class AdminLoginRequestOTP(APIView):
         if secret_key != settings.ADMIN_SECRET_KEY:
             return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
 
-        send_otp_email(user)  # Send OTP email
-        return Response({"message": "OTP sent to your email. Enter OTP to proceed."})
+        # Generate JWT tokens directly without OTP for admin
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh)
+        })
 class AdminVerifyOTP(APIView):
     permission_classes = [AllowAny]
 
