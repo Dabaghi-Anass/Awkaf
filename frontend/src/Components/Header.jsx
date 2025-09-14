@@ -1,61 +1,102 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react"; // icons for mobile toggle
 
 export const Header = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Used to redirect after logout
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
-    // Clear auth data (example: token stored in localStorage)
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-
-    // Redirect to login or home
-    navigate("/"); // Change to "/" if you want to go to the home page
+    navigate("/");
   };
 
-  return (
-    <header dir="rtl" className="bg-green-900 py-2 text-white shadow-md fixed top-0 w-full z-1000">
-      <nav className="bg-green-900 py-2 flex">
-        <div className="mx-auto flex flex-wrap jmd:justify-start gap-6 text-[1em]">
-          <button
-            onClick={handleLogout}
-            className="absolute text-[0.8em] right-5 px-5 py-2 bg-green-400 rounded-3xl hover:bg-green-500"
-          >
-            تسجيل الخروج
-          </button>
+  const navLinks = [
+    { path: "/Home", label: "الرئيسية" },
+    { path: "/About", label: "عن الزكاة" },
+    { path: "/ZakatCalculator", label: "حاسبة الزكاة" },
+    { path: "/Awkaf", label: "مشاريع الوقف" },
+    { path: "/Contact", label: "تواصل مباشرة معنا" },
+    { path: "/userhistory/", label: "تاريخ الزكاة" },
+    { path: "/userInfos", label: "معلومات المستخدم" },
+  ];
 
-          {[
-            { path: "/Home", label: "الرئيسية" },
-            { path: "/About", label: "عن الزكاة" },
-            { path: "/ZakatCalculator", label: "حاسبة الزكاة" },
-            { path: "/Awkaf", label: "مشاريع الوقف" },
-            { path: "/Contact", label: "تواصل مباشرة معنا" },
-            { path: "/userhistory/", label: "تاريخ الزكاة" },
-             { path: "/userInfos", label: "معلومات المستخدم" },
-          ].map(({ path, label }) => (
+  return (
+    <header
+      dir="rtl"
+      className="bg-gradient-to-r from-green-600 via-emerald-700 to-teal-800 text-white shadow-md fixed pb-2 top-0 w-full z-50"
+    >
+      <nav className="flex items-center justify-between px-4 py-3 md:px-8">
+        {/* Logo */}
+        <Link
+          to="/home"
+          className="text-2xl md:text-3xl font-bold tracking-wide hover:text-green-300 transition duration-300"
+        >
+          أوقاف
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden  mx-auto md:flex items-center gap-6">
+          {navLinks.map(({ path, label }) => (
             <Link
               key={path}
               to={path}
-              className={`relative text-[0.7em] px-1 py-1 hover:text-green-300 transition duration-300 ${
+              className={`relative text-[0.9em] hover:text-green-300 transition duration-300 ${
                 location.pathname === path ? "text-green-300 font-semibold" : ""
               }`}
             >
               {label}
               {location.pathname === path && (
-                <span className="absolute bottom-0 left-0 w-full h-1 bg-green-300"></span>
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-300"></span>
               )}
             </Link>
           ))}
+          
         </div>
+        <button
+            onClick={handleLogout}
+            className="text-[0.8em] px-5 py-2 bg-green-400 rounded-3xl hover:bg-green-500 transition"
+          >
+            تسجيل الخروج
+          </button>
 
-        <Link
-          to="/home"
-          className="text-3xl ml-7 md:text-1xl font-bold tracking-wide hover:text-green-300 transition duration-300"
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-white"
+          onClick={() => setIsOpen(!isOpen)}
         >
-          أوقاف
-        </Link>
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </nav>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-green-800 flex flex-col items-center gap-4 py-4">
+          {navLinks.map(({ path, label }) => (
+            <Link
+              key={path}
+              to={path}
+              onClick={() => setIsOpen(false)}
+              className={`w-full text-center py-2 text-[0.9em] hover:text-green-300 transition duration-300 ${
+                location.pathname === path ? "text-green-300 font-semibold" : ""
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+          <button
+            onClick={() => {
+              handleLogout();
+              setIsOpen(false);
+            }}
+            className="text-[0.8em] px-5 py-2 bg-green-400 rounded-3xl hover:bg-green-500 transition"
+          >
+            تسجيل الخروج
+          </button>
+        </div>
+      )}
     </header>
   );
 };

@@ -1,4 +1,6 @@
-
+// First, create the ScrollToTop component
+// Create a new file: Components/ScrollToTop.jsx
+// Updated main.jsx with ScrollToTop integration
 import { createRoot } from 'react-dom/client'
 import {
   createBrowserRouter,
@@ -25,164 +27,184 @@ import UserHistory from './pages/UserHistory.jsx';
 import { AdminProvider } from './Components/AdminProvider.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import { ForgotPassword } from './Components/ForgotPassword.jsx';
-
 import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './Components/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
 import { Maliki } from './Components/Maliki.jsx';
 import { TestForm } from './Components/TestForm.jsx';
-
+import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LoginPage />,
+    element: <ScrollToTop><LoginPage /></ScrollToTop>,
   },
   {
     path: "*",
-    element: <ErrorPage />,
+    element: <ScrollToTop><ErrorPage /></ScrollToTop>,
   },
   {
     path: "/forgot-password",
-    element: <ForgotPassword />,
+    element: <ScrollToTop><ForgotPassword /></ScrollToTop>,
   },
   {
     path: "Register/",
-    element: <RegisterPage />,
+    element: <ScrollToTop><RegisterPage /></ScrollToTop>,
   },
-  
   {
     path: "AdminLogin/",
-    element: <AdminLogin />,
+    element: <ScrollToTop><AdminLogin /></ScrollToTop>,
   },
   {
     path: "AdminRegister/",
-    element: <AdminRegister />,
+    element: <ScrollToTop><AdminRegister /></ScrollToTop>,
   },
   {
     path: "Home/",
     element: (
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "settings-page/",
     element: (
-      <ProtectedRoute>
-        <Settings />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Settings />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "ZakatCalculator/",
     element: (
-      <ProtectedRoute>
-        <ZakatCal />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <ZakatCal />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "userInfos/",
-    element:(
-      <ProtectedRoute>
-    <UserInfos/>
-    </ProtectedRoute>
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <UserInfos/>
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "Awkaf/",
     element: (
-      <ProtectedRoute>
-        <Awkaf />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Awkaf />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "About/",
     element: (
-      <ProtectedRoute>
-        <About />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <About />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "Contact/",
     element: (
-      <ProtectedRoute>
-        <Contact />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Contact />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "userhistory/",
     element: (
-      <ProtectedRoute>
-        <UserHistory />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <UserHistory />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "DashboardAdmin/",
     element: (
-      <PrivateRouterAdmin >
-        <DashboardAdmin />
-      </PrivateRouterAdmin>
+      <ScrollToTop>
+        <PrivateRouterAdmin>
+          <DashboardAdmin />
+        </PrivateRouterAdmin>
+      </ScrollToTop>
     ),
   },
   {
     path: "manage-project/",
     element: (
-      <ProtectedRoute>
-        <ManageAwkaf />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <ManageAwkaf />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "Contribution/",
-    element: (
-   
-        <Contribution />
-    
-    ),
+    element: <ScrollToTop><Contribution /></ScrollToTop>,
   },
   {
     path: "kol/",
     element: (
-      <ProtectedRoute>
-        <ZakatSelectionPage />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <ZakatSelectionPage />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "wakf/:id",
     element: (
-      <ProtectedRoute>
-        <WakfP />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <WakfP />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "Admin/",
     element: (
-      <ProtectedRoute>
-        <Admin />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Admin />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
   {
     path: "app/",
     element: (
-      <ProtectedRoute>
-        <App />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <ProtectedRoute>
+          <App />
+        </ProtectedRoute>
+      </ScrollToTop>
     ),
   },
 ]);
-
-
 
 createRoot(document.getElementById('root')).render(
   <ZakatProvider>  
