@@ -34,7 +34,7 @@ export default function Footer() {
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-center text-white mb-2">
-                  بنك البركة
+                  مصرف السلام
                 </h3>
                 <p className="text-gray-300 text-center">
                   شريك مصرفي موثوق في الخدمات المالية الإسلامية
@@ -94,21 +94,15 @@ export default function Footer() {
               <div>
                 <h3 className="text-xl font-semibold text-white mb-4">تابعونا</h3>
                 <div className="flex space-x-4">
-                  <a href="#" className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-300 group">
-                    <svg className="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                    </svg>
+                  <a href="#" className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-300 group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 1200 1227" fill="none"><g clip-path="url(#clip0_1_2)"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="black"/></g><defs><clipPath id="clip0_1_2"><rect width="1200" height="1227" fill="white"/></clipPath></defs></svg>
                   </a>
                   <a href="#" className="w-12 h-12 bg-blue-800 rounded-full flex items-center justify-center hover:bg-blue-900 transition-colors duration-300 group">
                     <svg className="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                     </svg>
                   </a>
-                  <a href="#" className="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors duration-300 group">
-                    <svg className="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.74.099.120.112.225.085.346-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.017 0z"/>
-                    </svg>
-                  </a>
+                 
                   <a href="#" className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors duration-300 group">
                     <svg className="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -140,7 +134,7 @@ export default function Footer() {
                       </div>
                       <div>
                         <p className="text-gray-300 text-sm">رقم الهاتف</p>
-                        <p className="text-white font-semibold text-lg">0658798756</p>
+                        <p className="text-white font-semibold text-lg">06666666</p>
                       </div>
                     </div>
 
@@ -183,20 +177,18 @@ export default function Footer() {
                   <nav>
                     <ul className="space-y-3">
                       {[
-                        { to: '/', label: 'الرئيسية', icon: '🏠' },
-                        { to: '/About', label: 'عن الزكاة', icon: '📖' },
-                        { to: '/ZakatCalculator', label: 'حاسبة الزكاة', icon: '🧮' },
-                        { to: '/Awkaf', label: 'مشاريع الوقف', icon: '🏛️' },
-                        { to: '/Contact', label: 'اتصل بنا', icon: '📞' }
+                        { to: '/', label: 'الرئيسية',  },
+                        { to: '/About', label: 'عن الزكاة',  },
+                        { to: '/ZakatCalculator', label: 'حاسبة الزكاة',  },
+                        { to: '/Awkaf', label: 'مشاريع الوقف',  },
+                        { to: '/Contact', label: 'اتصل بنا',  }
                       ].map((link, index) => (
                         <li key={index}>
                           <Link
                             to={link.to}
                             className="flex items-center text-gray-300 hover:text-white transition-colors duration-300 group py-2"
                           >
-                            <span className="text-lg ml-3 group-hover:scale-110 transition-transform">
-                              {link.icon}
-                            </span>
+                            
                             <span className="font-medium group-hover:translate-x-2 transition-transform">
                               {link.label}
                             </span>

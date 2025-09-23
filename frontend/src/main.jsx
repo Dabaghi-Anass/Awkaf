@@ -32,8 +32,9 @@ import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './Components/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
 import { Maliki } from './Components/Maliki.jsx';
-import { TestForm } from './Components/TestForm.jsx';
+
 import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
+import { Ma7acil } from './Components/Ma7acil.jsx';
 
 const router = createBrowserRouter([
   {
@@ -195,11 +196,11 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "app/",
+    path: "ma7acil/",
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <App />
+          <Ma7acil />
         </ProtectedRoute>
       </ScrollToTop>
     ),

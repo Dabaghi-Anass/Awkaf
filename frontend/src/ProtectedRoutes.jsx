@@ -1,3 +1,4 @@
+import { Loader } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
@@ -43,7 +44,7 @@ export const ProtectedRoute = ({ children }) => {
       });
   }, [location.pathname]);
 
-  if (authorized === null) return <div>Loading...</div>;
+  if (authorized === null) return <Loader/>;
 
   return authorized ? children : <Navigate to="/" replace />;
 };

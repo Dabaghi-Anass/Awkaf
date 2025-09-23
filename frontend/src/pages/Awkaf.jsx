@@ -3,7 +3,15 @@ import {Loader} from "../Components/Loader";
 import { Header } from "../Components/Header";
 import Project from "../Components/Project";
 import WakfPic from "../Components/WakfPic";
-import ReactPaginate from "react-paginate";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 import Footer from "../Components/Footer";
 
@@ -72,17 +80,54 @@ export default function Awkaf() {
 
         {/* Pagination */}
         <div className="flex justify-center mt-6">
-          <ReactPaginate
-            previousLabel={"«"}
-            nextLabel={"»"}
-            pageCount={pageCount}
-            onPageChange={changePage}
-            containerClassName="pagination flex items-center space-x-2 bg-white p-2 rounded-lg shadow-md"
-            previousLinkClassName="pagination-btn bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-2 rounded"
-            nextLinkClassName="pagination-btn bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-2 rounded"
-            disabledClassName="pagination-disabled text-gray-400"
-            activeClassName="pagination-active bg-green-500 text-white px-3 py-2 rounded"
-          />
+         {/* Pagination */}
+<div className="flex justify-center mt-6">
+  <Pagination>
+    <PaginationContent>
+      {/* Previous Button */}
+      <PaginationItem>
+        <PaginationPrevious
+          href="#"
+          className="bg-white "
+          onClick={(e) => {
+            e.preventDefault();
+            if (pageNumber > 0) setPageNumber(pageNumber - 1);
+          }}
+        />
+      </PaginationItem>
+
+      {/* Page Numbers */}
+      {Array.from({ length: pageCount }, (_, i) => i).map((p) => (
+        <PaginationItem key={p}>
+          <PaginationLink
+            href="#"
+            isActive={p === pageNumber}
+            className={p === pageNumber ? " bg-green-500 text-white border-0 hover:bg-green-500 hover:text-white" : "bg-white"}
+            onClick={(e) => {
+              e.preventDefault();
+              setPageNumber(p);
+            }}
+          >
+            {p + 1}
+          </PaginationLink>
+        </PaginationItem>
+      ))}
+
+      {/* Next Button */}
+      <PaginationItem>
+        <PaginationNext
+          href="#"
+          className="bg-white"
+          onClick={(e) => {
+            e.preventDefault();
+            if (pageNumber < pageCount - 1) setPageNumber(pageNumber + 1);
+          }}
+        />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</div>
+
         </div>
       </div>
 

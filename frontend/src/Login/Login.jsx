@@ -4,7 +4,6 @@ import { Loader } from "../Components/Loader";
 import { MessagePopup } from '../Components/MessagePopup';
 
 export const Login = ({ handleChange, formData }) => {
-    const [loginError, setLoginError] = useState("");
     const [formErrors, setFormErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [popup, setPopup] = useState({ message: '', type: '' });
@@ -41,16 +40,24 @@ export const Login = ({ handleChange, formData }) => {
                 localStorage.setItem("accessToken", result.access);
                 localStorage.setItem("refreshToken", result.refresh);
                 setPopup({ message: "تم تسجيل الدخول بنجاح", type: "success" });
-                navigate("/");
+                setTimeout(() => navigate("/"), 1500);
             } else {
-                setLoginError(result.detail || "إسم المستخدم أو كلمة المرور غير صحيحة");
+                setPopup({ 
+                    message: result.detail || "إسم المستخدم أو كلمة المرور غير صحيحة", 
+                    type: "error" 
+                });
             }
         } catch (error) {
-            setLoginError("حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.");
+            setPopup({ 
+                message: "حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.", 
+                type: "error" 
+            });
         } finally {
             setIsLoading(false);
         }
     };
+
+    if (isLoading) return <Loader />;
 
     return (
         <div dir="rtl" className="flex items-center justify-center min-h-screen w-dvw bg-gray-200">
@@ -81,7 +88,6 @@ export const Login = ({ handleChange, formData }) => {
                         />
                         {formErrors.password && <p className="text-red-500 text-[0.6em]">{formErrors.password}</p>}
                         <Link className="text-[0.7em] text-green-600 hover:underline block mt-1" to='/forgot-password'>نسيت كلمة المرور؟</Link>
-                        {loginError && <p className="text-red-500 text-[0.7em] mt-2">{loginError}</p>}
                     </div>
                     <button
                         type="submit"

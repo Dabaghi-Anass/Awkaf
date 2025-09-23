@@ -17,10 +17,10 @@ export const ZakatPrice = () => {
      <>
       
       <div className="fixed inset-0 flex items-center justify-center  bg-opacity-40 z-50">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-sm relative overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-[30em] relative overflow-hidden animate-in fade-in zoom-in duration-300">
           
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 text-white relative">
+          <div className="bg-green3 p-4 text-white relative">
             <h2 className="text-lg font-bold text-center">تفاصيل الحساب</h2>
             <p className="text-emerald-100 text-center text-xs">
               نتائج حساب الزكاة المفصلة
@@ -28,10 +28,10 @@ export const ZakatPrice = () => {
             
             {/* Close button */}
             <button
-              className="absolute top-2 right-2 p-1 hover:bg-white hover:bg-opacity-20 rounded-full transition"
+              className="absolute top-2 right-2 p-1  rounded-full transition"
               onClick={() => setShowResult(false)}
             >
-              <Trash width={20} className="text-white" />
+              <Trash width={30} className="text-white" />
             </button>
           </div>
 

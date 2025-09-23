@@ -12,7 +12,7 @@ export default function Project({ project }) {
             
             {/* Project Image */}
             <div 
-                className="project-pic bg-cover bg-center h-3/5 w-full rounded-t-xl"
+                className=" bg-cover bg-center h-3/5 w-full rounded-t-xl"
                 style={{ backgroundImage: `url(${imageUrl})` }}
             ></div>
             

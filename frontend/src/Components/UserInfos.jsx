@@ -2,23 +2,9 @@ import React, { useEffect, useState } from "react"
 import { Header } from "./Header"
 import Footer from "./Footer"
 
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+
+// Mock components for demonstration
+
 
 export const UserInfos = () => {
   const [formData, setFormData] = useState({
@@ -31,6 +17,7 @@ export const UserInfos = () => {
   })
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
+  const [activeTab, setActiveTab] = useState("account")
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken")
@@ -124,113 +111,193 @@ export const UserInfos = () => {
   return (
     <>
       <Header />
-      <div dir="rtl" className="flex w-full max-w-lg flex-col gap-6 mx-auto mt-28">
-        <Tabs defaultValue="account" dir="rtl">
-          <TabsList className="flex justify-center bg-green-400">
-            <TabsTrigger value="account">الحساب</TabsTrigger>
-            <TabsTrigger value="password">كلمة المرور</TabsTrigger>
-          </TabsList>
+      
+      <div className="min-h-screen my-8 bg-gradient-to-br from-gray-50 to-emerald-50 py-12">
+        <div className="container mx-auto px-6">
+          <div className="max-w-2xl mx-auto" dir="rtl">
+            
+            {/* Page Header */}
+            <div className="text-center mb-4">
+              <h1 className="text-2xl font-bold text-gray-800 mb-4">الملف الشخصي</h1>
+              <p className="text-gray-600 text-lg">إدارة معلوماتك الشخصية وإعدادات الحساب</p>
+            </div>
 
-          {/* Account Tab */}
-          <TabsContent value="account">
-            <form onSubmit={handleSubmit}>
-              <Card className={"border-green-400"}>
-                <CardHeader>
-                  <CardTitle>إعدادات الحساب</CardTitle>
-                  <CardDescription>
-                    قم بتحديث معلومات حسابك ثم اضغط على زر الحفظ.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="username">اسم المستخدم</Label>
-                    <Input
-                      id="username"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="first_name">الاسم الأول</Label>
-                    <Input
-                      id="first_name"
-                      name="first_name"
-                      value={formData.first_name}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="last_name">الاسم الأخير</Label>
-                    <Input
-                      id="last_name"
-                      name="last_name"
-                      value={formData.last_name}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">البريد الإلكتروني</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button type="submit">حفظ التغييرات</Button>
-                </CardFooter>
-              </Card>
-            </form>
-          </TabsContent>
+            {/* Tabs */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              
+              {/* Tab Headers */}
+              <div className="bg-green2">
+                <div className="flex rounded-xl bg-white/10 p-1">
+                  <button
+                    onClick={() => setActiveTab("account")}
+                    className={`flex-1 py-2 px-4 mx-2 rounded-lg text-center text-[0.8em] font-semibold transition-all duration-200 ${
+                      activeTab === "account"
+                        ? "bg-white text-green3 shadow-lg"
+                        : "text-white hover:bg-white/20"
+                    }`}
+                  >
+                    معلومات الحساب
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("password")}
+                    className={`flex-1 py-2 px-4 rounded-lg text-center text-[0.8em] font-semibold transition-all duration-200 ${
+                      activeTab === "password"
+                        ? "bg-white text-green3 shadow-lg"
+                        : "text-white hover:bg-white/20"
+                    }`}
+                  >
+                    كلمة المرور
+                  </button>
+                </div>
+              </div>
 
-          {/* Password Tab */}
-          <TabsContent value="password">
-            <form onSubmit={handleSubmit}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>تغيير كلمة المرور</CardTitle>
-                  <CardDescription>
-                    قم بإدخال كلمة المرور القديمة والجديدة لحفظ التغييرات.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="old_password">كلمة المرور القديمة</Label>
-                    <Input
-                      id="old_password"
-                      type="password"
-                      name="old_password"
-                      value={formData.old_password}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="password">كلمة المرور الجديدة</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit">حفظ كلمة المرور</Button>
-                </CardFooter>
-              </Card>
-            </form>
-          </TabsContent>
-        </Tabs>
+              {/* Tab Content */}
+              <div className="p-8">
+                
+                {/* Account Tab */}
+                {activeTab === "account" && (
+                  <div className="space-y-6 ">
+                    <div className="mb-4">
+                      <h2 className="text-2xl font-bold text-gray-800 mb-2"> معلومات الحساب</h2>
+                      <p className="text-gray-600"> قم بتحديث معلومات حسابك.</p>
+                    </div>
+                   
 
-        {/* Messages */}
-        {message && <p className="text-green-600 text-sm">{message}</p>}
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="custom-form-label mb-2">
+                          اسم المستخدم
+                        </label>
+                        <input
+                          type="text"
+                          name="username"
+                          value={formData.username}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 custom-input"
+                          placeholder="أدخل اسم المستخدم"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="custom-form-label  mb-2">
+                          البريد الإلكتروني
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 custom-input"
+                          placeholder="أدخل البريد الإلكتروني"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="custom-form-label  mb-2">
+                          الاسم الأول
+                        </label>
+                        <input
+                          type="text"
+                          name="first_name"
+                          value={formData.first_name}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 custom-input"
+                          placeholder="أدخل الاسم الأول"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="custom-form-label  mb-2">
+                          الاسم الأخير
+                        </label>
+                        <input
+                          type="text"
+                          name="last_name"
+                          value={formData.last_name}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 custom-input"
+                          placeholder="أدخل الاسم الأخير"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-6 border-t text-center border-gray-200">
+                      <button
+                        onClick={handleSubmit}
+                        className=" w-1/2 custom-button"
+                      >
+                        حفظ التغييرات
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Password Tab */}
+                {activeTab === "password" && (
+                  <div className="space-y-6">
+                    <div className="mb-4">
+                      <h2 className="text-2xl font-bold text-gray-800 mb-2">تغيير كلمة المرور</h2>
+                      <p className="text-gray-600">قم بإدخال كلمة المرور القديمة والجديدة</p>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="custom-form-label  mb-2">
+                          كلمة المرور الحالية
+                        </label>
+                        <input
+                          type="password"
+                          name="old_password"
+                          value={formData.old_password}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 custom-input"
+                          placeholder="أدخل كلمة المرور الحالية"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="custom-form-label  mb-2">
+                          كلمة المرور الجديدة
+                        </label>
+                        <input
+                          type="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 custom-input"
+                          placeholder="أدخل كلمة المرور الجديدة"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-6 border-t text-center border-gray-200">
+                      <button
+                        onClick={handleSubmit}
+                        className=" w-1/2 custom-button"
+                      >
+                        تحديث كلمة المرور
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Messages */}
+                {message && (
+                  <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                    <p className="text-emerald-800 font-medium">{message}</p>
+                  </div>
+                )}
+                {error && (
+                  <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-800 font-medium">{error}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
       <Footer />
     </>
   )

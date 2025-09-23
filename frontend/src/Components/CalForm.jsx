@@ -8,13 +8,95 @@ import {
 } from "@/components/ui/tooltip"
 import { ZakatContext } from "./ZakatProvider";
 import { zakatForm } from "./tools/table"
+import { ChevronDown, ChevronUp, Plus, Minus } from "lucide-react";
+import { WarninIcon } from "@/assets/Svg/WarninIcon";
+import {Money} from "@/assets/icons/Money"
 
 export const CalForm = () => {
-  const { nissab, setZakatFormInfos, setShowResult, showResult, setPopup, popup } = useContext(ZakatContext);
+  const { nissab, setNissab, setZakatFormInfos, setShowResult, showResult, setPopup, popup } = useContext(ZakatContext);
 
   const [methodCalcul, setMethodCalcul] = useState("Maliki");
   const [formData, setFormData] = useState(zakatForm);
-  const [companyType,setCompanyType] = useState("SARL");
+  const [companyType, setCompanyType] = useState("SARL");
+  const [collapsedSections, setCollapsedSections] = useState({});
+  
+  // Store additional input fields for each field name
+  const [additionalFields, setAdditionalFields] = useState({});
+  
+  // Gold price user input
+  const [goldPricePerGram, setGoldPricePerGram] = useState("");
+
+  // Nissab calculation constants
+  const NISSAB_GOLD_GRAMS = 85; // 85 grams of gold according to Islamic law
+
+  const toggleSection = (sectionName) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
+  };
+
+  // Add a new input field for a specific field name
+  const addField = (fieldName) => {
+    setAdditionalFields(prev => ({
+      ...prev,
+      [fieldName]: [...(prev[fieldName] || []), { id: Date.now(), value: "" }]
+    }));
+  };
+
+  // Remove an additional input field
+  const removeField = (fieldName, fieldId) => {
+    setAdditionalFields(prev => ({
+      ...prev,
+      [fieldName]: prev[fieldName].filter(field => field.id !== fieldId)
+    }));
+  };
+
+  // Handle change for additional fields
+  const handleAdditionalFieldChange = (fieldName, fieldId, value) => {
+    const rawValue = value.replace(/,/g, "");
+    if (!isNaN(rawValue) && rawValue >= 0) {
+      setAdditionalFields(prev => ({
+        ...prev,
+        [fieldName]: prev[fieldName].map(field => 
+          field.id === fieldId ? { ...field, value: rawValue } : field
+        )
+      }));
+    }
+  };
+
+  // Calculate total value for a field including additional fields
+  const calculateTotalForField = (fieldName, mainValue) => {
+    const mainVal = Number(mainValue) || 0;
+    const additionalVals = (additionalFields[fieldName] || []).reduce((sum, field) => 
+      sum + (Number(field.value) || 0), 0
+    );
+    return mainVal + additionalVals;
+  };
+
+  // Calculate nissab based on user input gold price
+  const calculateNissab = () => {
+    const goldPrice = parseFloat(goldPricePerGram.replace(/,/g, ""));
+    if (goldPrice > 0) {
+      const calculatedNissab = goldPrice * NISSAB_GOLD_GRAMS;
+      setNissab(calculatedNissab);
+      return calculatedNissab;
+    }
+    return 0;
+  };
+
+  // Update nissab when gold price changes
+  useEffect(() => {
+    calculateNissab();
+  }, [goldPricePerGram]);
+
+  const handleGoldPriceChange = (e) => {
+    const value = e.target.value.replace(/,/g, "");
+    if (!isNaN(value) && value >= 0) {
+      setGoldPricePerGram(value);
+    }
+  };
+
   const updateFieldValue = (fields, targetName, newValue) => {
     return fields.map(field => {
       if (field.name === targetName) {
@@ -35,13 +117,13 @@ export const CalForm = () => {
     }
   };
 
-
   const flattenData = (fields, acc = {}) => {
     fields.forEach(field => {
       if (field.children && field.children.length > 0) {
         flattenData(field.children, acc);
       } else {
-        acc[field.name] = Number(field.value) || 0;
+        // Calculate total including additional fields
+        acc[field.name] = calculateTotalForField(field.name, field.value);
       }
     });
     return acc;
@@ -57,28 +139,29 @@ export const CalForm = () => {
       (values.a1 || 0) + (values.a4 || 0) + (values.a5 || 0);
       
     let zakatBase = 0;
-    let A =0;
-    let F=0;
+    let A = 0;
+    let F = 0;
+    
     switch(method) {
       case "Maliki":
-     const somme = (values.y1 || 0) + (values.y2 || 0) + (values.y3 || 0) + (values.y4 || 0) 
-                  +(values.y6 || 0)+(values.z1 || 0 )+(values.z2 || 0)+(values.a1 || 0)+(values.a2 || 0)+
-                  (values.a3 || 0)+(values.a4 || 0)+(values.a5)+(values.a6 || 0)+(values.a7 || 0)+(values.a8 || 0);
+        const somme = (values.y1 || 0) + (values.y2 || 0) + (values.y3 || 0) + (values.y4 || 0) 
+                      +(values.y6 || 0)+(values.z1 || 0 )+(values.z2 || 0)+(values.a2 || 0)+
+                      (values.a3 || 0)+(values.a6 || 0)+(values.a7 || 0)+(values.a8 || 0);
 
-    const D = (values.c1 || 0) + (values.c2 || 0) + (values.c4 || 0) + (values.c5 || 0) + (values.c6 || 0);
+        const D = (values.c1 || 0) + (values.c2 || 0) + (values.c4 || 0) + (values.c5 || 0) + (values.c6 || 0);
 
-    companyType ==="SARL" ? A = (values.SPA || 0) : A = (values.SPA || 0)+(values.SARL || 0);
+        companyType === "SARL" ? A = (values.SPA || 0) : A = (values.SPA || 0)+(values.SARL || 0);
 
-    const C = A - (values.limit || 0);
-    
-     C > D ? F = D-C :null;
+        const C = A - (values.limit || 0);
+        
+        C <= D ? F = D-C : null;
 
-     zakatBase = commonAssets + somme - F;
-      break;
+        zakatBase = commonAssets + somme - F;
+        break;
       case "AAOIFI":
         zakatBase = commonAssets + (values.y1 || 0) + (values.y2 || 0) + (values.y3 || 0) + (values.y4 || 0) +
-        (values.z2 || 0) + (values.z3 || 0) + (values.z4 || 0) + (values.a1 || 0) + (values.z1 || 0) +
-        (values.a2 || 0) + (values.a3 || 0) + (values.a4 || 0) + (values.a5 || 0) + (values.a6 || 0) +
+        (values.z2 || 0) + (values.z3 || 0) + (values.z4 || 0)  + (values.z1 || 0) +
+        (values.a2 || 0) + (values.a3 || 0)  + (values.a6 || 0) +
         (values.a7 || 0) + (values.a8 || 0) - ((values.c1 || 0) + (values.c2 || 0) + (values.c4 || 0) +
         (values.c5 || 0) + (values.c6 || 0));
         break;
@@ -86,12 +169,12 @@ export const CalForm = () => {
         zakatBase = commonAssets + (values.x7 || 0) + (values.x8 || 0) + (values.x9 || 0) + (values.y1 || 0) +
         (values.y2 || 0) + (values.y3 || 0) + (values.y4 || 0) + (values.y5 || 0) + (values.y6 || 0) +
         (values.y7 || 0) + (values.z1 || 0) + (values.z2 || 0) + (values.z3 || 0) + (values.z4 || 0) +
-        (values.a1 || 0) + (values.a2 || 0) + (values.a3 || 0) + (values.a4 || 0) + (values.a5 || 0) + (values.a6 || 0) +
+        (values.a2 || 0) + (values.a3 || 0) + (values.a6 || 0) +
         (values.a7 || 0) + (values.a8 || 0) - ((values.c1 || 0) + (values.c2 || 0) + (values.c4 || 0) +
         (values.c5 || 0) + (values.c6 || 0) + (values.c3 || 0));
         break;
       case "Net":
-        zakatBase = commonAssets + (values.a1 || 0) + (values.a4 || 0) + (values.a5 || 0);
+        zakatBase = commonAssets;
         break;
     }
 
@@ -107,88 +190,167 @@ export const CalForm = () => {
 
     setShowResult(true);
   };
-  console.log(companyType);
+
   const formatNumber = (num) =>
     !num ? "" : num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-  // Enhanced rendering with better styling
-const renderInputs = (fieldList, depth = 0, companyType) =>
-  fieldList.map((field, index) => {
-    // Handle malikiAssets filtering
-    
-    if (field.name === "SARL" && companyType == "SARL") {
-      return null;
-    }
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('ar-DZ', {
+      style: 'currency',
+      currency: 'DZD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
+  };
 
-    return (
-      <div key={index} className={`mb-6 ${depth > 0 ? "mr-4" : ""}`}>
-        {field.children && field.children.length > 0 ? (
-          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-4 mb-4">
-            <div className="flex items-center mb-4">
-              <div className="w-1 h-6 bg-emerald-600 ml-3 rounded-full"></div>
-              <h3 className="font-bold text-emerald-800 text-lg">
-                {field.label}
-              </h3>
-            </div>
-            <div className="space-y-4">
-              {renderInputs(field.children, depth + 1, companyType)}
-            </div>
-          </div>
-        ) : (
-          <div className="cal-input-bg">
-            <div className="flex items-center justify-between mb-3">
-              <label className="font-semibold text-gray-700 text-sm flex-1">
-                {field.label}
-              </label>
-              <Tooltip className="max-w-xs whitespace-normal text-sm leading-relaxed">
-                <TooltipTrigger asChild>
-                  <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                    <img
-                      src="./211757_help_icon.svg"
-                      alt="help"
-                      className="w-5 h-5 opacity-60 hover:opacity-100 transition-opacity"
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-emerald-600 text-white border-emerald-700 max-w-sm">
-                  <p className="text-sm leading-relaxed">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+  // Enhanced rendering with better styling + collapsible functionality + dynamic fields
+  const renderInputs = (fieldList, depth = 0, companyType) =>
+    fieldList.map((field, index) => {
+      if (field.name === "SARL" && companyType == "SARL") {
+        return null;
+      }
 
-            <div className="relative">
-              <input
-                className="cal-input"
-                type="text"
-                name={field.name}
-                value={formatNumber(field.value || "")}
-                onChange={handleChange}
-                placeholder="أدخل المبلغ"
-              />
-              <span className="DA">د.ج</span>
-              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+      return (
+        <div key={index} className={`mb-6 ${depth > 0 ? "mr-4" : ""}`}>
+          {field.children && field.children.length > 0 ? (
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg overflow-hidden">
+              {/* Collapsible Header */}
+              <div 
+                className="flex items-center justify-between p-4 cursor-pointer hover:bg-emerald-100/50 transition-colors duration-200"
+                onClick={() => toggleSection(field.name)}
+              >
+                <div className="flex items-center">
+                  <div className="w-1 h-6 bg-emerald-600 ml-3 rounded-full"></div>
+                  <h3 className="font-bold text-emerald-800 text-lg select-none">
+                    {field.label}
+                  </h3>
+                </div>
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <span className="text-sm text-emerald-600 font-medium">
+                    {collapsedSections[field.name] ? "إظهار" : "إخفاء"}
+                  </span>
+                  <div className={`transform transition-transform duration-300 ${collapsedSections[field.name] ? "rotate-180" : ""}`}>
+                    <ChevronDown className="w-5 h-5 text-emerald-600" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Collapsible Content */}
+              <div 
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                  collapsedSections[field.name] 
+                    ? "max-h-0 opacity-0" 
+                    : "max-h-[2000px] opacity-100"
+                }`}
+              >
+                <div className="px-4 pb-4 space-y-4">
+                  {renderInputs(field.children, depth + 1, companyType)}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    );
-  });
+          ) : (
+            <div className="cal-input-bg">
+              <div className="flex items-center justify-between mb-3">
+                <label className="font-semibold text-gray-700 text-sm flex-1">
+                  {field.label}
+                  {/* Show total if there are additional fields */}
+                  {additionalFields[field.name] && additionalFields[field.name].length > 0 && (
+                    <span className="text-xs text-emerald-600 font-normal mr-2">
+                      (المجموع: {formatNumber(calculateTotalForField(field.name, field.value))} د.ج)
+                    </span>
+                  )}
+                </label>
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  {/* Add Field Button */}
+                  <button
+                    type="button"
+                    onClick={() => addField(field.name)}
+                    className="p-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-600 rounded-full transition-colors duration-200 group"
+                    title="إضافة حقل آخر"
+                  >
+                    <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  </button>
+                  
+                  <Tooltip className="max-w-xs whitespace-normal text-sm leading-relaxed">
+                    <TooltipTrigger asChild>
+                      <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                        <img
+                          src="./211757_help_icon.svg"
+                          alt="help"
+                          className="w-5 h-5 opacity-60 hover:opacity-100 transition-opacity"
+                        />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-emerald-600 text-white border-emerald-700 max-w-sm">
+                      <p className="text-sm leading-relaxed">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
 
-// 👇 filter formData depending on methodCalcul
-const getVisibleFields = () => {
-  if (methodCalcul === "Maliki") {
-    return formData; // show everything
-  } else {
-    // hide last 3 fields
-    return formData.slice(0, -1);
-  }
-};
+              {/* Main Input Field */}
+              <div className="relative mb-3">
+                <input
+                  className="cal-input text-[0.9em]"
+                  type="text"
+                  name={field.name}
+                  value={formatNumber(field.value || "")}
+                  onChange={handleChange}
+                  placeholder="أدخل المبلغ"
+                />
+                <span className="DA">د.ج</span>
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                </div>
+              </div>
 
+              {/* Additional Input Fields */}
+              {additionalFields[field.name] && additionalFields[field.name].map((additionalField, idx) => (
+                <div key={additionalField.id} className="relative mb-3 mr-4">
+                  <div className="flex items-center">
+                    <div className="flex-1 relative">
+                      <input
+                        className="cal-input pr-12"
+                        type="text"
+                        value={formatNumber(additionalField.value || "")}
+                        onChange={(e) => handleAdditionalFieldChange(field.name, additionalField.id, e.target.value)}
+                        placeholder="أدخل المبلغ الإضافي"
+                      />
+                      <span className="DA">د.ج</span>
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeField(field.name, additionalField.id)}
+                      className="mr-2 p-1.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-full transition-colors duration-200 group"
+                      title="حذف هذا الحقل"
+                    >
+                      <Minus className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1 text-right">
+                    حقل إضافي {idx + 1}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    });
 
+  // Filter formData depending on methodCalcul
+  const getVisibleFields = () => {
+    if (methodCalcul === "Maliki") {
+      return formData;
+    } else {
+      return formData.slice(0, -1);
+    }
+  };
 
   return (
     <div dir="rtl" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
@@ -198,6 +360,70 @@ const getVisibleFields = () => {
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-2">حاسبة الزكاة الاحترافية</h1>
             <p className="text-emerald-100">احسب زكاة أموالك وفقاً للمعايير الشرعية المعتمدة</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Gold Price Input & Nissab Info Card */}
+      <div className="container mx-auto px-6 mb-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-2xl p-6 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-yellow-100 p-3 rounded-full ml-4">
+                  <span className="text-2xl" ><Money></Money></span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-yellow-800 mb-4">تحديد سعر الذهب لحساب النصاب</h3>
+                  
+                  {/* Gold Price Input */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-yellow-800 mb-2">
+                      سعر الغرام الواحد من الذهب (24 قيراط) بالدينار الجزائري:
+                    </label>
+                    <div className="relative max-w-xs">
+                      <input
+                        type="text"
+                        value={formatNumber(goldPricePerGram)}
+                        onChange={handleGoldPriceChange}
+                        className="w-full px-4 py-3 bg-white border border-yellow-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-200 pr-12"
+                        placeholder="أدخل سعر الغرام"
+                      />
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-yellow-600 text-sm font-medium">
+                        د.ج
+                      </span>
+                      <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-yellow-500">
+                        <img src="/gold.svg" alt="" />
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Nissab Display */}
+                  {goldPricePerGram && parseFloat(goldPricePerGram.replace(/,/g, "")) > 0 && (
+                    <div className="bg-yellow-100/50 border border-yellow-300 rounded-lg p-4">
+                      <div className="space-y-2">
+                        <p className="text-yellow-800 text-sm">
+                          <span className="font-semibold">سعر الغرام:</span> {formatCurrency(parseFloat(goldPricePerGram.replace(/,/g, "")))}
+                        </p>
+                        <p className="text-yellow-800 text-sm">
+                          <span className="font-semibold">النصاب (85 غرام):</span> {formatCurrency(nissab)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* Information about gold price */}
+            <div className="mt-4 pt-4 border-t border-yellow-200">
+              <p className="text-yellow-700 text-xs flex items-center">
+                <span className="ml-2">
+                  <WarninIcon></WarninIcon>
+                </span>
+                يُرجى إدخال سعر الغرام الحالي للذهب عيار 24 قيراط في السوق الجزائرية لحساب النصاب بدقة
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -220,80 +446,65 @@ const getVisibleFields = () => {
 
             {/* Form Content */}
             <div className="p-8">
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mt-8">
-                  <div className="flex items-center mb-4">
-                    <div className="w-1 h-6 bg-blue-600 ml-3 rounded-full"></div>
-                    <h3 className="font-bold text-blue-800 text-lg">طريقة الحساب</h3>
-                  </div>
-                  
-                  <div className="relative">
-                    <select
-                      className="w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer"
-                      onChange={(e) => setMethodCalcul(e.target.value)}
-                      value={methodCalcul}
-                    >
-                      <option value="Maliki">معادلة حساب زكاة الشركات مالكي</option>
-                      <option value="AAOIFI">معادلة حساب زكاة الشركات AAOIFI</option>
-                      <option value="Alioua">معادلة باسم عليوة</option>
-                      <option value="Net">معادلة طريقة صافي الغنى</option>
-                    </select>
-                    {/* Custom dropdown arrow */}
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border my-3  border-blue-200 rounded-lg p-6 mt-8">
+                <div className="flex items-center mb-4 ">
+                  <div className="w-1 h-6 bg-blue-600 ml-3 rounded-full"></div>
+                  <h3 className="font-bold text-blue-800 text-lg">طريقة الحساب</h3>
+                </div>
+                
+                <div className="relative">
+                  <select
+                    className="w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer"
+                    onChange={(e) => setMethodCalcul(e.target.value)}
+                    value={methodCalcul}
+                  >
+                    <option value="Maliki">معادلة حساب زكاة الشركات مالكي</option>
+                    <option value="AAOIFI">معادلة حساب زكاة الشركات AAOIFI</option>
+                    <option value="Alioua">معادلة باسم عليوة</option>
+                    <option value="Net">معادلة طريقة صافي الغنى</option>
+                  </select>
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <ChevronDown className="w-5 h-5 text-blue-600" />
                   </div>
                 </div>
+              </div>
 
               <div className="space-y-6">
-                
                 {methodCalcul === "Maliki" && (
-                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mt-8">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mt-8">
                     <div className="relative">
-                       <div className="flex items-center mb-4">
-                    <div className="w-1 h-6 bg-blue-600 ml-3 rounded-full"></div>
-                    <h3 className="font-bold text-blue-800 text-lg">نوع الشركة</h3>
-                  </div>
-                  <div className="relative">
-                    <select
-                      className="w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer"
-                      onChange={(e) => setCompanyType(e.target.value)}
-                      value={companyType}
-                    >
-                      <option value="SARL">SARL</option>
-                      <option value="SPA">SPA</option>
-                      
-                    </select>
-                   
-                    
-                    {/* Custom dropdown arrow */}
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                      <div className="flex items-center mb-4">
+                        <div className="w-1 h-6 bg-blue-600 ml-3 rounded-full"></div>
+                        <h3 className="font-bold text-blue-800 text-lg">نوع الشركة</h3>
+                      </div>
+                      <div className="relative">
+                        <select
+                          className="w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer"
+                          onChange={(e) => setCompanyType(e.target.value)}
+                          value={companyType}
+                        >
+                          <option value="SARL">SARL</option>
+                          <option value="SPA">SPA</option>
+                        </select>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                          <ChevronDown className="w-5 h-5 text-blue-600" />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  </div>
-                  </div>
-                  
                 )}
-                {renderInputs(getVisibleFields(),0,companyType)}
                 
-                {/* Calculation Method Selection */}
+                {renderInputs(getVisibleFields(), 0, companyType)}
                 
                 {/* Calculate Button */}
                 <div className="text-center mt-10 pt-6 border-t border-gray-200">
                   <button 
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-4 px-12 rounded-full text-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="buttonAi w-1/2 "
                     onClick={() => calcZakat(methodCalcul)}
                   >
-                    <span className="flex items-center">
-                      <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                      </svg>
+                    
                       احسب الزكاة
-                    </span>
+                    
                   </button>
                 </div>
               </div>
@@ -304,14 +515,14 @@ const getVisibleFields = () => {
           <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6">
             <div className="flex items-center">
               <div className="bg-amber-100 p-3 rounded-full ml-4">
-                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <span className="text-2xl"><WarninIcon></WarninIcon></span>
               </div>
               <div>
                 <h3 className="font-bold text-amber-800 mb-1">معلومة مهمة</h3>
                 <p className="text-amber-700 text-sm">
-                  يُرجى التأكد من دقة البيانات المدخلة قبل الحساب. الزكاة واجبة على كل مسلم بالغ عاقل يملك النصاب.
+                  يُرجى التأكد من دقة البيانات المدخلة قبل الحساب. النصاب محسوب على أساس سعر الذهب المُدخل من قبلكم (85 غرام من الذهب عيار 24 قيراط). يُنصح بالاطلاع على الأسعار الحالية في السوق الجزائرية قبل الإدخال.
+                  <br />
+                  <span className="font-semibold text-amber-900">ملاحظة:</span> يمكنكم إضافة حقول إضافية لأي عنصر بالنقر على زر الإضافة (+) بجانب كل حقل.
                 </p>
               </div>
             </div>

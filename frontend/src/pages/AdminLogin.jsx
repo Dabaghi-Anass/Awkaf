@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader } from "../Components/Loader"; // adjust path if needed
+import { MessagePopup } from '../Components/MessagePopup';
 
 export const AdminLogin = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export const AdminLogin = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [popup, setPopup] = useState({ message: '', type: '' });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,20 +62,30 @@ export const AdminLogin = () => {
 
         if (meResponse.ok) {
           const userInfo = await meResponse.json();
-          if (userInfo.is_staff) {
-            navigate("/DashboardAdmin");
-          } else {
-            navigate("/home");
-          }
+          setPopup({ message: "تم تسجيل الدخول بنجاح", type: "success" });
+          setTimeout(() => {
+            if (userInfo.is_staff) {
+              navigate("/DashboardAdmin");
+            } else {
+              navigate("/home");
+            }
+          }, 1500);
         } else {
-          navigate("/DashboardAdmin"); // fallback
+          setPopup({ message: "تم تسجيل الدخول بنجاح", type: "success" });
+          setTimeout(() => navigate("/DashboardAdmin"), 1500); // fallback
         }
       } else {
-        alert(result.detail || "فشل تسجيل الدخول");
+        setPopup({ 
+          message: result.detail || "بيانات تسجيل الدخول غير صحيحة", 
+          type: "error" 
+        });
       }
     } catch (error) {
       console.error("Login failed:", error);
-      alert("حدث خطأ أثناء تسجيل الدخول. حاول لاحقاً.");
+      setPopup({ 
+        message: "حدث خطأ أثناء تسجيل الدخول. حاول لاحقاً.", 
+        type: "error" 
+      });
     } finally {
       setLoading(false);
     }
@@ -133,11 +145,20 @@ export const AdminLogin = () => {
               <p className="text-red-500 text-[0.7em] mt-1">{formErrors.secretKey}</p>
             )}
           </div>
-          <button type="submit" className="w-full custom-button py-1 rounded-[5px]">
-            تسجيل الدخول
+          <button 
+            type="submit" 
+            className="w-full custom-button py-1 rounded-[5px]"
+            disabled={loading}
+          >
+            {loading ? "جاري التحميل..." : "تسجيل الدخول"}
           </button>
         </form>
       </div>
+      <MessagePopup
+        message={popup.message}
+        type={popup.type}
+        onClose={() => setPopup({ message: "", type: "" })}
+      />
     </div>
   );
 };

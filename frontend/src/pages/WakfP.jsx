@@ -84,8 +84,8 @@ export const WakfP = () => {
             <div className="max-w-4xl mx-auto">
               <div className="grid gap-8">
                 {[
-                  { key: "objectives", label: "أهداف المشروع", icon: "🎯" },
-                  { key: "partners", label: "الشركاء والداعمون", icon: "🤝" },
+                  { key: "objectives", label: "أهداف المشروع", icon: "/goal.svg" },
+                  { key: "partners", label: "الشركاء والداعمون", icon: "/partner.svg" },
                 ].map(
                   ({ key, label, icon }) =>
                     project[key] && (
@@ -101,7 +101,7 @@ export const WakfP = () => {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-4">
                                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl">
-                                    {icon}
+                                    <img src={icon} alt="" />
                                   </div>
                                   <h2 className="text-2xl font-bold text-white mr-4">
                                     {label}

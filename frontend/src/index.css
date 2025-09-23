@@ -35,7 +35,11 @@ body{
   --color-pagin:#1e2939;
   --color-primary: #035116;
   --color-secondary: #F2CB05;
+  --color-green2:#22C55E;
+  --color-green3:#00ae7c;
   --color-graay:#e7e5eb;
+  
+  
 }
 
 @layer components{
@@ -112,13 +116,17 @@ a{
   
    @apply border border-gray-300 text-sm rounded-[8px] outline-none transition-[box-shadow,border-color] duration-200 resize-none;
 }
+.buttonAi{
+  @apply bg-green2 text-white font-bold py-4 px-12 rounded-[8px] text-[0.9em] hover:from-emerald-700 hover:to-teal-700 transition-all
+   duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl;
+}
 .custom-form-input{
   @apply  border-gray-300 text-sm rounded-[8px] outline-none transition-[box-shadow,border-color] duration-200 resize-none
   focus:ring-1 focus:ring-green-500 focus:border-green-500   w-full h-12 p-2 border  pr-10;
 }
 .cal-input{
   @apply w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2
-   focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white
+   focus:ring-green2 focus:border-green2 transition-all duration-200 bg-gray-50 hover:bg-white
 }
 .DA{
   @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-emerald-600 font-semibold text-sm
