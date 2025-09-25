@@ -1,7 +1,8 @@
 
-import { Header } from '../Components/Header'
-import { CalForm } from '../Components/CalForm';
-import Footer from '../Components/Footer';
+import { Header } from '../../Components/Header'
+import { CalForm } from './Components/CalForm';
+import Footer from '../../Components/Footer';
+
 
 
 export const ZakactCal = () => {

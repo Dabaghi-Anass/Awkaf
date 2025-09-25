@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { ZakatContext } from "./ZakatProvider";
-import { Trash } from "../assets/icons/trash";
+import { ZakatContext } from "../../../Components/ZakatProvider";
+import { Trash } from "../../../assets/icons/trash";
 import { Link } from "react-router-dom";
 
 export const ZakatPrice = () => {

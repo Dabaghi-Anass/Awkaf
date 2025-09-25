@@ -1,4 +1,4 @@
-import '../CSS/Values.css';
+
 
 export default function Values({ value, description, image }) {
   return (

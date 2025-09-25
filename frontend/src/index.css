@@ -114,7 +114,7 @@ a{
 
 .custom-input {
   
-   @apply border border-gray-300 text-sm rounded-[8px] outline-none transition-[box-shadow,border-color] duration-200 resize-none;
+   @apply border border-gray-300 text-sm p-2 rounded-[8px] outline-none transition-[box-shadow,border-color] duration-200 resize-none;
 }
 .buttonAi{
   @apply bg-green2 text-white font-bold py-4 px-12 rounded-[8px] text-[0.9em] hover:from-emerald-700 hover:to-teal-700 transition-all
@@ -125,21 +125,21 @@ a{
   focus:ring-1 focus:ring-green-500 focus:border-green-500   w-full h-12 p-2 border  pr-10;
 }
 .cal-input{
-  @apply w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2
-   focus:ring-green2 focus:border-green2 transition-all duration-200 bg-gray-50 hover:bg-white
+  @apply w-full px-4 py-3 pr-12 border text-[0.9em] border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2
+   focus:ring-green2 focus:border-green2 transition-all duration-200 bg-gray-50 hover:bg-white  max-[515px]:text-xs
 }
 .DA{
   @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-emerald-600 font-semibold text-sm
 }
 .cal-input-bg{
-  @apply bg-white border border-gray-200 rounded-lg p-4 hover:border-emerald-300 hover:shadow-md transition-all duration-200
+  @apply bg-white border border-gray-200 rounded-lg p-4 max-[515px]:p-2 hover:border-emerald-300 hover:shadow-md transition-all duration-200
 }
 .custom-input:focus {
   box-shadow: 0 0 0 1px #22C55E; /* focus:ring-2 + focus:ring-green-500 */
   border-color: #22C55E;
 }
 .custom-button {
-  @apply bg-green-600 text-white rounded-[6px] transition-[background-color] px-4 py-2  duration-200 hover:bg-green-700
+  @apply bg-green-600 text-white rounded-[6px] transition-[background-color] px-4 py-2  duration-200 hover:bg-green-700 
   ;
  
 }
@@ -156,6 +156,97 @@ a{
   box-shadow: 5px 5px 0 #22C55E;
 
 }
+.form-cont2{
+  @apply  bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mt-8
+}
+.select-form{
+  @apply w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer
+}
+@media (max-width: 1024px) {
+  .navbar .link{
+    font-size:0.8rem;
+  }
+  .navbar .logo{
+    font-size:1.4em;
+  }
+  .logout{
+    font-size:0.6rem;
+  }
+}
+
+@media (max-width: 957px) {
+  .navbar .link{
+   @apply text-[0.6rem]
+  }
+}
+@media (max-width: 847px) {
+  .navbar{
+    @apply px-8
+  }
+  .navbar .logout{
+    font-size:0.6rem;
+    padding:0.5em 0.6em;
+    
+  }
+  .navbar .link{
+    font-size:0.6rem;
+  }
+  
+}
+@media (max-width:520px){
+  .sendMessage{
+    @apply  px-2  w-screen rounded-none mt-9
+  }
+  .sendMessage p{
+    @apply  text-[0.7em] mb-4   text-center
+  } 
+
+  .custom-input {
+  
+   @apply border border-gray-300 text-[0.8em] p-2 rounded-[5px]
+    outline-none transition-[box-shadow,border-color]  font-[500] 
+   duration-200 resize-none;
+}
+.form{
+  @apply  p-2 
+}
+  
+}
+
+@media (max-width: 515px) {
+ .form-container{
+  @apply p-1 
+ }
+ .form-cont2{
+  @apply   p-3 mt-4 
+ }
+ .form-cont2 > div:nth-child(1) h3{
+  @apply  text-[0.9em]
+ }
+ .select-form{
+  @apply p-2 text-xs
+ }
+ .header-sec{
+  @apply bg-red-900 mb-2 py-2
+ } 
+ .container{
+  @apply px-2 
+ }
+ 
+}
+.header-sec{
+  @apply bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-8 mb-8 mt-16
+}
+
+/*.select-form{
+  @apply w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer
+}*/
+
+
+
+
+
+
 @media print {
   body * {
     visibility: hidden;

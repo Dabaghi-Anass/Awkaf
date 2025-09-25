@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessagePopup } from './MessagePopup';
+import { MessagePopup } from '../../../Components/MessagePopup';
 
 export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMessage }) => {
     const [loading, setLoading] = useState(false);
@@ -32,19 +32,20 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
             setLoading(false);
         }
     };
-
     return (
-        <div dir='rtl' className="max-w-lg mx-auto bg-white">
-            <form onSubmit={sendMessage} className="space-y-4">
-                <div className="flex gap-4">
+        <div dir='rtl' className="  w-full   p-4 sm:p-6  form">
+            <div className="space-y-4 sm:space-y-6   ">
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input 
                         type="text" 
                         placeholder="الاسم الأول" 
                         name="first_name" 
                         value={userMessage.first_name} 
                         onChange={handleChange} 
-                        className="custom-input w-full p-2"
+                        className="w-full sm:p-2 custom-input sm:text-base"
                         disabled={loading}
+                        required
                     />
                     <input 
                         type="text" 
@@ -52,60 +53,81 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                         name="last_name" 
                         value={userMessage.last_name} 
                         onChange={handleChange} 
-                        className="custom-input w-full p-2"
+                        className="w-full sm:p-2 custom-input sm:text-base"
                         disabled={loading}
+                        required
                     />
                 </div>
 
+                {/* Email Field */}
                 <input 
                     type="email" 
                     placeholder="البريد الإلكتروني" 
                     name="sender_email" 
                     value={userMessage.sender_email} 
                     onChange={handleChange} 
-                    className="custom-input w-full p-2"
+                    className="w-full sm:p-2 custom-input sm:text-base"
                     disabled={loading}
+                    required
                 />
 
+                {/* Phone Field */}
                 <input 
-                type="number" min={0}
-                placeholder="رقم الهاتف" 
-                name="phone" 
-                value={userMessage.phone} 
-                onChange={handleChange} 
-                className="custom-input w-full p-2"
-                disabled={loading}
-                pattern="^0[5-7][0-9]{8}$"
-                title="الرجاء إدخال رقم هاتف جزائري صالح "
-            />
+                    type="tel" 
+                    placeholder="رقم الهاتف" 
+                    name="phone" 
+                    value={userMessage.phone} 
+                    onChange={handleChange} 
+                    className="w-full sm:p-2 custom-input sm:text-base"
+                    disabled={loading}
+                    title="الرجاء إدخال رقم هاتف جزائري صالح"
+                    required
+                />
 
+                {/* Message Field */}
                 <textarea 
                     placeholder="كيف يمكننا مساعدتك؟" 
                     name="message" 
                     value={userMessage.message} 
                     onChange={handleChange} 
-                    className="custom-input w-full p-2 min-h-[10em]"
+                    rows="5"
+                    className="w-full sm:p-2 custom-input resize-none text-sm sm:text-base min-h-[120px]"
                     disabled={loading}
-                ></textarea>
+                    required
+                />
 
+                {/* Submit Button */}
                 <button 
-                    type="submit" 
-                    className={`custom-button w-full py-2 rounded-[10px] ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    onClick={sendMessage}
+                    className={`custom-button w-full max-sm:w-3/4 text-sm sm:text-base ${
+                        loading 
+                            ? 'opacity-60 cursor-not-allowed' 
+                            : 'hover:bg-green-700 active:bg-green-800'
+                    }`}
                     disabled={loading}
                 >
-                    
                     {loading ? "جاري الإرسال..." : "إرسال"}
                 </button>
 
-                <p className="text-gray-600 text-sm text-center">
-                    بالاتصال بنا، فإنك توافق على <span className="text-green-600 font-semibold cursor-pointer">شروط الخدمة</span> و <span className="text-green-600 font-semibold cursor-pointer">سياسة الخصوصية</span> الخاصة بنا.
+                {/* Terms Text */}
+                <p className="text-gray-600 text-xs sm:text-sm text-center leading-relaxed px-2">
+                    بالاتصال بنا، فإنك توافق على{' '}
+                    <span className="text-green-600 font-semibold cursor-pointer hover:text-green-700">
+                        شروط الخدمة
+                    </span>
+                    {' '}و{' '}
+                    <span className="text-green-600 font-semibold cursor-pointer hover:text-green-700">
+                        سياسة الخصوصية
+                    </span>
+                    {' '}الخاصة بنا.
                 </p>
-            </form>
+            </div>
+            
             <MessagePopup
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={() => setPopup({ message: "", type: "" })}
-             />
+                message={popup.message}
+                type={popup.type}
+                onClose={() => setPopup({ message: "", type: "" })}
+            />
         </div>
     );
 };
