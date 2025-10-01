@@ -38,7 +38,7 @@ body{
   --color-green2:#22C55E;
   --color-green3:#00ae7c;
   --color-graay:#e7e5eb;
-  
+  --color-green4:var(--color-emerald-900);
   
 }
 
@@ -117,8 +117,8 @@ a{
    @apply border border-gray-300 text-sm p-2 rounded-[8px] outline-none transition-[box-shadow,border-color] duration-200 resize-none;
 }
 .buttonAi{
-  @apply bg-green2 text-white font-bold py-4 px-12 rounded-[8px] text-[0.9em] hover:from-emerald-700 hover:to-teal-700 transition-all
-   duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl;
+  @apply bg-green4 text-white font-bold py-4 px-12 rounded-[8px] text-[0.9em] hover:from-emerald-700 hover:to-teal-700 transition-all
+   duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl mb-3;
 }
 .custom-form-input{
   @apply  border-gray-300 text-sm rounded-[8px] outline-none transition-[box-shadow,border-color] duration-200 resize-none

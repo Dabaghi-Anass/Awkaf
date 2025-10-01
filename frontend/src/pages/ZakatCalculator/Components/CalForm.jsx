@@ -12,6 +12,8 @@ import { ChevronDown, ChevronUp, Plus, Minus } from "lucide-react";
 import { WarninIcon } from "@/assets/Svg/WarninIcon";
 
 import { GoldPrice } from "./GoldPrice";
+import { useZakatForm } from "./useZakatForm";
+import { useTranslation } from "react-i18next";
 
 
  export const formatNumber = (num) =>
@@ -21,10 +23,23 @@ import { GoldPrice } from "./GoldPrice";
 
 
 export const CalForm = () => {
-  const { nissab, setZakatFormInfos, setShowResult, showResult, setPopup, popup } = useContext(ZakatContext);
+   const { t, i18n } = useTranslation();
+  const { nissab, setZakatFormInfos, setShowResult, showResult, setPopup, popup } =
+    useContext(ZakatContext);
+
+// ✅ Always call hook at top level
+const zakatForm = useZakatForm();
+
+// ✅ Keep formData in sync when language changes
+const [formData, setFormData] = useState(zakatForm);
+
+useEffect(() => {
+  setFormData(zakatForm);   // use the new translated form directly
+}, [zakatForm]);
+
+  
 
   const [methodCalcul, setMethodCalcul] = useState("Maliki");
-  const [formData, setFormData] = useState(zakatForm);
   const [companyType, setCompanyType] = useState("SARL");
   const [collapsedSections, setCollapsedSections] = useState({});
   
@@ -325,8 +340,11 @@ export const CalForm = () => {
     }
   };
 
+   const handleLangChange = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
   return (
-    <div dir="rtl" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
+    <div dir="ltr" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
       {/* Header Section */}
       <div className="header-sec ">
         <div className="container text-center  mx-auto px-6">
@@ -339,6 +357,20 @@ export const CalForm = () => {
 
       {/* Gold Price Input & Nissab Info Card */}
       <GoldPrice></GoldPrice>
+
+    
+      {/* Language Selector */}
+      <div className="mb-6 flex justify-end">
+        <select
+          onChange={handleLangChange}
+          value={i18n.language}
+          className="border rounded p-2"
+        >
+          <option value="ar">🇦🇪 العربية</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="fr">🇫🇷 Français</option>
+        </select>
+      </div>
       {/* Main Form Container */}
       <div className="max-[515px]:px-0  mx-auto px-6 pb-12">
         <div className="max-w-4xl mx-auto">

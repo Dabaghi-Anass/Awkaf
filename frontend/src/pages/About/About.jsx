@@ -67,7 +67,7 @@ export default function About() {
           <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border border-emerald-100">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full mb-4">
-                <span className="text-3xl font-bold text-white">2.5%</span>
+                <span className="text-2xl font-bold text-white">2.5%</span>
               </div>
               <h3 className="text-2xl font-bold text-emerald-800 mb-4">نسبة الزكاة الأساسية</h3>
             </div>

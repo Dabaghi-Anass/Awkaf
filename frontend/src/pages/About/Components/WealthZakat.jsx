@@ -7,7 +7,7 @@ export const WealthZakat = () => {
         <div className="container mx-auto text-right max-w-4xl" dir="rtl">
           <div className="flex items-center mb-8">
             <div className="w-1 h-12 bg-gradient-to-b from-emerald-600 to-emerald-800 rounded-full ml-4"></div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-emerald-900">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-green4">
               أنواع الأموال التي تجب فيها الزكاة
             </h2>
           </div>
@@ -25,7 +25,7 @@ export const WealthZakat = () => {
                 </div>
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">⚜</span>
+                    <span className="text-2xl font-bold text-white"><img src="/gold.svg" alt="" /></span>
                   </div>
                   <h3 className="font-bold text-gray-800 mb-2">الذهب والفضة</h3>
                   <p className="text-sm text-gray-600">
@@ -34,7 +34,7 @@ export const WealthZakat = () => {
                 </div>
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">🏪</span>
+                    <span className="text-2xl font-bold text-white"><img src="/goods.svg" alt="" /></span>
                   </div>
                   <h3 className="font-bold text-gray-800 mb-2">عروض التجارة</h3>
                   <p className="text-sm text-gray-600">
@@ -47,7 +47,7 @@ export const WealthZakat = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">🌾</span>
+                    <span className="text-2xl font-bold text-white"><img src="/crops.svg" alt="" /></span>
                   </div>
                   <h3 className="font-bold text-gray-800 mb-2">الزروع والثمار</h3>
                   <p className="text-sm text-gray-600">
@@ -56,7 +56,7 @@ export const WealthZakat = () => {
                 </div>
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-br from-brown-400 to-brown-600 rounded-full mx-auto mb-4 flex items-center justify-center" style={{background: 'linear-gradient(to bottom right, #92400e, #78350f)'}}>
-                    <span className="text-2xl font-bold text-white">🐄</span>
+                    <span className="text-2xl font-bold text-white"><img src="/camle.svg" alt="" /></span>
                   </div>
                   <h3 className="font-bold text-gray-800 mb-2">الأنعام</h3>
                   <p className="text-sm text-gray-600">

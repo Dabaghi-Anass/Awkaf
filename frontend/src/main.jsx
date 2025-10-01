@@ -31,8 +31,8 @@ import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './Components/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
-import { Maliki } from './Components/Maliki.jsx';
 
+import "./i18n"; //
 import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
 import { Ma7acil } from './Components/Ma7acil.jsx';
 import Awkaf from './pages/Awkaf.jsx';

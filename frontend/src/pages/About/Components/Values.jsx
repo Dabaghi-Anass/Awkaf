@@ -2,7 +2,7 @@
 
 export default function Values({ value, description, image }) {
   return (
-    <div className="container-values center bg-green-100 p-6 rounded-lg shadow-md text-center">
+    <div className=" bg-green-100 p-6 rounded-lg shadow-md text-center">
       {/* Image Section */}
       {image && (
         <div

@@ -6,13 +6,13 @@ export const ZakatReceiver = () => {
         <section className="bg-gradient-to-br from-indigo-50 to-purple-50 py-12 lg:py-16 px-4 sm:px-6">
                 <div className="container mx-auto text-right max-w-4xl" dir="rtl">
                   <div className="flex items-center mb-8">
-                    <div className="w-1 h-12 bg-gradient-to-b from-indigo-600 to-purple-600 rounded-full ml-4"></div>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-900">
+                    <div className="w-1 h-12 bg-gradient-to-b bg-green4 rounded-full ml-4"></div>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-green4">
                       مصارف الزكاة الثمانية
                     </h2>
                   </div>
                   <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border border-indigo-100 mb-6">
-                    <p className="text-center text-lg text-indigo-800 font-semibold mb-6 leading-relaxed">
+                    <p className="text-center text-lg text-green4 font-semibold mb-6 leading-relaxed">
                       "إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ وَالْمَسَاكِينِ وَالْعَامِلِينَ عَلَيْهَا وَالْمُؤَلَّفَةِ قُلُوبُهُمْ وَفِي الرِّقَابِ وَالْغَارِمِينَ وَفِي سَبِيلِ اللَّهِ وَابْنِ السَّبِيلِ"
                     </p>
                     <div className="text-center text-sm text-gray-500">سورة التوبة: آية 60</div>
