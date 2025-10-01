@@ -35,7 +35,7 @@ import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
 import "./i18n"; //
 import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
 import { Ma7acil } from './Components/Ma7acil.jsx';
-import Awkaf from './pages/Awkaf.jsx';
+import Awkaf from './pages/Awkaf/Awkaf.jsx';
 
 const router = createBrowserRouter([
   {

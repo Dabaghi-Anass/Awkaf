@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView,AdminRegisterView,UserLoginView,AdminLoginView,VerifyEmailView,UpdateDeleteUserView,LogoutView
+from api.views import CreateUserView,AdminRegisterView, UserLoginRequestOTP,AdminLoginView, UserVerifyOTP,VerifyEmailView,UpdateDeleteUserView,LogoutView
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
@@ -26,8 +26,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("apif/user/register/", CreateUserView.as_view(), name="register"),
-   path("apif/token/", UserLoginView.as_view(), name="user_login"),    path("apif/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
-    #path("apif/token/verify/", UserVerifyOTP.as_view(), name="user_verify_otp"),
+    path("apif/token/", UserLoginRequestOTP.as_view(), name="user_login"),    path("apif/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("apif/token/verify/", UserVerifyOTP.as_view(), name="user_verify_otp"),
     path("apif-auth/", include("rest_framework.urls")),
     path("apif/", include("api.urls")), 
     path('apif/user/update/', UpdateDeleteUserView.as_view(), name='user-update'),
