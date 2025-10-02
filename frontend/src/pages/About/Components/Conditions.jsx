@@ -12,19 +12,14 @@ export const Conditions = () => {
                     </h2>
                   </div>
                   <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border border-emerald-100">
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                       <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 border border-blue-200">
                         <h3 className="font-bold text-blue-800 mb-3 text-center">الإسلام</h3>
                         <p className="text-sm text-blue-700 text-center">
                           أن يكون المزكي مسلماً بالغاً عاقلاً
                         </p>
                       </div>
-                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 sm:p-6 border border-purple-200">
-                        <h3 className="font-bold text-purple-800 mb-3 text-center">الحرية</h3>
-                        <p className="text-sm text-purple-700 text-center">
-                          أن يكون حراً غير مملوك
-                        </p>
-                      </div>
+                      
                       <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 sm:p-6 border border-amber-200">
                         <h3 className="font-bold text-amber-800 mb-3 text-center">النصاب</h3>
                         <p className="text-sm text-amber-700 text-center">

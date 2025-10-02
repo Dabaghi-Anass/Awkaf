@@ -110,7 +110,7 @@ export default function About() {
       <Zvalues/>
 
       {/* Call to Action */}
-      <section className="text-center py-12 lg:py-16 bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-600 text-white px-4 sm:px-6">
+      <section className="text-center py-12 lg:py-16 bg-gradient-to-b from-emerald-600 to-emerald-800 text-white px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
             احسب زكاتك الآن بدقة وسهولة

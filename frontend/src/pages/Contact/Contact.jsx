@@ -25,7 +25,7 @@ export const Contact = () => {
       <div dir="rtl" className="   flex flex-col items-center justify-center mx-auto bg-gray-100 p-6">
         <div className="bg-white sendMessage mt-15 shadow-lg rounded-lg px-8 py-2 max-w-[35em] w-full text-center">
           {/* Contact Title */}
-          <h1 className="text-[1.6em] font-bold text-green-500 mb-4">
+          <h1 className="text-[1.8em] font-bold text-green3 mb-4">
             تواصل معنا
           </h1>
           <p className="text-gray-400 font-[600] text-[0.8em] mb-6">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { Header } from "./Header"
-import Footer from "./Footer"
+import { Header } from "../Components/Header"
+import Footer from "../Components/Footer"
 
 
 // Mock components for demonstration
@@ -126,7 +126,7 @@ export const UserInfos = () => {
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
               
               {/* Tab Headers */}
-              <div className="bg-green2">
+              <div className="bg-green4">
                 <div className="flex rounded-xl bg-white/10 p-1">
                   <button
                     onClick={() => setActiveTab("account")}

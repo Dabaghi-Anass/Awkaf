@@ -158,9 +158,9 @@ const UserHistory = () => {
                                 <div className="overflow-x-auto">
                                     <Table className="w-full">
                                         <TableHeader>
-                                            <TableRow className="bg-green-500 hover:bg-green-500 ">
+                                            <TableRow className="bg-green4 hover:bg-green4 ">
                                                 <TableHead 
-                                                    className="text-center font-semibold text-gray-700   transition-colors"
+                                                    className="text-center font-semibold text-white   transition-colors"
                                                     
                                                 >
                                                     <div className="flex items-center justify-center gap-1">
@@ -169,7 +169,7 @@ const UserHistory = () => {
                                                     </div>
                                                 </TableHead>
                                                 <TableHead 
-                                                    className="text-center font-semibold text-gray-700   transition-colors"
+                                                    className="text-center font-semibold text-white   transition-colors"
                                                    
                                                 >
                                                     <div className="flex items-center justify-center gap-1">
@@ -178,7 +178,7 @@ const UserHistory = () => {
                                                     </div>
                                                 </TableHead>
                                                 <TableHead 
-                                                    className="text-center font-semibold text-gray-700  transition-colors"
+                                                    className="text-center font-semibold text-white  transition-colors"
                                                     
                                                 >
                                                     <div className="flex items-center justify-center gap-1">
@@ -219,7 +219,7 @@ const UserHistory = () => {
                                 {totalPages > 1 && (
                                     <div className="px-6 py-4 border-t border-gray-200">
                                         <div className="flex items-center justify-between">
-                                            <div className="text-sm text-gray-700">
+                                            <div className="text-sm text-white">
                                                 صفحة {currentPage} من {totalPages}
                                             </div>
                                             <div className="flex gap-2">
