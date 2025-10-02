@@ -3,7 +3,7 @@ import './Home.css'
 function Welcome() {
     return (
         <>
-            <div className="flex flex-row justify-between items-center flex-grow flex-shrink w-full center-padding max-w-[80rem] center-zoom  mx-auto p-4 my-28">
+            <div className="flex flex-row justify-between items-center flex-grow flex-shrink w-full center-padding max-w-[80rem] center-zoom  mx-auto p-4 my-10">
             <div className="text-right ">
                     <div className="font-bold text-primary mb-4 text-right text-4xl leading-15 text-green-800">
                         <h1>المنصة الموثوقة والمخصصة لمساعدة الشركات في حساب زكاتها المستحقة بسهولة ودقة.</h1>                    
@@ -15,7 +15,7 @@ function Welcome() {
                 <div className="flex flex-col z-10 flex-shrink w-1/2 relative">
                     <svg
                         width="500"
-                        height="500"
+                        height="600"
                         viewBox="0 0 376 383"
                         xmlns="http://www.w3.org/2000/svg"
                         className="relative z-10"
@@ -29,7 +29,8 @@ function Welcome() {
                         </defs>
                         
                         <image
-                            href="https://res.cloudinary.com/dbqf0wq9s/image/upload/v1721743014/k8ad75fp3jgy9e235fmr.jpg"
+                        
+                            href="/images/building.jpg"
                             width="376"
                             height="383"
                             preserveAspectRatio="xMidYMid slice"

@@ -1,213 +1,228 @@
-import React, { useState } from 'react';
-import '../CSS/TestForm.css';
+import React, { useContext, useState } from "react";
+import { X, Save, Printer, Calculator, Info, Calendar, Coins, TrendingUp, AlertCircle, Phone } from "lucide-react";
+
+// Mock components for demo
+const ZakatContext = React.createContext({
+  zakatFormInfos: { totalAmount: 2500000, zakatAmount: 62500 },
+  setShowResult: () => {},
+  saveZakatHistory: () => {},
+  isUnnaire: true,
+  nissab: 850000
+});
+
+const Link = ({ to, children, className }) => (
+  <a href={to} className={className}>{children}</a>
+);
 
 export const TestForm = () => {
-    // Initial empty values
-    const initialZakatData = {
-        liquidites: "",
-        stocks: "", 
-        investissements: "",
-        bienLocation: "",
-        creancesClients: "",
-        bienUsageInterne: "",
-        fondsNonDispo: "",
-        stocksInvendable: "",
-        zakatAmount: "",
-        created_at: new Date().toISOString().split("T")[0],
-    };
+  const { zakatFormInfos, setShowResult, saveZakatHistory, isUnnaire, nissab } = useContext(ZakatContext);
 
-    const [zakatFormInfos, setZakatFormInfos] = useState(initialZakatData);
+  const zakatTax = zakatFormInfos.zakatAmount * 1.26;
+  const formatNumber = (num) => (!num ? "0" : num.toLocaleString("fr-FR"));
+  const handlePrint = () => window.print();
 
-    // States to track which fields the user selects
-    const [isLiquidites, setIsLiquidites] = useState(false);
-    const [isStocks, setIsStocks] = useState(false);
-    const [isInvestissements, setIsInvestissements] = useState(false);
-    const [isBienLocation, setIsBienLocation] = useState(false);
-    const [isCreancesClients, setIsCreancesClients] = useState(false);
-    const [isBienUsageInterne, setIsBienUsageInterne] = useState(false);
-    const [isFondsNonDispo, setIsFondsNonDispo] = useState(false);
-    const [isStocksInvendable, setIsStocksInvendable] = useState(false);
-    const [showInputs, setShowInputs] = useState(false);
+  const today = new Date().toLocaleDateString("ar-SA", {
+    year: "numeric",
+    month: "long", 
+    day: "numeric",
+  });
 
-    // Handles text input changes
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setZakatFormInfos(prev => ({ ...prev, [name]: value }));
-    };
+  const todaySimple = new Date().toISOString().split("T")[0];
 
-    // Handles Yes/No questions & selections
-    const handleSelection = (field, value) => {
-        setZakatFormInfos(prev => ({ ...prev, [field]: value ? "" : undefined }));
-    };
-
-    // Handles form submission (Sends selected data to the backend)
-    const saveZakatHistory = async () => {
-        const token = localStorage.getItem("accessToken");
-    
-        const zakatData = {
-            liquidites: zakatFormInfos.liquidites || 0,
-            investissements: zakatFormInfos.investissements || 0,
-            bien_location: zakatFormInfos.bienLocation || 0,
-            creances_clients: zakatFormInfos.creancesClients || 0,
-            bien_usage_interne: zakatFormInfos.bienUsageInterne || 0,
-            fonds_non_dispo: zakatFormInfos.fondsNonDispo || 0,
-            stocks_invendable: zakatFormInfos.stocksInvendable || 0,
-            stocks: zakatFormInfos.stocks || 0,
-            created_at: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-        };
-    
-        try {
-            const response = await fetch("http://localhost:8000/apif/save-zakat-history/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify(zakatData),
-            });
-    
-            const data = await response.json();
-            if (!response.ok) {
-                console.error("Backend error:", data);
-                throw new Error("Failed to save Zakat history");
-            }
-    
-            console.log("Zakat history saved successfully:", data);
-            alert("Zakat history saved successfully!");
-    
-            // Reset form after successful save
-            setZakatFormInfos(initialZakatData);
-            setIsLiquidites(false);
-            setIsStocks(false);
-            setIsInvestissements(false);
-            setIsBienLocation(false);
-            setIsCreancesClients(false);
-            setIsBienUsageInterne(false);
-            setIsFondsNonDispo(false);
-            setIsStocksInvendable(false);
-            setShowInputs(false); // Hide input fields again
-    
-        } catch (error) {
-            console.error("Error:", error);
-            alert(error.message);
-        }
-    };
-    
-    
-    
-
-    const calculateZakat = () => {
-        // Ensure numeric values (default to 0 if undefined)
-        const liquidites = Number(zakatFormInfos.liquidites) || 0;
-        const stocks = Number(zakatFormInfos.stocks) || 0;
-        const fondsNonDispo = Number(zakatFormInfos.fondsNonDispo) || 0;
-        const stocksInvendable = Number(zakatFormInfos.stocksInvendable) || 0;
-    
-        // Ensure selectedRate is a number (default to 2.5% if not set)
-        const zakatRate =  2.5;
-    
-        // Calculate total eligible assets
-        const totalActifs = (liquidites + stocks) - (fondsNonDispo + stocksInvendable);
-    
-        // Calculate zakat
-        const zakat = totalActifs * (zakatRate / 100);
-    
-        // Update the zakatAmount in zakatFormInfos
-        setZakatFormInfos(prevState => ({
-            ...prevState,
-            zakatAmount: zakat.toFixed(2) // Store zakat amount as a string for display
-        }));
-    };
-    
-
-    return (
-        <div className="parent center">
-            <div className="zakat-form-container">
-                {/* Left Section - Selection */}
-                <div className="left-side">
-                    <div className="zakat-calculator-title">
-                        <h1>Zakat Calculator</h1>
-                        <p>Dans ce formulaire, vous pouvez simplement calculer le montant <br /> 
-                           de votre Zakat en remplissant les informations ci-dessous.</p>
-                    </div>
-                    <div className="line-hor"></div>
-                    <div className="questions-container">
-
-                        {/* Question 1 - Asset Selection */}
-                        <div className="question">
-                            <h3>1. Quels types d’actifs votre entreprise possède-t-elle ?</h3>
-                            <ul>
-                                <li className={`choice ${isLiquidites ? "active" : ""}`} onClick={() => setIsLiquidites(prev => !prev)}>Trésorerie (caisse, comptes bancaires, or et argent)</li>
-                                <li className={`choice ${isStocks ? "active" : ""}`} onClick={() => setIsStocks(prev => !prev)}>Stocks destinés à la vente</li>
-                                <li className={`choice ${isInvestissements ? "active" : ""}`} onClick={() => setIsInvestissements(prev => !prev)}>Investissements</li>
-                                <li className={`choice ${isBienLocation ? "active" : ""}`} onClick={() => setIsBienLocation(prev => !prev)}>Biens en location</li>
-                                <li className={`choice ${isCreancesClients ? "active" : ""}`} onClick={() => setIsCreancesClients(prev => !prev)}>Créances clients</li>
-                                <li className={`choice ${isBienUsageInterne ? "active" : ""}`} onClick={() => setIsBienUsageInterne(prev => !prev)}>Biens d’usage interne</li>
-                            </ul>
-                        </div>
-
-                        {/* Question 2 - Fonds Non Dispo */}
-                        <div className="question">
-                            <h3>2. Avez-vous des fonds non disponibles ?</h3>
-                            <div className="yes-no">
-                                <button className={`yes ${isFondsNonDispo ? "active" : ""}`} onClick={() => { setIsFondsNonDispo(true); handleSelection('fondsNonDispo', true); }}>Yes</button>
-                                <button className={`no ${!isFondsNonDispo ? "active" : ""}`} onClick={() => { setIsFondsNonDispo(false); handleSelection('fondsNonDispo', false); }}>No</button>
-                            </div>
-                        </div>
-
-                        {/* Question 3 - Stocks Invendables */}
-                        <div className="question">
-                            <h3>3. Avez-vous des stocks invendables ?</h3>
-                            <div className="yes-no">
-                                <button className={`yes ${isStocksInvendable ? "active" : ""}`} onClick={() => { setIsStocksInvendable(true); handleSelection('stocksInvendable', true); }}>Yes</button>
-                                <button className={`no ${!isStocksInvendable ? "active" : ""}`} onClick={() => { setIsStocksInvendable(false); handleSelection('stocksInvendable', false); }}>No</button>
-                            </div>
-                        </div>
-
-                        {/* Next Button */}
-                        <div className="question">
-                            <button className="next-btn" onClick={() => setShowInputs(true)}>Next</button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Section - Inputs */}
-                {showInputs && (
-                    <div className="right-side">
-                        <div className="montants">
-                            <h3>Veuillez saisir vos infos:</h3>
-                            <div className="input-montants-container">
-                                {isLiquidites && <p className='input-label-montants'><label>Trésorerie</label><input type="text" name="liquidites" value={zakatFormInfos.liquidites} onChange={handleChange} /></p>}
-                                {isStocks && <p className='input-label-montants'><label>Stocks</label><input type="text" name="stocks" value={zakatFormInfos.stocks} onChange={handleChange} /></p>}
-                                {isInvestissements && <p className='input-label-montants'><label>Investissements</label><input type="text" name="investissements" value={zakatFormInfos.investissements} onChange={handleChange} /></p>}
-                                {isBienUsageInterne && <p className='input-label-montants'><label>Bien d'usage interne</label><input type="text" name="bienUsageInterne" value={zakatFormInfos.bienUsageInterne} onChange={handleChange} /></p>}
-                                {isBienLocation && <p className='input-label-montants'><label>Biens en location</label><input type="text" name="bienLocation" value={zakatFormInfos.bienLocation} onChange={handleChange} /></p>}
-                                {isCreancesClients && <p className='input-label-montants'><label>Créances clients</label><input type="text" name="creancesClients" value={zakatFormInfos.creancesClients} onChange={handleChange} /></p>}
-                                {isFondsNonDispo && <p className='input-label-montants'><label>Fonds non disponibles</label><input type="text" name="fondsNonDispo" value={zakatFormInfos.fondsNonDispo} onChange={handleChange} /></p>}
-                                {isStocksInvendable && <p className='input-label-montants'><label>Stocks invendables</label><input type="text" name="stocksInvendable" value={zakatFormInfos.stocksInvendable} onChange={handleChange} /></p>}
-                            </div>
-                            <div className="zakat-calcul-container center">
-                            <button className="zakat-calcl-btn" onClick={calculateZakat}>Calculer la Zakat</button>
-                            </div>
-                            
-                        </div>
-                        <div className="result-container">
-                            <h2>قيمة الزكاة الواجبة على شركتكم</h2>
-                            <div className="line-ver"></div>
-                            <div className="zakat-amount">{zakatFormInfos.zakatAmount}</div>
-                            <p>
-                            لقد قمنا بحساب زكاتك وهي تبلغ [مبلغ الزكاة] دولار أمريكي. ندعوك لاستخدام زكاتك في الوقف، حيث ستسهم
-                            في مشاريع مستدامة تحقق فائدة طويلة الأمد للمجتمع. بادر بالمساهمة بزكاتك للوقف ودع أثرها الإيجابي
-                            يمتد لأجيال قادمة.
-                            </p>
-                        </div>
-
-                       <div className="savee center"><button className="save-btn" onClick={saveZakatHistory}>Save</button></div>
-                    </div>
-                )}
-                
-
+  return (
+    <>
+      {/* Enhanced Modal Dialog */}
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-300">
+          
+          {/* Header with gradient */}
+          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-white relative overflow-hidden">
+            <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-center mb-2">
+                <Calculator className="w-6 h-6 ml-2" />
+                <h2 className="text-xl font-bold">تفاصيل الحساب</h2>
+              </div>
+              <p className="text-emerald-100 text-center text-sm">
+                حساب دقيق ومفصل لزكاة المال
+              </p>
             </div>
+            
+            {/* Close button */}
+            <button
+              className="absolute top-4 right-4 p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all"
+              onClick={() => setShowResult(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            {/* Decorative elements */}
+            <div className="absolute -top-4 -right-4 w-16 h-16 bg-white bg-opacity-10 rounded-full"></div>
+            <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-white bg-opacity-10 rounded-full"></div>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            {/* Summary Cards */}
+            <div className="grid gap-4 mb-6">
+              {/* Zakat Amount Card */}
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                <div className="flex items-center mb-2">
+                  <div className="bg-emerald-100 p-2 rounded-lg ml-2">
+                    <Coins className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <span className="font-semibold text-emerald-800 text-sm">قيمة الزكاة (معنا)</span>
+                </div>
+                <p className="text-2xl font-bold text-emerald-700 text-center">
+                  {formatNumber(zakatFormInfos.zakatAmount)} د.ج
+                </p>
+              </div>
+
+              {/* Tax Amount Card */}
+              <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl p-4">
+                <div className="flex items-center mb-2">
+                  <div className="bg-red-100 p-2 rounded-lg ml-2">
+                    <AlertCircle className="w-4 h-4 text-red-600" />
+                  </div>
+                  <span className="font-semibold text-red-800 text-xs">قيمة الزكاة بالضريبة IBS (من دوننا)</span>
+                </div>
+                <p className="text-2xl font-bold text-red-700 text-center">
+                  {formatNumber(zakatTax)} د.ج
+                </p>
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="space-y-3 mb-6">
+              <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <Info className="w-4 h-4 text-blue-600 ml-2" />
+                  <span className="text-sm font-medium text-gray-700">قيمة النصاب:</span>
+                </div>
+                <span className="font-bold text-gray-900">{formatNumber(nissab)} د.ج</span>
+              </div>
+
+              <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <TrendingUp className="w-4 h-4 text-purple-600 ml-2" />
+                  <span className="text-sm font-medium text-gray-700">الوعاء الزكوي:</span>
+                </div>
+                <span className="font-bold text-gray-900">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
+              </div>
+
+              <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <Calendar className="w-4 h-4 text-orange-600 ml-2" />
+                  <span className="text-sm font-medium text-gray-700">التاريخ:</span>
+                </div>
+                <span className="font-bold text-gray-900">{today}</span>
+              </div>
+
+              <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <Calendar className="w-4 h-4 text-green-600 ml-2" />
+                  <span className="text-sm font-medium text-gray-700">نوع الحول:</span>
+                </div>
+                <span className={`font-bold px-3 py-1 rounded-full text-xs ${
+                  isUnnaire 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {isUnnaire ? "هجري" : "ميلادي"}
+                </span>
+              </div>
+            </div>
+
+            {/* Contact Notice */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
+              <div className="flex items-start">
+                <Phone className="w-4 h-4 text-blue-600 mt-0.5 ml-2 flex-shrink-0" />
+                <p className="text-xs text-blue-800">
+                  إن أردت إخراج الزكاة دون ضريبة{" "}
+                  <Link to="/contact" className="font-semibold text-blue-600 hover:text-blue-800 underline">
+                    اتصل بنا
+                  </Link>
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={saveZakatHistory}
+                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
+              >
+                <Save className="w-4 h-4" />
+                حفظ
+              </button>
+
+              <button
+                onClick={handlePrint}
+                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
+              >
+                <Printer className="w-4 h-4" />
+                طباعة
+              </button>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+
+      {/* Enhanced Print Receipt */}
+      <div id="printable-receipt" className="hidden print:block p-10 text-black border-2 border-gray-400 bg-white max-w-2xl mx-auto">
+        <div className="text-center mb-8 border-b-2 border-gray-300 pb-6">
+          <h1 className="text-3xl font-bold text-green-700 mb-2">وصل دفع الزكاة</h1>
+          <div className="w-20 h-1 bg-green-600 mx-auto rounded-full"></div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6 mb-8 text-lg">
+          <div className="space-y-4">
+            <div className="flex justify-between border-b border-gray-200 pb-2">
+              <span className="font-medium">التاريخ:</span>
+              <span className="font-bold">{today}</span>
+            </div>
+            <div className="flex justify-between border-b border-gray-200 pb-2">
+              <span className="font-medium">نوع الحول:</span>
+              <span className="font-bold">{isUnnaire ? "هجري" : "ميلادي"}</span>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between border-b border-gray-200 pb-2">
+              <span className="font-medium">قيمة النصاب:</span>
+              <span className="font-bold">{formatNumber(nissab)} د.ج</span>
+            </div>
+            <div className="flex justify-between border-b border-gray-200 pb-2">
+              <span className="font-medium">الوعاء الزكوي:</span>
+              <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-green-50 border-2 border-green-300 rounded-lg p-6 mb-8">
+          <div className="flex justify-between items-center text-2xl">
+            <span className="font-bold text-green-800">مبلغ الزكاة المستحق:</span>
+            <span className="font-bold text-green-700">{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
+          </div>
+        </div>
+
+        <div className="border-t-2 border-gray-300 pt-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium mb-2">توقيع المكلف:</p>
+              <div className="w-48 border-b-2 border-gray-400"></div>
+            </div>
+            <div className="text-right text-gray-600">
+              <p className="text-sm">تم إنشاء هذا الوصل في:</p>
+              <p className="text-sm font-medium">{new Date().toLocaleString("ar-SA")}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-8 text-center text-gray-500 text-sm border-t border-gray-200 pt-4">
+          <p>هذا وصل رسمي لدفع الزكاة - يُرجى الاحتفاظ به للمراجع المستقبلية</p>
+        </div>
+      </div>
+    </>
+  );
 };

@@ -8,24 +8,29 @@ export const ManageProjects = () => {
     const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("accessToken");
+        console.log("Using token:", token);
     
-        const response = await fetch("http://localhost:8000/apif/public/waqf-projects/", {
+        const response = await fetch("http://127.0.0.1:8000/apif/list/waqf-projects/", {
           method: "GET",
           headers: token
-            ? { "Authorization": `Bearer ${token}` }
-            : {}, // Add Authorization only if token exists
+            ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+            : { "Content-Type": "application/json" },
         });
+    
+        const text = await response.text();
+        console.log("Raw response:", text);
     
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
     
-        const data = await response.json();
+        const data = JSON.parse(text); // instead of response.json()
         setProjects(data);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
     };
+    
     
 
     fetchProjects();
@@ -39,7 +44,7 @@ export const ManageProjects = () => {
         throw new Error("No authentication token found. Please log in.");
       }
   
-      const response = await fetch(`http://127.0.0.1:8000/apif/waqf-projects/${projectId}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/apif/list/waqf-projects/${projectId}/`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`, // 🔥 Include the token

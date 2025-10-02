@@ -5,21 +5,31 @@ export const ZakatContext = createContext();
 export const ZakatProvider = ({ children }) => {
     
     
-const [nissab, setNissab] = useState(800000);
+const [nissab, setNissab] = useState(null);
 const [zakatFormInfos, setZakatFormInfos] = useState();
 const [isUnnaire, setIsUnnaire] = useState(false);
 const [showResult, setShowResult] = useState(false);
 const [totalAmount, setTotalAmount] = useState(0);
 const [selectedCompany, setSelectedCompany] = useState(null);
-
+const [isLoading,setIsLoading]=useState('');
+const [popup,setPopup]=useState({message:'',type:''});
 // Update form fields dynamically when company type changes
 useEffect(() => {
-    if (selectedCompany && Array.isArray(selectedCompany.custom_fields)) {
-        setZakatFormInfos(prevData => ({
-            ...Object.fromEntries(selectedCompany.custom_fields.map(field => [field.name, ""]))
-        }));
+    if (selectedCompany && Array.isArray(selectedCompany.fields)) {
+        const extractLeafFields = (nodes) => {
+            return nodes.flatMap(field =>
+                field.children && field.children.length > 0
+                    ? extractLeafFields(field.children)
+                    : [field]
+            );
+        };
+
+        const leafFields = extractLeafFields(selectedCompany.fields);
+        const initialValues = Object.fromEntries(leafFields.map(field => [field.name, ""]));
+        setZakatFormInfos(initialValues);
     }
 }, [selectedCompany]);
+
 
 
 
@@ -34,7 +44,6 @@ useEffect(() => {
             zakat_result:zakatFormInfos.zakatAmount,
             zakat_base:zakatFormInfos.totalAmount,
             calculation_date: zakatFormInfos.calculationDate,
-            month_type: isUnnaire ? "هجري" : "ميلادي",
             nissab:nissab
            
         };
@@ -55,13 +64,13 @@ useEffect(() => {
                 throw new Error("Failed to save Zakat history");
             }
 
-            alert("Zakat history saved successfully!");
+            setPopup({message:"تم حفظ الزكاة بنجاح!",type:"success"});
             setZakatFormInfos({});
             setShowResult(false);
           
         } catch (error) {
             console.error("Error:", error);
-            alert(error.message);
+           setPopup({message:"حدث خطاء",type:"error"})
         }
     };
 
@@ -70,7 +79,7 @@ useEffect(() => {
         const token = localStorage.getItem("accessToken");
     
         if (!token || !selectedCompany) {
-            alert("Please select a company type and log in.");
+            setPopup({ message: "Authentication required! Please log in.", type: "error" });
             return;
         }
     
@@ -130,7 +139,7 @@ useEffect(() => {
             alert(error.message);
         }
     };
-    console.log("Updated zakatFormInfos:", zakatFormInfos);
+    
     
 
     return (
@@ -140,10 +149,11 @@ useEffect(() => {
             calculateZakat, 
             showResult, setShowResult,
             saveZakatHistory, 
-           
+            isLoading, setIsLoading,
             totalAmount, setTotalAmount,
             selectedCompany, setSelectedCompany,
-            nissab,setNissab
+            nissab,setNissab,
+            popup,setPopup
         }}>
             {children}
         </ZakatContext.Provider>

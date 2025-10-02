@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
 
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 export const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
@@ -100,13 +108,13 @@ export const ManageUsers = () => {
 
   return (
     <>
-      <div className="w-full mx-auto  p-6 ">
+      <div className="w-full mx-auto  ">
       
         <table className="w-full border-collapse border border-gray-300">
           <thead>
-            <tr className="bg-green-400">
+            <tr className="bg-gray-800 text-white text-[0.8em] font-medium">
               <th className="border border-gray-300 p-2">ID</th>
-              <th className="border border-gray-300 p-2">Usernmae</th>
+              <th className="border border-gray-300 p-2">Username</th>
               <th className="border border-gray-300 p-2">Email</th>
               <th className="border border-gray-300 p-2">Created date</th>
               <th className="border border-gray-300 p-2 text-center">Acions</th>
@@ -115,17 +123,17 @@ export const ManageUsers = () => {
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
-                <tr key={user.id} className="text-center border border-gray-300">
+                <tr key={user.id} className="text-center text-[0.7em] border border-gray-300 hover:bg-gray-100 transition ">
                   <td className="p-2">{user.id}</td>
                   <td className="p-2">{user.username}</td>
                   <td className="p-2">{user.email}</td>
                   <td className="p-2">{user.date_joined}</td>
-                  <td className="p-2">
+                  <td className="p-2  flex justify-center">
                     <button
                       onClick={(e) => { e.preventDefault(); deleteUser(user.id); }}
-                      className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-800"
+                      className="px-4 mx-auto py-1 custom-input bg-gray-600 text-white rounded hover:bg-gray-800"
                     >
-                      حذف
+                      delete
                     </button>
                   </td>
                 </tr>
@@ -139,29 +147,53 @@ export const ManageUsers = () => {
         </table>
       </div>
       <div className="flex justify-center mt-5">
-        <Stack spacing={2} className="flex">
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(_, value) => setPage(value)}
-            variant="outlined"
-            shape="rounded-2xl"
-            sx={{
-              "& .MuiPaginationItem-root": {
-                color: "#035116",
-                borderColor: "#035116",
-              },
-              "& .MuiPaginationItem-root:hover": {
-                backgroundColor: "#e6f5ea",
-              },
-              "& .Mui-selected": {
-                backgroundColor: "#035116 !important",
-                color: "white !important",
-              },
-            }}
-          />
-        </Stack>
-      </div>
+              <Pagination >
+                            <PaginationContent >
+                              {/* Previous Button */}
+                              <PaginationItem  >
+                                <PaginationPrevious
+                                  className={"border-pagin border-1"}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    if (page > 1) setPage(page - 1);
+                                  }}
+                                />
+                            </PaginationItem>
+              
+                          {/* Render page numbers dynamically */}
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                            <PaginationItem key={p}>
+                              <PaginationLink
+                                className={p===page ? "border-pagin  text-pagin bg-gray-300 ":"pagin-btn"}
+                                href="#"
+                                isActive={p === page}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setPage(p);
+                                }}
+                              >
+                                {p}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ))}
+              
+                       {/* Next Button */}
+                            <PaginationItem>
+                              <PaginationNext
+                                className={"border-pagin border-1"}
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  if (page < totalPages) setPage(page + 1);
+                                }}
+                              />
+                            </PaginationItem>
+                          </PaginationContent>
+                        </Pagination>
+
+           
+        </div>
     </>
   );
 };

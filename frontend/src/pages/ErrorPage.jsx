@@ -1,7 +1,6 @@
-import React from "react";
+
 import { useNavigate } from "react-router-dom";
-import { Header } from "../Components/Header";
-import Footer from "../Components/Footer";
+
 
 export default function ErrorPage() {
   const navigate = useNavigate();
@@ -13,13 +12,13 @@ export default function ErrorPage() {
       {/* Main Error Content */}
       <div className="bg-gray-300 min-h-screen flex items-center justify-center pt-24 pb-10 px-4">
         <div className="bg-white shadow-md rounded-lg p-8 max-w-lg text-center">
-          <h1 className="text-4xl font-bold text-red-600 mb-4">خطأ 404</h1>
-          <p className="text-gray-700 text-lg mb-6">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">خطأ 404</h1>
+          <p className="text-gray-700 text-[0.8em] mb-6">
             الصفحة التي تحاول الوصول إليها غير موجودة أو ليس لديك الصلاحية للوصول إليها.
           </p>
           <button
-            onClick={() => navigate("/home")}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded"
+            onClick={() => navigate("/")}
+            className="custom-button bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded"
           >
             العودة إلى الصفحة الرئيسية
           </button>
@@ -31,7 +30,7 @@ export default function ErrorPage() {
         <div className="w-24 h-1 bg-green-500"></div>
       </div>
 
-      <Footer />
+      
     </>
   );
 }

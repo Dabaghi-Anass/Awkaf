@@ -1,0 +1,54 @@
+{
+  "form": {
+    "cashAndEquivalents": "Cash and Equivalents",
+    "cashOnHand": "Cash on Hand",
+    "cashInBank": "Cash in Bank (Current/On Demand)",
+    "certifiedChecks": "Certified Checks",
+    "foreignCurrency": "Foreign Currency",
+    "digitalAssets": "Digital Assets / Cryptocurrencies",
+    "timeDeposits": "Time Deposits / Fixed Accounts",
+    "qardHasanGiven": "Qard Hasan Loan (Until Collected)",
+    "accruedIncome": "Accrued Income",
+    "cashFromNonZakatAssets": "Cash from Sale of Non-Zakatable Assets",
+
+    "receivables": "Receivables (Collectible Debts)",
+    "currentReceivables": "Current Receivables from Customers",
+    "deferredReceivables": "Deferred Receivables",
+    "notesReceivable": "Notes Receivable",
+    "qardOrInstallments": "Receivable Loans / Installments",
+    "receivablesFromNonZakatAssets": "Receivables from Non-Zakatable/Non-Trade Assets",
+    "rentIncomeDue": "Due Rent Income",
+    "doubtfulDebts": "Doubtful / Bad Debts",
+
+    "zakatInvestments": "Zakatable Investments",
+    "sharesForTrade": "Shares / Sukuk / Units for Trade",
+    "realEstateForTrade": "Real Estate Shares for Trade",
+    "bondsOrTreasuryBills": "Bonds / Treasury Bills",
+    "sharesForIncome": "Shares Held for Income",
+
+    "tradeInventory": "Trade Inventory and Stock",
+    "finishedGoods": "Finished Goods",
+    "workInProgress": "Work in Progress",
+    "rawMaterials": "Raw Materials",
+    "goodsInTransit": "Goods in Transit",
+    "goodsOnConsignment": "Goods on Consignment",
+    "sparePartsForTrade": "Spare Parts for Trade",
+    "giftedOrInheritedGoods": "Goods from Gift or Inheritance",
+    "realEstateHeldForTrade": "Real Estate Held for Trade",
+    "unsellableInventory": "Obsolete / Unsellable Inventory",
+
+    "liabilities": "Deductible Liabilities",
+    "shortTermLoans": "Short-Term Loans Due within a Year",
+    "notesPayable": "Notes Payable / Creditors",
+    "employeeRights": "Employee Rights (Wages / Leave)",
+    "taxesDue": "Taxes Due within a Year",
+    "mudarabahProfits": "Mudarabah Profits for Others",
+    "customerDeposits": "Customer Deposits to Refund",
+    "generalReserves": "General Reserves / Provisions",
+
+    "malikiAssets": "Maliki Financial Obligations",
+    "companyAssets": "Company’s Financial Obligation",
+    "personalAssets": "Individual’s Financial Obligation",
+    "insolvencyLimit": "Insolvency Threshold"
+  }
+}

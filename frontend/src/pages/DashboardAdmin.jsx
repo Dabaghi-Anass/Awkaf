@@ -5,70 +5,56 @@ import "../CSS/DashboardAdmin.css";
 import { SideBar } from "../Components/admin_dashboard/SideBar";
 import { ManageUsers } from "../Components/ManageUsers";
 import { ProjectsTable } from "../Components/ProjectsTable";
-import { Reports } from "../Components/Reports"; 
-import { ManageAwkaf } from "./ManageAwkaf";
 
+import { ManageAwkaf } from "./ManageAwkaf";
+import {Add} from '../assets/icons/Add.jsx';
 
 import { AdminContext } from "../Components/AdminProvider";
 import AdminFormBuilder from "../Components/AdminFormBuilder";
+import { Settings } from "../Components/Settings.jsx";
 export const DashboardAdmin = () => {
   
   const navigate = useNavigate();
-  const { isEditing, setIsEditing,activeTab,setActiveTab} = useContext(AdminContext);
+  const {setIsEditing,activeTab,setActiveTab} = useContext(AdminContext);
 
   const tabComponents = {
     Users: <ManageUsers />,
     Projects: <ProjectsTable />,
-    Reports: <Reports />,  
+    Settings: <Settings />,  
     Form: <AdminFormBuilder />, 
     ManageProject: <ManageAwkaf />,
   };
 
-  // Handle "Add New" Button Click
-  const handleAddNew = () => {
-    switch (activeTab) {
-      case "Users":
-        navigate("/add-user");
-        break;
-      case "Projects":
-        setActiveTab("ManageProject");
-        break;
-      case "Reports":
-        navigate("/generate-report");
-        break;
-      case "Settings":
-        navigate("/settings-page");
-        break;
-      default:
-        break;
-    }
-  };
+  
+ 
 
   return (
     <>
      {/* <TopBar />*/}
-      <div className=" flex gap-80  min-h-screen  ">
+      <div className=" flex gap-60  min-h-screen  ">
         <div>
         <SideBar setActiveTab={setActiveTab} activeTab={activeTab} />
         </div>
         <div className=" w-full p-5  " >
           {/* Breadcrumb Section */}
-          <div className="bg-green-700 py-4 pl-3.5 rounded-lg mt-5 mb-8 relative after:absolute after:-bottom-4 after:left-0 after:h-0.5 after:bg-green-700 after:w-full after:rounded-4xl text-white font-[600] text-lg">
+          <div className="bg-gray-800 py-4 pl-3.5 rounded-lg   relative  text-white font-[600] text-lg">
             Admin - {activeTab}
           </div>
 
           {/* Header Section */}
-          <div className="flex items-center mb-5 gap-8">
+          <div className="flex items-center mb-2 gap-8">
             
             {activeTab === "Projects" && (
               <button
               onClick={() => {
-                handleAddNew();
                 setIsEditing(false);
+                setActiveTab("ManageProject");
+               
+                
               }}  
-                className="bg-green-800 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition duration-300"
+                className="custom-button mt-5 py-2 px-1 text-[0.9em] rounded-[8px] flex items-center"
               >
-                Add New
+               <Add></Add> Add new
               </button>
             )}
           </div>

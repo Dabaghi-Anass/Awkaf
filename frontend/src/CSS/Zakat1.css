@@ -1,47 +1,39 @@
+
+
 .zakat{
-    width: 100%;
-    height: 100vh;
-    background-color: #035116;
-}
-
-.zakat-box-container{
-    height: 36em;
-    width: 77.5em;
-    border-radius: 2.5em;
-    background: rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(6.75px);
- 
-}
-.zakat-box{
-    display: flex;
-    gap: 1em;
-    width: 74em;
-    height: 32em;
-    margin: auto;
-}
-.left-zakat-box{
-    width: 50em;
-    height: 30em;
-    
-}
-.left-zakat-box h2{
-    font-size: 2.625em;
-    color: #F2CB05;
-}
-.left-zakat-box p{
-    font-size: 1.45em;
-    color: #fff;
-}
-
-.right-zakat-box{
-   border-radius: 0 2.5em 2.5em 0;
     position: relative;
-    width: 100%;
-    height: 100%;
-    background: url('../assets/images/ZkatPics/zakat1.jpg');
+    background: url('../assets/images/ZkatPics/mosque2.jpg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    width: 23.4375em;
-    height: 32.43em;
+    height: 50em;
+    margin: 5em auto;
+    
+}
+.pic1{
+    position: relative;
+    background: url('../assets/images/ZkatPics/mosque2.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    border-radius: 1em;
+}
+.pic1-text{
+    backdrop-filter: blur(3px);
+    padding: 2em 2em;
+}
+.category{
+    position: relative;
+    overflow: none;
+}
+.category-text{
+    display: inline-block;
+    position: relative;
+    overflow: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    height: 0;
 }

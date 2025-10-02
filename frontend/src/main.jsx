@@ -1,13 +1,15 @@
-
+// First, create the ScrollToTop component
+// Create a new file: Components/ScrollToTop.jsx
+// Updated main.jsx with ScrollToTop integration
 import { createRoot } from 'react-dom/client'
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Awkaf from './pages/Awkaf.jsx'
-import About from './pages/About.jsx'
+
+import About from './pages/About/About.jsx'
 import Home from './pages/Home.jsx';
-import ZakatCal from './pages/ZakatCal.jsx';
+import ZakatCal from './pages/ZakatCalculator/ZakatCal.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { Admin } from './pages/Admin.jsx';
@@ -15,102 +17,200 @@ import { DashboardAdmin } from './pages/DashboardAdmin.jsx';
 import { ZakatProvider } from './Components/ZakatProvider.jsx';
 import { AdminRegister } from './pages/AdminRegister.jsx';
 import { AdminLogin } from './pages/AdminLogin.jsx';
-import { Contact } from './pages/Contact.jsx';
-import { WakfP } from './pages/WakfP.jsx';
+import { Contact } from './pages/Contact/Contact.jsx';
+import { WakfP } from './pages/WakfProject/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 import App from './App.jsx';
-
 import { ProtectedRoute } from './ProtectedRoutes.jsx';
 import { Contribution } from './pages/Contribution.jsx';
-
-import AdminFormBuilder from './Components/AdminFormBuilder.jsx';
 import UserHistory from './pages/UserHistory.jsx';
 import { AdminProvider } from './Components/AdminProvider.jsx';
+import ErrorPage from './pages/ErrorPage.jsx';
+import { ForgotPassword } from './Components/ForgotPassword.jsx';
+import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
+import { Settings } from './Components/Settings.jsx';
+import { UserInfos } from './pages/UserInfos.jsx';
+import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
 
+import "./i18n"; //
+import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
+import { Ma7acil } from './Components/Ma7acil.jsx';
+import Awkaf from './pages/Awkaf/Awkaf.jsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <ScrollToTop><LoginPage /></ScrollToTop>,
   },
   {
-    path: "About/",
-    element: <About />,
+    path: "*",
+    element: <ScrollToTop><ErrorPage /></ScrollToTop>,
   },
   {
-    path: "manage-project/",
-    element: <ManageAwkaf />,
-  },
-  {
-    path: "Contact/",
-    element: <Contact />,
-  },
-  {
-    path: "Awkaf/",
-    element: <Awkaf />,
-  },
-  {
-    path: "ZakatCalculator/",
-    element: <ZakatCal />,
-  },
-  {
-    path: "Login/",
-    element: <LoginPage />,
-  },
-  {
-    path: "kol/",
-    element: <AdminFormBuilder />,
+    path: "/forgot-password",
+    element: <ScrollToTop><ForgotPassword /></ScrollToTop>,
   },
   {
     path: "Register/",
-    element: <RegisterPage />,
+    element: <ScrollToTop><RegisterPage /></ScrollToTop>,
+  },
+  {
+    path: "AdminLogin/",
+    element: <ScrollToTop><AdminLogin /></ScrollToTop>,
+  },
+  {
+    path: "AdminRegister/",
+    element: <ScrollToTop><AdminRegister /></ScrollToTop>,
+  },
+  {
+    path: "Home/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "settings-page/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Settings />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "ZakatCalculator/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <ZakatCal />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "userInfos/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <UserInfos/>
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "Awkaf/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Awkaf />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "About/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <About />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "Contact/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Contact />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
   },
   {
     path: "userhistory/",
-    element: <UserHistory />,
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <UserHistory />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
   },
   {
     path: "DashboardAdmin/",
     element: (
-      <ProtectedRoute>
-        <DashboardAdmin />
-      </ProtectedRoute>
+      <ScrollToTop>
+        <PrivateRouterAdmin>
+          <DashboardAdmin />
+        </PrivateRouterAdmin>
+      </ScrollToTop>
     ),
   },
-  
+  {
+    path: "manage-project/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <ManageAwkaf />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
   {
     path: "Contribution/",
-    element: <Contribution />,
+    element: <ScrollToTop><Contribution /></ScrollToTop>,
+  },
+  {
+    path: "kol/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <ZakatSelectionPage />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "wakf/:id",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <WakfP />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
   },
   {
     path: "Admin/",
-    element: <Admin />,
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Admin />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
   },
   {
-    path: "wakf/:id",  // ✅ Dynamic route to handle specific project ID
-    element: <WakfP />,
-  },
-  {
-    path: "AdminRegister/",
-    element: <AdminRegister />,
-  },
-  {
-    path: "AdminLogin/",
-    element: <AdminLogin />,
-  },
-  {
-    path: "app/",
-    element: <App />,
+    path: "ma7acil/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Ma7acil />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
   },
 ]);
- 
-
-
-
 
 createRoot(document.getElementById('root')).render(
   <ZakatProvider>  
-    <AdminProvider>  {/* ✅ Now, all pages inside have access to both contexts */}
+    <AdminProvider>  
       <RouterProvider router={router} />
     </AdminProvider>
   </ZakatProvider>

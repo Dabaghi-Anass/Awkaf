@@ -2,12 +2,14 @@
 
 
 .pic-container{
+margin-top: 4em;
 text-align: right;
 position: relative;
 background: url('../assets/images/ZkatPics/Rectangle 57.png');
 background-position: center;
 background-repeat: no-repeat;
 background-size: cover;
+
 }
 .green{
     position: absolute;
@@ -25,36 +27,19 @@ background-size: cover;
 .text .title{
 
 font-weight: 700;
-font-size: 41.7765px;
+font-size: 1.6em;
 line-height: 50px;
 letter-spacing: 0.01em;
-color: #04a442;
+
 }
 .paragraph{
 font-style: normal;
 font-weight: 400;
-font-size: 23.7771px;
-line-height: 45px;
+font-size: 1em;
+line-height:1.5em;
 letter-spacing: 0.01em;
 color: #FFFFFF;
-margin-bottom: 4rem;
-}
-.join-btn{
-display: flex;
-justify-content: left;
-}
-.join-btn button{
- margin-bottom: 2rem;
-border: none;
-outline: none;
-cursor: pointer;
-background-color: #F2CB05;
-padding: 0.3rem 1rem;
-font-weight: 400;
-font-size: 23.7771px;
-line-height: 45px;
-letter-spacing: 0.01em;
-color: #035116;
+margin-bottom: 2.5em;
 }
 .line{
 height: 7px;

@@ -22,11 +22,11 @@ function Home() {
           detail={('welcome')}
         />
       
-          <div className="w-full h-[11px] top-[997px] bg-[#F2CB05]"></div>
+          <div className="w-full h-[11px] top-[997px] bg-green-500"></div>
           
           <BacEffect />
 
-          <div className="w-full h-[11px] top-[997px] bg-[#F2CB05]"></div>
+          <div className="w-full h-[11px] top-[997px] bg-green-500"></div>
 
         <Footer />
 

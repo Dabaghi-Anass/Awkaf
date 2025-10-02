@@ -1,148 +1,164 @@
 import React, { useState } from "react";
-
+import {Trash} from '../assets/icons/trash.jsx';
+import {Add} from '../assets/icons/Add.jsx';
+import '../CSS/DashboardAdmin.css';
 const AdminFormBuilder = () => {
   const [companyName, setCompanyName] = useState("");
   const [fields, setFields] = useState([]);
   const [calculationMethod, setCalculationMethod] = useState("");
 
-  const addField = () => {
-    setFields([...fields, { name: "", label: "" }]);
+  const addField = (parentIndex = null) => {
+    const newField = { name: "", label: "", children: [] };
+
+    if (parentIndex === null) {
+      setFields([...fields, newField]);
+    } else {
+      const updatedFields = [...fields];
+      updatedFields[parentIndex].children.push(newField);
+      setFields(updatedFields);
+    }
   };
 
-  const updateField = (index, key, value) => {
-    const updatedFields = [...fields];
-    updatedFields[index][key] = value;
-    setFields(updatedFields);
+  const updateField = (fieldPath, key, value) => {
+    const update = (fieldList, path) => {
+      const [index, ...rest] = path;
+      if (rest.length === 0) {
+        fieldList[index][key] = value;
+      } else {
+        update(fieldList[index].children, rest);
+      }
+    };
+
+    const newFields = [...fields];
+    update(newFields, fieldPath);
+    setFields(newFields);
   };
 
-  const removeField = (index) => {
-    setFields(fields.filter((_, i) => i !== index));
+  const removeField = (fieldPath) => {
+    const remove = (fieldList, path) => {
+      const [index, ...rest] = path;
+      if (rest.length === 0) {
+        fieldList.splice(index, 1);
+      } else {
+        remove(fieldList[index].children, rest);
+      }
+    };
+
+    const newFields = [...fields];
+    remove(newFields, fieldPath);
+    setFields(newFields);
   };
+
+  const renderFields = (fieldList, path = []) =>
+    fieldList.map((field, index) => {
+      const currentPath = [...path, index];
+      return (
+        <div key={currentPath.join("-")} className="ml-4 mb-4 border-l border-gray-300 pl-4">
+          <input
+            type="text"
+            placeholder="Label"
+            value={field.label}
+            onChange={(e) => updateField(currentPath, "label", e.target.value)}
+            className="mb-1 mr-2 custom-input py-2 px-3 w-[40%]"
+          />
+          <input
+            type="text"
+            placeholder="Name"
+            value={field.name}
+            onChange={(e) => updateField(currentPath, "name", e.target.value)}
+            className="mb-1 custom-input py-2 px-3"
+          />
+         <div className="inline-flex align-middle gap-2.5">
+  <button
+    type="button"
+    onClick={() => removeField(currentPath)}
+    className="ml-2 text-white  px-2 py-1 rounded"
+  >
+    <Trash></Trash>
+  </button>
+
+  {/* Only allow adding sub-fields if it's a top-level field */}
+  {path.length === 0 && (
+    <button
+      type="button"
+      onClick={() => addField(index)}
+      className="ml-2 flex items-center text-white text-[15px] custom-button rounded-[10px] px-2 py-1"
+    >
+      <Add></Add>Sub-field
+    </button>
+  )}
+</div>
+
+          {field.children && field.children.length > 0 && renderFields(field.children, currentPath)}
+        </div>
+      );
+    });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const cleanedFields = fields.filter(
-      (field) => typeof field.name === "string" && field.name.trim() !== ""
-    );
-
-    if (cleanedFields.length === 0) {
-      alert("Please add at least one valid field.");
-      return;
-    }
-
     const companyData = {
       name: companyName,
       calculation_method: calculationMethod,
-      fields: cleanedFields,
+      fields: fields,
     };
 
     try {
       const token = localStorage.getItem("accessToken");
-      if (!token) {
-        alert("Authentication required! Please log in.");
-        return;
+      if (!token) return alert("Authentication required!");
+
+      const res = await fetch("http://localhost:8000/apif/create-company-with-fields/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(companyData),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to save");
       }
 
-      const response = await fetch(
-        "http://localhost:8000/apif/create-company-with-fields/",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(companyData),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Backend error response:", errorData);
-        throw new Error(errorData.error || "Failed to create company type");
-      }
-
-      alert("Company Type Created Successfully!");
+      alert("Company created!");
       setCompanyName("");
-      setFields([]);
       setCalculationMethod("");
-    } catch (error) {
-      console.error("Error creating company type:", error);
-      alert(`Error: ${error.message}`);
+      setFields([]);
+    } catch (err) {
+      alert(`Error: ${err.message}`);
     }
   };
 
   return (
-    <div className="w-full text-white   p-8 bg-green-800 shadow-md rounded-2xl ">
-      <h2 className="text-2xl font-bold text-center mb-6">Create Company Type</h2>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full bg-white border-gray-800 border-3 p-6 mt-10  mx-auto  shadow rounded-[15px]">
+      <h2 className="text-3xl text-blue-950 font-bold mb-6 text-center">Create Company Form</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          className="custom-input w-full py-2 px-3 mb-3"
+          placeholder="Company Name"
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
+        />
+        
         <div>
-          <label className="block font-semibold mb-1">Company Name</label>
-          <input
-            type="text"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            placeholder="Enter company name"
-            className="w-full p-3 border border-gray-300 bg-white rounded-lg focus:ring-2 focus:ring-green-500 text-black"
-            required
-          />
-        </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Fields</h3>
-          {fields.map((field, index) => (
-            <div key={index} className="flex items-center gap-2 mb-2">
-              <input
-                type="text"
-                value={field.label}
-                onChange={(e) => updateField(index, "label", e.target.value)}
-                placeholder="Field label"
-                className="flex-grow p-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                required
-              />
-              <input
-                type="text"
-                value={field.name}
-                onChange={(e) => updateField(index, "name", e.target.value)}
-                placeholder="Variable (for calculations)"
-                className="flex-grow bg-white p-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => removeField(index)}
-                className="px-3 py-1 text-white bg-green-500 rounded-lg hover:bg-red-600 transition"
-              >
-                X
-              </button>
-            </div>
-          ))}
-
+          <h3 className="font-semibold text-blue-950  mb-2">Fields</h3>
+          {renderFields(fields)}
           <button
             type="button"
-            onClick={addField}
-            className="mt-3 w-full py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600"
+            onClick={() => addField(null)}
+            className="custom-button flex items-center py-2 px-5 rounded-[10px]"
           >
-            + Add Field
+            <Add></Add> Add Field
           </button>
         </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Calculation Formula</h3>
-          <textarea
-            value={calculationMethod}
-            onChange={(e) => setCalculationMethod(e.target.value)}
-            placeholder="Example: (variable1 + variable2) - (variable3 + variable4)"
-            className="w-full p-3 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-black"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full py-3 bg-green-500 text-white text-xl font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-green-600  "
-        >
+        <textarea
+          className="custom-input mt-8 w-full py-2 px-3"
+          placeholder="Calculation formula"
+          value={calculationMethod}
+          onChange={(e) => setCalculationMethod(e.target.value)}
+        />
+        <button type="submit" className="block mt-6 custom-button  py-2 px-5 rounded-[10px] font-bold">
           Save Company
         </button>
       </form>

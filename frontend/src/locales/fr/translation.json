@@ -1,0 +1,54 @@
+{
+  "form": {
+    "cashAndEquivalents": "Trésorerie et équivalents",
+    "cashOnHand": "Caisse",
+    "cashInBank": "Espèces en banque (courant/à vue)",
+    "certifiedChecks": "Chèques certifiés",
+    "foreignCurrency": "Devises étrangères",
+    "digitalAssets": "Actifs numériques / Cryptomonnaies",
+    "timeDeposits": "Dépôts à terme / Comptes bloqués",
+    "qardHasanGiven": "Prêt Qard Hasan (jusqu’au recouvrement)",
+    "accruedIncome": "Revenus à recevoir",
+    "cashFromNonZakatAssets": "Trésorerie provenant de la vente d’actifs non zakatables",
+
+    "receivables": "Créances (dettes recouvrables)",
+    "currentReceivables": "Créances clients exigibles",
+    "deferredReceivables": "Créances différées",
+    "notesReceivable": "Effets à recevoir",
+    "qardOrInstallments": "Prêts/ventes à tempérament recouvrables",
+    "receivablesFromNonZakatAssets": "Créances sur actifs non zakatables/non commerciaux",
+    "rentIncomeDue": "Revenus locatifs échus",
+    "doubtfulDebts": "Créances douteuses / irrécouvrables",
+
+    "zakatInvestments": "Investissements zakatables",
+    "sharesForTrade": "Actions / Sukuk / Parts destinées au commerce",
+    "realEstateForTrade": "Parts immobilières destinées au commerce",
+    "bondsOrTreasuryBills": "Obligations / Bons du Trésor",
+    "sharesForIncome": "Actions détenues pour revenu",
+
+    "tradeInventory": "Stocks commerciaux",
+    "finishedGoods": "Produits finis",
+    "workInProgress": "Produits en cours de fabrication",
+    "rawMaterials": "Matières premières",
+    "goodsInTransit": "Marchandises en transit",
+    "goodsOnConsignment": "Marchandises en consignation",
+    "sparePartsForTrade": "Pièces détachées destinées à la vente",
+    "giftedOrInheritedGoods": "Biens issus de dons ou héritages",
+    "realEstateHeldForTrade": "Biens immobiliers destinés au commerce",
+    "unsellableInventory": "Stock invendable / obsolète",
+
+    "liabilities": "Passifs déductibles",
+    "shortTermLoans": "Prêts à court terme exigibles dans l’année",
+    "notesPayable": "Effets à payer / Fournisseurs",
+    "employeeRights": "Droits des employés (salaires / congés)",
+    "taxesDue": "Impôts dus dans l’année",
+    "mudarabahProfits": "Profits de Moudaraba revenant à autrui",
+    "customerDeposits": "Dépôts clients à restituer",
+    "generalReserves": "Réserves générales / Provisions",
+
+    "malikiAssets": "Obligations financières malikites",
+    "companyAssets": "Obligation financière de l’entreprise",
+    "personalAssets": "Obligation financière de la personne",
+    "insolvencyLimit": "Seuil d’insolvabilité"
+  }
+}

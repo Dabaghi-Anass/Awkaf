@@ -61,10 +61,23 @@ from api.models import User
 from api.serializer import UserSerializer
 from api.permissions import IsStaffUser
 from .models import CompanyType, CompanyField
-from .serializer import CompanyTypeSerializer, CompanyFieldSerializer
+from .serializer import CompanyTypeSerializer
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.utils.timezone import now
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from .serializer import (
+    
+    CompanyTypeSerializer
+    
+)
 
 
 
@@ -251,46 +264,50 @@ class AdminVerifyOTP(APIView):
             "refresh_token": str(refresh)
         })
         
-class UpdateDeleteUserView(APIView):
-    permission_classes = [IsAuthenticated]  # Only logged-in users
+# views.py
 
-    def get_object(self, request):
-        """Get the logged-in user's object"""
-        return request.user
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from .serializer import UserSerializer
+
+User = get_user_model()
+
+class UpdateDeleteUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # Always operate on the authenticated user
+        return self.request.user
 
     def put(self, request, *args, **kwargs):
-        """Full update of user profile"""
+        # Full update: all writable fields should be provided
         return self.update_user(request, partial=False)
 
     def patch(self, request, *args, **kwargs):
-        """Partial update of user profile"""
+        # Partial update: only provided fields will change
         return self.update_user(request, partial=True)
 
     def update_user(self, request, partial):
-        """Handles both PUT and PATCH updates"""
-        user = self.get_object(request)
-        serializer = UserSerializer(user, data=request.data, partial=partial)
-
-        if serializer.is_valid():
-            serializer.save()
-
-            # Update company if the user has one
-            if hasattr(user, "employee") and "company" in request.data:
-                user.employee.company = request.data["company"]
-                user.employee.save()
-
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        user = self.get_object()
+        serializer = UserSerializer(
+            user,
+            data=request.data,
+            partial=partial,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        """Allow users to delete their own account"""
-        user = self.get_object(request)
-
-        # Delete Employee record if it exists
-        Employee.objects.filter(user=user).delete()
-
+        user = self.get_object()
         user.delete()
         return Response({"message": "Account deleted successfully."}, status=204)
+
 
 
 
@@ -532,7 +549,7 @@ def send_contact_email(request):
             Message:
             {message}
             """
-            receiver_email = "aminecheikh180@gmail.com"  # Replace with actual email
+            receiver_email = "amine.dizo123@gmail.com" 
 
             send_mail(subject, full_message, sender_email, [receiver_email])
 
@@ -601,57 +618,103 @@ class RequestPasswordResetView(APIView):
             return Response({"message": "Password reset email sent!"})
 
         except User.DoesNotExist:
-            return Response({"error": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "لا يوجد مستخدم بهذا البريد الإلكتروني"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# views.py
+
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+
+User = get_user_model()
 
 class ResetPasswordView(APIView):
-    permission_classes = [AllowAny]  # Allow unauthenticated access
+    permission_classes = [AllowAny]
+    # Only JSONRenderer + TemplateHTMLRenderer → no DRF browsable API
+    renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
+    # When rendering HTML, use this template:
+    template_name = "reset_password_form.html"
 
     def get(self, request, uidb64, token):
+        # decode & verify token
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
-
-            if not default_token_generator.check_token(user, token):
-                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
-
-            return Response({
-                "message": "Token is valid. You can now send a POST request with your new password.",
-                "uid": uidb64,
-                "token": token
-            }, status=status.HTTP_200_OK)
-
-        except (User.DoesNotExist, DjangoUnicodeDecodeError):
-            return Response({"error": "Invalid link or user not found."}, status=status.HTTP_400_BAD_REQUEST)
-
-    def post(self, request, uidb64, token):
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-
-            if not default_token_generator.check_token(user, token):
-                return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
-
-            new_password = request.data.get("password")
-            if not new_password:
-                return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-            user.set_password(new_password)
-            user.save()
-
-            send_mail(
-                subject="Password Changed Successfully",
-                message="Your password has been changed successfully.",
-                from_email="noreply@yourdomain.com",
-                recipient_list=[user.email],
-                fail_silently=False,
+        except Exception:
+            return Response(
+                {"error": "Invalid link."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
             )
 
-            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+        if not default_token_generator.check_token(user, token):
+            return Response(
+                {"error": "Token invalid or expired."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
 
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # token valid → render form, passing uidb64 & token into context
+        return Response(
+            {"uidb64": uidb64, "token": token},
+            template_name=self.template_name
+        )
+
+    def post(self, request, uidb64, token):
+        # decode & verify
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except Exception:
+            return Response(
+                {"error": "Invalid link."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
+
+        if not default_token_generator.check_token(user, token):
+            return Response(
+                {"error": "Token invalid or expired."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
+
+        # get new password (works for JSON or form POST)
+        new_password = request.data.get("password") or request.POST.get("password")
+        if not new_password:
+            return Response(
+                {"error": "Password cannot be empty."},
+                status=status.HTTP_400_BAD_REQUEST,
+                template_name=self.template_name
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        # optional confirmation email
+        send_mail(
+            "Your password was changed",
+            "Your password has been successfully reset.",
+            "noreply@yourdomain.com",
+            [user.email],
+            fail_silently=False,
+        )
+
+        return Response(
+            {"success": "Your password has been reset!"},
+            template_name=self.template_name
+        )
+
 from django.shortcuts import render
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
@@ -756,11 +819,9 @@ class AdminNonStaffUserListView(generics.ListAPIView):
         """ ✅ Return paginated or full user list based on request """
         queryset = self.get_queryset()
 
-        # ✅ Serialize data and format `date_joined`
+        # ✅ Serialize data
         serializer = self.get_serializer(queryset, many=True)
         serialized_data = serializer.data
-        for user in serialized_data:
-            user["date_joined"] = user["date_joined"].strftime("%Y-%m-%d")  # Format date properly
 
         # ✅ Apply pagination if requested
         if "page" in request.GET and "page_size" in request.GET:
@@ -964,15 +1025,23 @@ def delete_table(request, table_name):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from .models import WaqfProject
+from .serializer import WaqfProjectSerializer
+
+
 class WaqfProjectListView(generics.ListAPIView):
     """ ✅ Returns all Waqf projects (paginated or full list) as an array """
 
     serializer_class = WaqfProjectSerializer
-    permission_classes = [AllowAny]  # ✅ Anyone can access
-    pagination_class = None  # ✅ Default: No pagination
+    permission_classes = [AllowAny]
+    pagination_class = None  # Default: No pagination unless requested
 
     def get_queryset(self):
-        """ ✅ Fetch all Waqf projects """
+        """ ✅ Fetch all Waqf projects with selected fields """
         return WaqfProject.objects.all().only(
             "id", "name", "domain", "objectives", "partners", "image", "created_at", "updated_at"
         )
@@ -980,13 +1049,8 @@ class WaqfProjectListView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         """ ✅ Return paginated or full list based on request """
         queryset = self.get_queryset()
-
-        # ✅ Serialize data and format dates
         serializer = self.get_serializer(queryset, many=True)
         serialized_data = serializer.data
-        for project in serialized_data:
-            project["created_at"] = project["created_at"].split("T")[0]  # ✅ Keep only YYYY-MM-DD
-            project["updated_at"] = project["updated_at"].split("T")[0]  # ✅ Keep only YYYY-MM-DD
 
         # ✅ Apply pagination if requested
         if "page" in request.GET and "page_size" in request.GET:
@@ -994,8 +1058,8 @@ class WaqfProjectListView(generics.ListAPIView):
             paginated_data = paginator.paginate_queryset(serialized_data, request, view=self)
             return paginator.get_paginated_response(paginated_data)
 
-        # ✅ Default: Return all projects (no pagination)
         return Response(serialized_data)
+
 
 
 from django.shortcuts import get_object_or_404
@@ -1006,7 +1070,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from .models import CompanyType, CompanyField
-from .serializer import CompanyTypeSerializer, CompanyFieldSerializer
+from .serializer import CompanyTypeSerializer
 
 import json
 import re
@@ -1072,23 +1136,37 @@ class ZakatCalculationView(APIView):
 
     def calculate_zakat_logic(self, company_type_id, user_inputs, moon, nissab):
         company_type = get_object_or_404(CompanyType, id=company_type_id)
-        fields = CompanyField.objects.filter(company_type=company_type)
 
-        user_inputs = {re.sub(r'\s+', '_', k.strip()): v for k, v in user_inputs.items()}
-        required_fields = {field.name for field in fields}
-        name_to_label = {field.name: field.label or field.name for field in fields}
+        # ← only the bottom-level fields (no children) are real inputs
+        leaf_fields = CompanyField.objects.filter(
+            company_type=company_type,
+            children__isnull=True
+        )
 
-        missing_fields = required_fields - user_inputs.keys()
-        if missing_fields:
-            missing_labels = [name_to_label[name] for name in missing_fields]
-            raise ValueError(f"Missing required fields: {', '.join(missing_labels)}")
+        # normalize keys
+        user_inputs = {
+            re.sub(r'\s+', '_', k.strip()): v
+            for k, v in user_inputs.items()
+        }
 
-        formula_symbols = {name: symbols(name) for name in required_fields}
-        expression = sympify(company_type.calculation_method, locals=formula_symbols)
-        zakat_base = round(float(expression.evalf(subs=user_inputs)), 2)
-        zakat_result = zakat_base * moon if zakat_base > nissab else 0
+        # required = exactly those leaf names
+        required = { f.name for f in leaf_fields }
+        labels   = { f.name: f.label for f in leaf_fields }
 
-        return zakat_base, zakat_result
+        missing = required - set(user_inputs.keys())
+        if missing:
+            raise ValueError(
+                "Missing required fields: " +
+                ", ".join(labels[n] for n in missing)
+            )
+
+        # only create symbols for the leaves
+        syms = { name: symbols(name) for name in required }
+        expr = sympify(company_type.calculation_method, locals=syms)
+
+        base   = round(float(expr.evalf(subs=user_inputs)), 2)
+        result = base * moon if base > nissab else 0
+        return base, result
 from django.db import IntegrityError
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
@@ -1161,76 +1239,163 @@ def update_company_with_fields(request, company_type_id):
 
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-from .serializer import CompanyTypeSimpleSerializer
+
+# api/views.py
+
+from django.shortcuts      import get_object_or_404
+from django.utils.timezone import now
+
+from rest_framework         import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response   import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views      import APIView
+
+from .models      import CompanyType, CompanyField, ZakatHistory
+from .serializer  import (
+    CompanyTypeSimpleSerializer,
+    ZakatHistorySerializer
+)
+
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
+
+
+from django.shortcuts      import get_object_or_404
+from rest_framework.decorators import api_view
+from rest_framework.response   import Response
+from rest_framework import status
+
+from .models     import CompanyType
+from .serializer import CompanyTypeSerializer
 
 @api_view(['GET'])
 def get_company_type_fields(request, company_type_id):
     """
-    Get only the name and fields of a CompanyType (name + label)
+    Return id, name and nested fields (no calculation_method).
     """
     company_type = get_object_or_404(CompanyType, id=company_type_id)
-    serializer = CompanyTypeSimpleSerializer(company_type, context={'request': request})
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer = CompanyTypeSerializer(company_type, context={'request': request})
+    data = serializer.data
+    # keep id, remove calculation_method only
+    data.pop('calculation_method', None)
+    return Response(data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def list_all_company_types(request):
     """
-    Get all company types with their IDs, names, and fields
+    Return all company-types with id, name and nested fields.
     """
-    all_companies = CompanyType.objects.all()
-    serializer = CompanyTypeSimpleSerializer(all_companies, many=True)
-    return Response(serializer.data)
+    qs = CompanyType.objects.all()
+    serializer = CompanyTypeSerializer(qs, many=True, context={'request': request})
+    data = serializer.data
+    for item in data:
+        # keep id, remove calculation_method only
+        item.pop('calculation_method', None)
+    return Response(data, status=status.HTTP_200_OK)
 
-from .models import ZakatHistory
-from .serializer import ZakatHistorySerializer
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def zakat_history(request):
     """
-    Save zakat calculations in the database with authenticated user.
+    Save zakat calculation in the database for the authenticated user.
     """
     data = request.data
-
-    zakat_base = data.get('zakat_base')
-    zakat_result = data.get('zakat_result')
-    month_type = data.get('month_type')
-    nissab = data.get('nissab')
-
-    if zakat_base is None or zakat_result is None or month_type is None or nissab is None:
+    required = ['zakat_base', 'zakat_result', 'nissab']
+    if any(data.get(k) is None for k in required):
         return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
 
-    zakat_record = ZakatHistory.objects.create(
-        user=request.user,  # ✅ Enregistre l'utilisateur connecté
-        zakat_base=zakat_base,
-        zakat_result=zakat_result,
-        month_type=month_type,
-        calculation_date=now().date(),
-        nissab=nissab
+    record = ZakatHistory.objects.create(
+        user             = request.user,
+        zakat_base       = data['zakat_base'],
+        zakat_result     = data['zakat_result'],
+        calculation_date = now().date(),
+        nissab           = data['nissab']
     )
-
-    serializer = ZakatHistorySerializer(zakat_record)
+    serializer = ZakatHistorySerializer(record, context={'request': request})
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 @api_view(['GET'])
 def get_zakat_history(request):
     """
-    Retrieve all Zakat history records (with user info).
+    Retrieve all Zakat history records.
     """
-    zakat_history = ZakatHistory.objects.all().order_by('-calculation_date')
-    serializer = ZakatHistorySerializer(zakat_history, many=True)
+    qs = ZakatHistory.objects.all().order_by('-calculation_date')
+    serializer = ZakatHistorySerializer(qs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 @api_view(['GET'])
 def get_zakat_history_by_user(request, user_id):
     """
-    Retrieve all Zakat history records for a specific user ID.
+    Retrieve Zakat history for a specific user.
     """
-    zakat_history = ZakatHistory.objects.filter(user__id=user_id).order_by('-calculation_date')
-    
-    if not zakat_history.exists():
-        return Response({"message": "No zakat history found for this user."}, status=status.HTTP_404_NOT_FOUND)
-    
-    serializer = ZakatHistorySerializer(zakat_history, many=True)
+    qs = ZakatHistory.objects.filter(user_id=user_id).order_by('-calculation_date')
+    if not qs.exists():
+        return Response({"message": "No zakat history found for this user."},
+                        status=status.HTTP_404_NOT_FOUND)
+    serializer = ZakatHistorySerializer(qs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CheckTokenView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        token = request.GET.get("token")
+        if not token:
+            return Response(False, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            access = AccessToken(token)
+            exp = access["exp"]
+            valid = (now().timestamp() < exp)
+            return Response(valid, status=status.HTTP_200_OK)
+        except (TokenError, Exception):
+            return Response(False, status=status.HTTP_401_UNAUTHORIZED)
+
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
+from datetime import datetime
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
+from datetime import datetime
+
+class CheckTokenView(APIView):
+    permission_classes = [AllowAny]  # Allow all users to access this view
+
+    def get(self, request):
+        token = request.GET.get("token")  # Get token from query parameters
+
+        if not token:
+            return Response(False, status=400)  # Return False if no token is provided
+
+        try:
+            access_token = AccessToken(token)  # Decode token
+            exp_time = access_token["exp"]  # Get expiration timestamp
+            is_expired = datetime.fromtimestamp(exp_time) < datetime.utcnow()  # Compare with current time
+
+            return Response(not is_expired)  # Return True if valid, False if expired
+
+        except (TokenError, Exception):  # Handle expired or invalid tokens
+            return Response(False, status=401)  # Return False if the token is invalid or expired
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .serializer import UserInfoSerializer
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserInfoSerializer(request.user)
+        return Response(serializer.data)
