@@ -29,7 +29,7 @@ export const ProtectedRoute = ({ children }) => {
       })
       .then(user => {
         const isStaff = user.is_staff === 1 || user.is_staff === true;
-        console.log("is_staff:", user.is_staff, "is admin?", isStaff);
+       
 
         // If trying to access DashboardAdmin and not admin
         if (location.pathname === "/DashboardAdmin" && !isStaff) {

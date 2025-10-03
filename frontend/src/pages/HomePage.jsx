@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export const Home = () => {
+export const HomePage = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   const features = [
@@ -742,4 +742,4 @@ export const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

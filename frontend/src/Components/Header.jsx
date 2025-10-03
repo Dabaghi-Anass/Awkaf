@@ -49,7 +49,7 @@ export const Header = () => {
             >
               {label}
               {location.pathname === path && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-300"></span>
+                <span className="absolute top-6 left-0 w-full h-0.5 bg-green-300 "></span>
               )}
             </Link>
           ))}

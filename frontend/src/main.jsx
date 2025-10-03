@@ -31,7 +31,7 @@ import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './pages/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
-
+import {HomePage} from './pages/HomePage.jsx'
 import "./i18n"; //
 import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
 import { Ma7acil } from './Components/Ma7acil.jsx';
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <Settings />
+          <HomePage />
         </ProtectedRoute>
       </ScrollToTop>
     ),

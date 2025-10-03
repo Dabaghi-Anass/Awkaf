@@ -101,13 +101,14 @@ class UserSerializer(serializers.ModelSerializer):
             old = data.get("old_password")
             if not old:
                 raise serializers.ValidationError({
-                    "old_password": "Required when changing password."
+                    "old_password": "كلمة المرور الحالية مطلوبة عند تغيير كلمة المرور."
                 })
             if not self.instance.check_password(old):
                 raise serializers.ValidationError({
-                    "old_password": "Incorrect current password."
+                    "old_password": "كلمة المرور الحالية غير صحيحة."
                 })
         return data
+
 
     def create(self, validated_data):
         password = validated_data.pop("password", None)

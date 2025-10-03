@@ -73,7 +73,8 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
 
                 {/* Phone Field */}
                 <input 
-                    type="tel" 
+                    min={0}
+                    type="number" 
                     placeholder="رقم الهاتف" 
                     name="phone" 
                     value={userMessage.phone} 
@@ -99,7 +100,7 @@ export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMe
                 {/* Submit Button */}
                 <button 
                     onClick={sendMessage}
-                    className={`custom-button w-full max-sm:w-3/4 text-sm sm:text-base ${
+                    className={`custom-button w-full max-sm:w-3/4 text-sm sm:text-base py-2 rounded-sm ${
                         loading 
                             ? 'opacity-60 cursor-not-allowed' 
                             : 'hover:bg-green-700 active:bg-green-800'

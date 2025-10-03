@@ -8,7 +8,7 @@ export default function Project({ project }) {
 
     // Ensure the image URL is correct
     const imageUrl = project.image?.startsWith("http") ? project.image : `http://localhost:8000${project.image}`;
-    console.log("Project Image URL:", imageUrl);
+   
 
 return (
         <div 
@@ -50,10 +50,10 @@ return (
                 {/* Button */}
               
                     <button 
-                        className="custom-button w-[90%]   block absolute bottom-2 left-1/2 transform -translate-x-1/2"
+                        className="custom-button w-[90%]   block absolute bottom-2 left-1/2 transform -translate-x-1/2 py-2 rounded-sm"
                         onClick={() => navigate(`/wakf/${project.id}`)}
                     >
-                        <span>تعرف أكثر</span>
+                        تعرف أكثر
                        
                     </button>
            

@@ -1,10 +1,11 @@
+import {Link} from "react-router-dom"
 import React from 'react'
 
 export const Support = () => {
   return (
          <div className="mt-10">
               <div className="max-w-4xl mx-auto">
-                <div className="bg-gradient-to-br from-green-600 via-emerald-700 to-teal-800 rounded-2xl p-6 text-center text-white relative overflow-hidden">
+                <div className="bg-gradient-to-br from-green-600 via-emerald-700 to-teal-800 rounded-2xl p-6 text-center text-white relative overflow-hidden max-sm:rounded-none">
                   {/* Background Pattern */}
                   <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-10 right-10 w-32 h-32 bg-white rounded-full"></div>
@@ -20,11 +21,11 @@ export const Support = () => {
                       </svg>
                     </div>
 
-                    <h1 className="text-2xl font-bold mb-4">
+                    <h1 className="text-2xl font-bold mb-4 max-sm:text-lg">
                       شارك في الأجر والثواب
                     </h1>
                     
-                    <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed max-sm:text-sm">
                       ساهم في دعم هذا المشروع الوقفي واحصل على الأجر المستمر. 
                       كل مساهمة تساعد في تحقيق أهداف خيرية نبيلة.
                     </p>
@@ -47,10 +48,10 @@ export const Support = () => {
 
                     {/* Support Button */}
                     <button
-                      onClick={() => navigate('/Contact')}
-                      className="inline-flex items-center px-8 py-4 bg-green2 text-gray-800 rounded-full hover:bg-green4 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-bold text-lg group"
+                     
+                      className="inline-flex items-center px-8 py-4 bg-green2 text-gray-800 rounded-full hover:bg-green4 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-bold text-lg group max-sm:text-sm"
                     >
-                      <span className="ml-2">دعم المشروع الآن</span>
+                      <Link to="/Contact"><span className="ml-2">دعم المشروع الآن</span></Link>
                       <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
