@@ -47,6 +47,9 @@ urlpatterns = [
     path('check-token/', CheckTokenView.as_view(), name='check-token'),
      path('me/', CurrentUserView.as_view(), name='current-user'),
     path('delete-zakat-history/<int:pk>/', views.delete_zakat_history, name='delete_zakat_history'),
+    path('create-ma7acil/', views.create_ma7acil, name='create_ma7acil'),
+    path('get-ma7acil/<int:user_id>/', views.get_ma7acil_by_user, name='get_ma7acil_by_user'),
+    path('delete-ma7acil/<int:pk>/', views.delete_ma7acil, name='delete_ma7acil'),
 
     
 ]
