@@ -33,6 +33,7 @@ export const AdminLogin = () => {
     setOtpError("");
   };
 
+
   const validateFields = () => {
     const errors = {};
     if (!data.username.trim()) errors.username = "إسم المستخدم مطلوب!";
@@ -60,7 +61,7 @@ export const AdminLogin = () => {
       });
 
       const result = await response.json();
-      console.log("API Response:", result);
+      
 
       if (response.ok && result.message === "OTP sent to your email. Enter OTP to proceed.") {
         setOtpSent(true);

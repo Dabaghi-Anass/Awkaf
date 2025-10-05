@@ -115,9 +115,12 @@ export const CalForm = () => {
   };
 
   const calcZakat = (method) => {
+  if(  nissab === null) {
+     setPopup({message:'يرجى إدخال قيمة الذهب من أجل تحديد قيمة النصاب',type:'error'});
+     return
+  }   
     const values = flattenData(formData);
-    console.log("Values:", values);
-
+    
     const commonAssets = 
       (values.x1 || 0) + (values.x2 || 0) + (values.x3 || 0) +
       (values.x4 || 0) + (values.x5 || 0) + (values.x6 || 0) +
@@ -168,8 +171,8 @@ export const CalForm = () => {
         
     setZakatFormInfos(prevState => ({
       ...prevState,
-      zakatAmount: zakat.toFixed(3),  
-      totalAmount: zakatBase.toFixed(3),  
+      zakatAmount: zakat.toFixed(2),  
+      totalAmount: zakatBase.toFixed(2),  
       calculationDate: calculationDate,
     }));
 
@@ -412,7 +415,7 @@ export const CalForm = () => {
                 {/* Calculate Button */}
                 <div className="text-center mt-10 pt-6 border-t border-gray-200">
                   <button 
-                    className="custom-button py-2 rounded-sm w-1/2 "
+                    className="custom-button py-2 mb-4 rounded-sm w-1/2 "
                     onClick={() => calcZakat(methodCalcul)}
                   >
                     

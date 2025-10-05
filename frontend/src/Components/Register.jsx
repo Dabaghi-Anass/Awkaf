@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { MessagePopup } from './MessagePopup';
+
 export const Register = ({ handleChange, formData }) => {
     const formRef = useRef(null);
     const navigate = useNavigate();
-    const [showSuccess, setShowSuccess] = useState(false);
+    const [popup, setPopup] = useState({ message: "", type: "" });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
@@ -87,13 +89,23 @@ export const Register = ({ handleChange, formData }) => {
         });
 
         if (response.ok) {
-            setShowSuccess(true);
+           setPopup({
+            message: "تم التسجيل بنجاح!",
+            type: "success"
+           })
             setTimeout(() => navigate('/'), 3000);
         } else {
-            console.error("فشل التسجيل");
+            
+            setPopup({
+                message: "فشل التسجيل، يرجى التحقق من صحة البيانات المدخلة.",
+                type: "error"
+            });
         }
     } catch (error) {
-        console.error("خطأ:", error);
+        setPopup({
+            message: "حدث خطاء",
+            type: "error"
+        })
     } finally {
         setLoading(false); //
     }
@@ -153,15 +165,13 @@ export const Register = ({ handleChange, formData }) => {
                 </form>
             </div>
 
-            {showSuccess && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h2 className="text-green-600 text-2xl font-bold mb-3">تم التسجيل بنجاح!</h2>
-                        <p>سيتم تحويلك إلى صفحة تسجيل الدخول قريبًا...</p>
-                        <button className="bg-green-500 text-white px-4 py-2 rounded mt-4" onClick={() => navigate('/')}>الانتقال إلى تسجيل الدخول</button>
-                    </div>
-                </div>
-            )}
+            <MessagePopup
+                 message={popup.message}
+                 type={popup.type}
+                 onClose={() => setPopup({ message: "", type: "" })}
+               />
+
+          
         </div>
     );
 };

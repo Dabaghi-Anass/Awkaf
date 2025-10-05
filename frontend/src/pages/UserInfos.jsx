@@ -192,7 +192,7 @@ export const UserInfos = () => {
                 {activeTab === "account" && (
                   <div className="space-y-6 ">
                     <div className="mb-4">
-                      <h2 className="text-2xl font-bold text-gray-800 mb-2"> معلومات الحساب</h2>
+                      <h2 className="text-xl font-bold text-gray-800 mb-2"> معلومات الحساب</h2>
                       <p className="text-gray-600"> قم بتحديث معلومات حسابك.</p>
                     </div>
                    
@@ -270,7 +270,7 @@ export const UserInfos = () => {
                 {activeTab === "password" && (
                   <div className="space-y-6">
                     <div className="mb-4">
-                      <h2 className="text-2xl font-bold text-gray-800 mb-2">تغيير كلمة المرور</h2>
+                      <h2 className="text-xl font-bold text-gray-800 mb-2">تغيير كلمة المرور</h2>
                       <p className="text-gray-600">قم بإدخال كلمة المرور القديمة والجديدة</p>
                     </div>
 

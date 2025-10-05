@@ -47,15 +47,10 @@ export const Support = () => {
                     </div>
 
                     {/* Support Button */}
-                    <button
+                   
+                      <Link  className="inline-flex items-center px-8 py-4 bg-green2 text-gray-800 rounded-full hover:bg-green4 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-bold text-lg group max-sm:text-sm" to="/Contact">دعم المشروع الآن</Link>
                      
-                      className="inline-flex items-center px-8 py-4 bg-green2 text-gray-800 rounded-full hover:bg-green4 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl font-bold text-lg group max-sm:text-sm"
-                    >
-                      <Link to="/Contact"><span className="ml-2">دعم المشروع الآن</span></Link>
-                      <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
+                    
 
                     {/* Additional Info */}
                     <div className="mt-8 pt-8 border-t border-white/20">

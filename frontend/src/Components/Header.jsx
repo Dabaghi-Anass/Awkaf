@@ -26,7 +26,7 @@ export const Header = () => {
   return (
     <header
       dir="rtl"
-      className="bg-gradient-to-r from-green-600 via-emerald-700 to-teal-800 text-white shadow-md fixed pb-2 top-0 w-full z-50"
+      className="bg-gradient-to-r from-green-600 via-emerald-700 to-teal-800 text-white shadow-md fixed py-2 top-0 w-full z-50"
     >
       <nav className="navbar flex items-center justify-between px-4 py-3 md:px-8 ">
         {/* Logo */}
