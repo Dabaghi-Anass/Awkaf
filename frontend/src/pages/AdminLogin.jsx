@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader } from "../Components/Loader"; // adjust path if needed
+import { Loader } from "../Components/Loader"; 
 import { MessagePopup } from '../Components/MessagePopup';
 
 export const AdminLogin = () => {

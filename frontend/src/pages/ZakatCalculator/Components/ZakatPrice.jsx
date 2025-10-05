@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { ZakatContext } from "./ZakatProvider";
-import { Trash } from "../assets/icons/trash";
+import { ZakatContext } from "../../../Components/ZakatProvider";
+import { Trash } from "../../../assets/icons/trash";
 import { Link } from "react-router-dom";
 
 export const ZakatPrice = () => {
@@ -17,11 +17,11 @@ export const ZakatPrice = () => {
      <>
       
       <div className="fixed inset-0 flex items-center justify-center  bg-opacity-40 z-50">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-[30em] relative overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div className="bg-white rounded-xl shadow-xl max-[510px]:w-[70%] w-full max-w-[30em] relative overflow-hidden animate-in fade-in zoom-in duration-300">
           
           {/* Header */}
-          <div className="bg-green3 p-4 text-white relative">
-            <h2 className="text-lg font-bold text-center">تفاصيل الحساب</h2>
+          <div className="bg-green3 p-4 text-white relative ">
+            <h2 className="text-lg font-bold text-center max-[510px]:text-sm">تفاصيل الحساب</h2>
             <p className="text-emerald-100 text-center text-xs">
               نتائج حساب الزكاة المفصلة
             </p>
@@ -31,7 +31,7 @@ export const ZakatPrice = () => {
               className="absolute top-2 right-2 p-1  rounded-full transition"
               onClick={() => setShowResult(false)}
             >
-              <Trash width={30} className="text-white" />
+              <Trash width={30} fill={"#035116"}  />
             </button>
           </div>
 
@@ -39,40 +39,31 @@ export const ZakatPrice = () => {
           <div className="p-4 text-sm">
             {/* Zakat amounts */}
             <div className="space-y-3 mb-4">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex justify-between">
-                <span className="text-emerald-800 font-medium">قيمة الزكاة (معنا):</span>
-                <span className="text-emerald-700 font-bold">{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex justify-between max-[510px]:justify-evenly max-[510px]:p-1 max-[510px]:rounded-sm ">
+                <span className="text-emerald-800 font-medium max-[510px]:text-xs">قيمة الزكاة (معنا):</span>
+                <span className="text-emerald-700 font-bold max-[510px]:text-xs">{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
               </div>
-              <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 flex justify-between">
-                <span className="text-rose-800 font-medium text-xs">قيمة الزكاة بالضريبة IBS:</span>
-                <span className="text-rose-700 font-bold">{formatNumber(zakatTax)} د.ج</span>
+              <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 flex justify-between max-[510px]:justify-evenly max-[510px]:p-1 max-[510px]:rounded-sm">
+                <span className="text-rose-800 font-medium max-[510px]:text-xs ">قيمة الزكاة بالضريبة IBS:</span>
+                <span className="text-rose-700 font-bold max-[510px]:text-xs">{formatNumber(zakatTax)} د.ج</span>
               </div>
             </div>
 
             {/* Details */}
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between bg-gray-50 p-2 rounded">
+            <div className="space-y-2 mb-4  ">
+              <div className="flex justify-between mx-auto bg-gray-50 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
                 <span>قيمة النصاب:</span>
                 <span className="font-bold">{formatNumber(nissab)} د.ج</span>
               </div>
-              <div className="flex justify-between bg-gray-50 p-2 rounded">
+              <div className="flex justify-between mx-auto bg-gray-50 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
                 <span>الوعاء الزكوي:</span>
                 <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
               </div>
-              <div className="flex justify-between bg-gray-50 p-2 rounded">
+              <div className="flex justify-between mx-auto bg-gray-50 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
                 <span>التاريخ:</span>
                 <span className="font-bold">{today}</span>
               </div>
-              <div className="flex justify-between bg-gray-50 p-2 rounded">
-                <span>نوع الحول:</span>
-                <span
-                  className={`font-bold px-2 py-0.5 rounded-full text-xs ${
-                    isUnnaire ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
-                  }`}
-                >
-                  {isUnnaire ? "هجري" : "ميلادي"}
-                </span>
-              </div>
+            
             </div>
 
             {/* Contact Notice */}

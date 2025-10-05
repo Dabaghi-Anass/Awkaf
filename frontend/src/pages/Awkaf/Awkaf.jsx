@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import {Loader} from "../Components/Loader";
-import { Header } from "../Components/Header";
-import Project from "../Components/Project";
-import WakfPic from "../Components/WakfPic";
+
+import {Loader} from "../../Components/Loader"
+import { Header } from "../../Components/Header";
+import Project from "../../Components/Project";
+import WakfPic from "../../Components/WakfPic";
 import {
   Pagination,
   PaginationContent,
@@ -13,7 +14,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-import Footer from "../Components/Footer";
+import Footer from "../../Components/Footer";
+
 
 export default function Awkaf() {
   const [projects, setProjects] = useState([]);
@@ -60,9 +62,7 @@ export default function Awkaf() {
   return (
     <>
       <Header />
-      {loading ? <Loader/> :(
-       <WakfPic />
-      ) }
+     
       
 
       {/* Projects Section */}

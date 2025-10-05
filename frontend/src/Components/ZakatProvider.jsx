@@ -44,7 +44,6 @@ useEffect(() => {
             zakat_result:zakatFormInfos.zakatAmount,
             zakat_base:zakatFormInfos.totalAmount,
             calculation_date: zakatFormInfos.calculationDate,
-            month_type: isUnnaire ? "هجري" : "ميلادي",
             nissab:nissab
            
         };

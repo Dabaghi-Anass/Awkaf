@@ -6,10 +6,10 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Awkaf from './pages/Awkaf.jsx'
-import About from './pages/About.jsx'
+
+import About from './pages/About/About.jsx'
 import Home from './pages/Home.jsx';
-import ZakatCal from './pages/ZakatCal.jsx';
+import ZakatCal from './pages/ZakatCalculator/ZakatCal.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { Admin } from './pages/Admin.jsx';
@@ -17,7 +17,7 @@ import { DashboardAdmin } from './pages/DashboardAdmin.jsx';
 import { ZakatProvider } from './Components/ZakatProvider.jsx';
 import { AdminRegister } from './pages/AdminRegister.jsx';
 import { AdminLogin } from './pages/AdminLogin.jsx';
-import { Contact } from './pages/Contact.jsx';
+import { Contact } from './pages/Contact/Contact.jsx';
 import { WakfP } from './pages/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 import App from './App.jsx';
@@ -31,10 +31,11 @@ import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './Components/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
-import { Maliki } from './Components/Maliki.jsx';
 
+import "./i18n"; //
 import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
 import { Ma7acil } from './Components/Ma7acil.jsx';
+import Awkaf from './pages/Awkaf/Awkaf.jsx';
 
 const router = createBrowserRouter([
   {

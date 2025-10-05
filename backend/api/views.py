@@ -114,7 +114,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 
-class UserLoginView(APIView):
+class UserLoginRequestOTP(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -131,17 +131,14 @@ class UserLoginView(APIView):
         if not user.is_active:
             return Response({"error": "Email not verified. Please verify your email."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Authenticate the user
+        # Authenticate after checking if the user is active
         user = authenticate(username=username, password=password)
         if not user:
             return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Generate JWT tokens directly without OTP
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh)
-        })
+        # Send OTP email
+        send_otp_email(user)
+        return Response({"message": "OTP sent to your email. Enter OTP to proceed."})
 
 class UserVerifyOTP(APIView):
     permission_classes = [AllowAny]
@@ -200,7 +197,7 @@ class AdminRegisterView(APIView):
             return Response({"message": "Admin account created. Please verify your email."}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-class AdminLoginView(APIView):
+class AdminLoginRequestOTP(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -208,7 +205,7 @@ class AdminLoginView(APIView):
         password = request.data.get("password")
         secret_key = request.data.get("secret_key")
 
-        # First, check if the user exists and is staff
+        # First, check if the user exists
         user = User.objects.filter(username=username).first()
         
         if not user or not user.is_staff:
@@ -218,7 +215,7 @@ class AdminLoginView(APIView):
         if not user.is_active:
             return Response({"error": "User is not verified. Please verify your email first."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Authenticate the admin user
+        # Authenticate after checking if the user is active
         user = authenticate(username=username, password=password)
         if not user:
             return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
@@ -227,12 +224,8 @@ class AdminLoginView(APIView):
         if secret_key != settings.ADMIN_SECRET_KEY:
             return Response({"error": "Invalid secret key"}, status=status.HTTP_403_FORBIDDEN)
 
-        # Generate JWT tokens directly without OTP for admin
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh)
-        })
+        send_otp_email(user)  # Send OTP email
+        return Response({"message": "OTP sent to your email. Enter OTP to proceed."})
 class AdminVerifyOTP(APIView):
     permission_classes = [AllowAny]
 
@@ -1310,7 +1303,7 @@ def zakat_history(request):
     Save zakat calculation in the database for the authenticated user.
     """
     data = request.data
-    required = ['zakat_base', 'zakat_result', 'month_type', 'nissab']
+    required = ['zakat_base', 'zakat_result', 'nissab']
     if any(data.get(k) is None for k in required):
         return Response({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1318,7 +1311,6 @@ def zakat_history(request):
         user             = request.user,
         zakat_base       = data['zakat_base'],
         zakat_result     = data['zakat_result'],
-        month_type       = data['month_type'],
         calculation_date = now().date(),
         nissab           = data['nissab']
     )

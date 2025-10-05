@@ -186,9 +186,7 @@ const UserHistory = () => {
                                                         
                                                     </div>
                                                 </TableHead>
-                                                <TableHead className="text-center font-semibold text-gray-700">
-                                                    نوع الحول
-                                                </TableHead>
+                                                
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -210,11 +208,7 @@ const UserHistory = () => {
                                                             {item.zakat_result.toLocaleString("fr-FR")} د.ج
                                                         </span>
                                                     </TableCell>
-                                                    <TableCell className="py-4">
-                                                        <span className="inline-flex px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-800">
-                                                            {item.month_type}
-                                                        </span>
-                                                    </TableCell>
+                                                    
                                                 </TableRow>
                                             ))}
                                         </TableBody>

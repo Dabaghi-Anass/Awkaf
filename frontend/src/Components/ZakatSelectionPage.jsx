@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Header } from "./Header";
 import Footer from "./Footer";
-import { CalForm } from "./CalForm";
+import { CalForm } from "../pages/ZakatCalculator/Components/CalForm";
 import '../CSS/Zakat1.css'
 export default function ZakatSelectionPage() {
   const [selectedOption, setSelectedOption] = useState(null);

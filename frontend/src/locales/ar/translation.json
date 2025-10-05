@@ -1,0 +1,54 @@
+{
+  "form": {
+    "cashAndEquivalents": "النقود وما في حكمها",
+    "cashOnHand": "نقدية بالصندوق",
+    "cashInBank": "نقدية لدى المصارف (جارية/تحت الطلب)",
+    "certifiedChecks": "شيكات مصادق عليها",
+    "foreignCurrency": "العملات الأجنبية",
+    "digitalAssets": "أصول رقمية/نقود مشفّرة متاحة",
+    "timeDeposits": "ودائع أمانة/حسابات ثابتة يمكن التصرف فيها",
+    "qardHasanGiven": "قرض حسن مُقرض (حتى يُقبض)",
+    "accruedIncome": "إيرادات مستحقة غير مقبوضة",
+    "cashFromNonZakatAssets": "نقود من بيع أصول غير زكوية",
+
+    "receivables": "الذمم المدينة (الديون المرجوّة)",
+    "currentReceivables": "ديون حالّة مرجوّة على العملاء",
+    "deferredReceivables": "ديون مؤجّلة مرجوّة",
+    "notesReceivable": "أوراق قبض",
+    "qardOrInstallments": "ديون لي مرجوّة (قرض حسن/بيع احتكاري)",
+    "receivablesFromNonZakatAssets": "ديون عن بيع أصول غير زكوية/غير تجارية",
+    "rentIncomeDue": "إيرادات إيجار/كراء حل أجلها",
+    "doubtfulDebts": "ديون مشكوك فيها/ميؤوس منها",
+
+    "zakatInvestments": "الاستثمارات الزكوية",
+    "sharesForTrade": "أسهم/صكوك/حصص للتجارة",
+    "realEstateForTrade": "حصص عقارية للتجارة",
+    "bondsOrTreasuryBills": "استثمارات سندات/أذون خزينة",
+    "sharesForIncome": "أسهم بنية العائد (احتفاظ)",
+
+    "tradeInventory": "عروض التجارة والمخزون",
+    "finishedGoods": "بضاعة تامة الصنع",
+    "workInProgress": "بضاعة تحت التشغيل",
+    "rawMaterials": "مواد أولية",
+    "goodsInTransit": "بضاعة في الطريق",
+    "goodsOnConsignment": "بضاعة أمانة لدى الغير",
+    "sparePartsForTrade": "قطع غيار بقصد المتاجرة",
+    "giftedOrInheritedGoods": "عروض تجارة بهبة/إرث",
+    "realEstateHeldForTrade": "عقارات محتكرة للتجارة",
+    "unsellableInventory": "بضاعة كاسدة/غير معدّة للبيع",
+
+    "liabilities": "الالتزامات واجبة الخصم",
+    "shortTermLoans": "قروض قصيرة الأجل مستحقة خلال الحول",
+    "notesPayable": "أوراق دفع/دائنون",
+    "employeeRights": "حقوق موظفين (أجور/إجازات)",
+    "taxesDue": "ضرائب مستحقة خلال الحول",
+    "mudarabahProfits": "أرباح مضاربة للغير",
+    "customerDeposits": "تأمينات العملاء للرد",
+    "generalReserves": "احتياطيات عامة/مخصصات تقديرية",
+
+    "malikiAssets": "الذمات المالية",
+    "companyAssets": "ذمة المالية للشركة",
+    "personalAssets": "ذمة المالية للشخص المعني",
+    "insolvencyLimit": "حد المفلس"
+  }
+}
