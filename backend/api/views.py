@@ -1331,15 +1331,25 @@ def get_zakat_history(request):
 @api_view(['GET'])
 def get_zakat_history_by_user(request, user_id):
     """
-    Retrieve Zakat history for a specific user.
+    Retrieve paginated Zakat history for a specific user.
     """
     qs = ZakatHistory.objects.filter(user_id=user_id).order_by('-calculation_date')
-    if not qs.exists():
-        return Response({"message": "No zakat history found for this user."},
-                        status=status.HTTP_404_NOT_FOUND)
-    serializer = ZakatHistorySerializer(qs, many=True, context={'request': request})
-    return Response(serializer.data, status=status.HTTP_200_OK)
 
+    if not qs.exists():
+        return Response(
+            {"message": "No zakat history found for this user."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # ✅ Create paginator
+    paginator = PageNumberPagination()
+    paginator.page_size = 10  # 10 items per page
+    paginated_qs = paginator.paginate_queryset(qs, request)
+
+    serializer = ZakatHistorySerializer(paginated_qs, many=True, context={'request': request})
+
+    # ✅ Return paginated response
+    return paginator.get_paginated_response(serializer.data)
 
 class CheckTokenView(APIView):
     permission_classes = [AllowAny]
@@ -1399,3 +1409,25 @@ class CurrentUserView(APIView):
     def get(self, request):
         serializer = UserInfoSerializer(request.user)
         return Response(serializer.data)
+
+
+
+
+@api_view(['DELETE'])
+def delete_zakat_history(request, pk):
+    """
+    Delete a specific Zakat history entry by ID.
+    """
+    try:
+        zakat_history = ZakatHistory.objects.get(pk=pk)
+    except ZakatHistory.DoesNotExist:
+        return Response(
+            {"error": "Zakat history not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    zakat_history.delete()
+    return Response(
+        {"message": "Zakat history deleted successfully."},
+        status=status.HTTP_204_NO_CONTENT
+    )

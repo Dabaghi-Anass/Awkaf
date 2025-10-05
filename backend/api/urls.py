@@ -46,6 +46,7 @@ urlpatterns = [
     path('calculate-zakat/', ZakatCalculationView.as_view()),
     path('check-token/', CheckTokenView.as_view(), name='check-token'),
      path('me/', CurrentUserView.as_view(), name='current-user'),
+    path('delete-zakat-history/<int:pk>/', views.delete_zakat_history, name='delete_zakat_history'),
 
     
 ]
