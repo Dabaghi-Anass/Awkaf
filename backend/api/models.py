@@ -81,6 +81,7 @@ class CompanyField(models.Model):
     )
     name = models.CharField(max_length=100)   # utilisé dans les formules
     label = models.CharField(max_length=255)  # étiquette d’affichage
+    
 class ZakatHistory(models.Model):
     user = models.ForeignKey(
         User,
@@ -97,3 +98,26 @@ class ZakatHistory(models.Model):
 
     def __str__(self):
         return f"ZakatHistory({self.user.username} - {self.month_type} - {self.calculation_date})"
+
+
+
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils.timezone import now
+
+class Ma7acil(models.Model):
+    id_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='ma7acil_entries'
+    )
+    zakat_amount = models.FloatField(default=0.0)
+    total_amount = models.FloatField(default=0.0)
+    corp_type = models.CharField(max_length=100)
+    date = models.DateField(default=now)
+
+    class Meta:
+        db_table = 'ma7acil'  # database table name
+
+    def __str__(self):
+        return f"Ma7acil({self.id_user.username} - {self.corp_type} - {self.date})"

@@ -1431,3 +1431,82 @@ def delete_zakat_history(request, pk):
         {"message": "Zakat history deleted successfully."},
         status=status.HTTP_204_NO_CONTENT
     )
+
+
+
+
+from .models import Ma7acil
+from .serializer import Ma7acilSerializer  # Make sure you have this serializer
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_ma7acil(request):
+    """
+    Save a Ma7acil record for the authenticated user.
+    """
+    data = request.data
+    required_fields = ['zakat_amount', 'total_amount', 'corp_type']
+    
+    # Validate input
+    if any(data.get(field) is None for field in required_fields):
+        return Response({"error": "Invalid or missing data."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Create record
+    record = Ma7acil.objects.create(
+        id_user=request.user,
+        zakat_amount=data['zakat_amount'],
+        total_amount=data['total_amount'],
+        corp_type=data['corp_type'],
+        date=now().date()
+    )
+
+    serializer = Ma7acilSerializer(record, context={'request': request})
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+
+
+@api_view(['GET'])
+def get_ma7acil_by_user(request, user_id):
+    """
+    Retrieve paginated Ma7acil records for a specific user.
+    """
+    qs = Ma7acil.objects.filter(id_user_id=user_id).order_by('-date')
+
+    if not qs.exists():
+        return Response(
+            {"message": "No ma7acil records found for this user."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # ✅ Create paginator
+    paginator = PageNumberPagination()
+    paginator.page_size = 10  # 10 items per page
+    paginated_qs = paginator.paginate_queryset(qs, request)
+
+    serializer = Ma7acilSerializer(paginated_qs, many=True, context={'request': request})
+
+    # ✅ Return paginated response
+    return paginator.get_paginated_response(serializer.data)
+
+@api_view(['DELETE'])
+def delete_ma7acil(request, pk):
+    """
+    Delete a specific Ma7acil entry by ID.
+    """
+    try:
+        ma7acil_entry = Ma7acil.objects.get(pk=pk)
+    except Ma7acil.DoesNotExist:
+        return Response(
+            {"error": "Ma7acil record not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    ma7acil_entry.delete()
+    return Response(
+        {"message": "Ma7acil record deleted successfully."},
+        status=status.HTTP_204_NO_CONTENT
+    )
+

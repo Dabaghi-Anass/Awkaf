@@ -347,3 +347,14 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
     def get_is_staff(self, obj):
         return 1 if obj.is_staff else 0
+
+
+
+
+from rest_framework import serializers
+from .models import Ma7acil
+
+class Ma7acilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ma7acil
+        fields = '__all__'
