@@ -115,9 +115,12 @@ export const CalForm = () => {
   };
 
   const calcZakat = (method) => {
+  if(  nissab === null) {
+     setPopup({message:'يرجى إدخال قيمة الذهب من أجل تحديد قيمة النصاب',type:'error'});
+     return
+  }   
     const values = flattenData(formData);
-    console.log("Values:", values);
-
+    
     const commonAssets = 
       (values.x1 || 0) + (values.x2 || 0) + (values.x3 || 0) +
       (values.x4 || 0) + (values.x5 || 0) + (values.x6 || 0) +
@@ -168,8 +171,8 @@ export const CalForm = () => {
         
     setZakatFormInfos(prevState => ({
       ...prevState,
-      zakatAmount: zakat.toFixed(3),  
-      totalAmount: zakatBase.toFixed(3),  
+      zakatAmount: zakat.toFixed(2),  
+      totalAmount: zakatBase.toFixed(2),  
       calculationDate: calculationDate,
     }));
 
@@ -329,11 +332,12 @@ export const CalForm = () => {
   return (
     <div dir="rtl" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
       {/* Header Section */}
-      <div className="header-sec ">
+      <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-700  text-white py-16 mt-15
+      max-sm:py-8 mb-2">
         <div className="container text-center  mx-auto px-6">
           
-            <h1 className="text-3xl  font-bold mb-2 max-[515px]:text-[1.5rem]">حاسبة الزكاة الاحترافية</h1>
-            <p className="text-white max-[515px]:text-[0.7em]">احسب زكاة أموالك وفقاً للمعايير الشرعية المعتمدة</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 max-sm:text-2xl">حاسبة الزكاة الاحترافية</h1>
+            <p className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto max-sm:text-sm">احسب زكاة أموالك وفقاً للمعايير الشرعية المعتمدة</p>
           
         </div>
       </div>
@@ -411,7 +415,7 @@ export const CalForm = () => {
                 {/* Calculate Button */}
                 <div className="text-center mt-10 pt-6 border-t border-gray-200">
                   <button 
-                    className="buttonAi w-1/2 "
+                    className="custom-button py-2 mb-4 rounded-sm w-1/2 "
                     onClick={() => calcZakat(methodCalcul)}
                   >
                     

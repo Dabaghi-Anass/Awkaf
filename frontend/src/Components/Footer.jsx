@@ -13,11 +13,11 @@ export default function Footer() {
       <div className="relative border-b border-gray-700/50">
         <div className="container mx-auto px-6 py-16" dir="rtl">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 className="text-4xl  font-bold text-white mb-4 max-sm:text-2xl">
               شركاؤنا المميزون
             </h2>
-            <div className="w-24 h-1 bg-green-400 mx-auto rounded-full"></div>
-            <p className="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
+            <div className="w-24 h-1 bg-green-400 mx-auto rounded-full "></div>
+            <p className="text-gray-300 mt-2 text-lg max-w-2xl mx-auto max-sm:text-sm ">
               نفتخر بشراكتنا مع المؤسسات الرائدة في خدمة المجتمع
             </p>
           </div>
@@ -25,7 +25,7 @@ export default function Footer() {
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Partner 1 */}
             <div className="group">
-              <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm rounded-2xl p-8 border border-green-500/30 hover:border-green-400/50 transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20">
+              <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm rounded-2xl p-8 border border-green-500/30 hover:border-green-400/50 transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20 max-sm:p-4">
                 <div className="flex items-center justify-center mb-4">
                   <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -33,10 +33,10 @@ export default function Footer() {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-center text-white mb-2">
+                <h3 className="text-2xl font-bold text-center text-white mb-2 max-sm:text-xl">
                   مصرف السلام
                 </h3>
-                <p className="text-gray-300 text-center">
+                <p className="text-gray-300 text-center max-sm:text-sm">
                   شريك مصرفي موثوق في الخدمات المالية الإسلامية
                 </p>
               </div>
@@ -52,10 +52,10 @@ export default function Footer() {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-center text-white mb-2">
+                <h3 className="text-2xl font-bold text-center text-white mb-2 max-sm:text-xl">
                   وزارة الشؤون الدينية والأوقاف
                 </h3>
-                <p className="text-gray-300 text-center">
+                <p className="text-gray-300 text-center max-sm:text-sm">
                   الجهة الرسمية المشرفة على الأوقاف والشؤون الدينية
                 </p>
               </div>
@@ -72,16 +72,8 @@ export default function Footer() {
             {/* Platform Info */}
             <div className="lg:col-span-1">
               <div className="mb-8">
-                <div className="flex items-center justify-start mb-6">
-                  <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center ml-4">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.51-1.31c-.562-.649-1.413-1.076-2.353-1.253V5z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <h2 className="text-2xl font-bold text-white">منصة الزكاة</h2>
-                </div>
-                <h1 className="text-3xl font-bold text-white leading-tight mb-6">
+                
+                <h1 className="text-2xl font-bold text-white leading-tight mb-6">
                   منصة حساب زكاة الشركات<br />
                   وتوجيهها للوقف والتنمية
                 </h1>
@@ -95,7 +87,7 @@ export default function Footer() {
                 <h3 className="text-xl font-semibold text-white mb-4">تابعونا</h3>
                 <div className="flex space-x-4">
                   <a href="#" className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-300 group">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 1200 1227" fill="none"><g clip-path="url(#clip0_1_2)"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="black"/></g><defs><clipPath id="clip0_1_2"><rect width="1200" height="1227" fill="white"/></clipPath></defs></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 1200 1227" fill="none"><g clipPath="url(#clip0_1_2)"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="black"/></g><defs><clipPath id="clip0_1_2"><rect width="1200" height="1227" fill="white"/></clipPath></defs></svg>
                   </a>
                   <a href="#" className="w-12 h-12 bg-blue-800 rounded-full flex items-center justify-center hover:bg-blue-900 transition-colors duration-300 group">
                     <svg className="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
@@ -118,7 +110,7 @@ export default function Footer() {
                 
                 {/* Contact Information */}
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center">
                     <svg className="w-6 h-6 ml-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                     </svg>
@@ -167,7 +159,7 @@ export default function Footer() {
 
                 {/* Navigation Links */}
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center">
                     <svg className="w-6 h-6 ml-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                     </svg>

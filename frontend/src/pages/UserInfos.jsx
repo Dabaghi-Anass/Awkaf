@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
-import { Header } from "./Header"
-import Footer from "./Footer"
+import { Header } from "../Components/Header"
+import Footer from "../Components/Footer"
+import { MessagePopup } from "@/Components/MessagePopup"
 
 
 // Mock components for demonstration
@@ -15,14 +16,15 @@ export const UserInfos = () => {
     old_password: "",
     password: "",
   })
-  const [message, setMessage] = useState("")
-  const [error, setError] = useState("")
+  const[isLoading,setIsLoading]=useState(false);
+  const [error, setError] = useState({})
   const [activeTab, setActiveTab] = useState("account")
+  const [popup,setPopup]=useState({message:'',type:''});
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken")
     if (!token) {
-      setError("لم يتم العثور على رمز الدخول.")
+     setPopup({message:"لم يتم العثور على رمز الدخول.",type:"error"})
       return
     }
 
@@ -44,7 +46,7 @@ export const UserInfos = () => {
         }))
       } catch (err) {
         console.error(err)
-        setError("تعذر جلب بيانات المستخدم.")
+        setPopup({message:"حدث خطاء",type:"error"})
       }
     }
 
@@ -56,27 +58,57 @@ export const UserInfos = () => {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  const validate = (values) => {
+        const errors = {};
+        if (!values.password.trim()) {
+            errors.password = "كلمة المرور  الجديدة مطلوبة!";
+        }
+        if (!values.old_password.trim()) {
+            errors.old_password =" كلمة المرور القديمة مطلوبة!";
+        }
+        return errors;
+    };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setMessage("")
-    setError("")
+   
+   if(activeTab==="password"){
+    const errors = validate(formData);
+    setError(errors);
+    if (Object.keys(errors).length > 0) return;
+   }
+    
+   
+
+    
 
     const token = localStorage.getItem("accessToken")
     if (!token) {
-      setError("لم يتم العثور على رمز الدخول.")
+     setPopup({message:"لم يتم العثور على رمز الدخول.",type:"error"})
+
       return
     }
 
     if (formData.old_password && !formData.password) {
-      setError("يجب إدخال كلمة مرور جديدة إذا قمت بإدخال كلمة المرور القديمة.")
+      setPopup({message:"يرجىادخال كلمة المرور",type:"error"})
       return
     }
 
-    const payload = {}
-    for (const key in formData) {
-      if (formData[key]) payload[key] = formData[key]
-    }
+   const payload = {}
+  for (const key in formData) {
+    if (formData[key]) payload[key] = formData[key]
+  }
 
+  // 🚨 Only keep password fields if on password tab
+  if (activeTab !== "password") {
+    delete payload.password
+    delete payload.old_password
+  }
+
+
+
+    
+    setIsLoading(true);
     try {
       const response = await fetch("http://127.0.0.1:8000/apif/user/update/", {
         method: "PATCH",
@@ -91,23 +123,25 @@ export const UserInfos = () => {
 
       if (!response.ok) {
         if (data.old_password) {
-          setError(data.old_password[0])
+          setPopup({message:data.old_password,type:"error"})
         } else if (typeof data === "object") {
           const firstError = Object.values(data)[0]
-          setError(Array.isArray(firstError) ? firstError[0] : firstError)
+          setPopup({message:firstError,type:"error"})
         } else {
-          setError("فشل تحديث البيانات.")
+          setPopup({message:data,type:"error"})
         }
         return
       }
+      setIsLoading(false);
 
-      setMessage("تم تحديث الملف الشخصي بنجاح.")
+      setPopup({message:'تم تحديث البيانات بنجاح',type:'success'})
       setFormData((prev) => ({ ...prev, password: "", old_password: "" }))
     } catch (err) {
-      setError("خطأ في الخادم.")
+      setPopup({message:"حدث خطاء",type:"error"})
     }
   }
-
+ 
+  
   return (
     <>
       <Header />
@@ -126,7 +160,7 @@ export const UserInfos = () => {
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
               
               {/* Tab Headers */}
-              <div className="bg-green2">
+              <div className="bg-green4">
                 <div className="flex rounded-xl bg-white/10 p-1">
                   <button
                     onClick={() => setActiveTab("account")}
@@ -158,7 +192,7 @@ export const UserInfos = () => {
                 {activeTab === "account" && (
                   <div className="space-y-6 ">
                     <div className="mb-4">
-                      <h2 className="text-2xl font-bold text-gray-800 mb-2"> معلومات الحساب</h2>
+                      <h2 className="text-xl font-bold text-gray-800 mb-2"> معلومات الحساب</h2>
                       <p className="text-gray-600"> قم بتحديث معلومات حسابك.</p>
                     </div>
                    
@@ -224,9 +258,9 @@ export const UserInfos = () => {
                     <div className="pt-6 border-t text-center border-gray-200">
                       <button
                         onClick={handleSubmit}
-                        className=" w-1/2 custom-button"
+                        className=" w-1/2 custom-button py-2 rounded-sm"
                       >
-                        حفظ التغييرات
+                        {isLoading ? "جاري التحديث..." : "تحديث المعلومات"}
                       </button>
                     </div>
                   </div>
@@ -236,7 +270,7 @@ export const UserInfos = () => {
                 {activeTab === "password" && (
                   <div className="space-y-6">
                     <div className="mb-4">
-                      <h2 className="text-2xl font-bold text-gray-800 mb-2">تغيير كلمة المرور</h2>
+                      <h2 className="text-xl font-bold text-gray-800 mb-2">تغيير كلمة المرور</h2>
                       <p className="text-gray-600">قم بإدخال كلمة المرور القديمة والجديدة</p>
                     </div>
 
@@ -246,6 +280,7 @@ export const UserInfos = () => {
                           كلمة المرور الحالية
                         </label>
                         <input
+                        required
                           type="password"
                           name="old_password"
                           value={formData.old_password}
@@ -253,13 +288,16 @@ export const UserInfos = () => {
                           className="w-full px-4 py-3 custom-input"
                           placeholder="أدخل كلمة المرور الحالية"
                         />
+                         {error.old_password && <p className="text-red-500 text-sm  mt-2">{error.old_password}</p>}
                       </div>
+                     
 
                       <div>
                         <label className="custom-form-label  mb-2">
                           كلمة المرور الجديدة
                         </label>
                         <input
+                        required
                           type="password"
                           name="password"
                           value={formData.password}
@@ -267,31 +305,29 @@ export const UserInfos = () => {
                           className="w-full px-4 py-3 custom-input"
                           placeholder="أدخل كلمة المرور الجديدة"
                         />
+                        {error.password && <p className="text-red-500 text-sm  mt-2">{error.password}</p>}
                       </div>
+                      
                     </div>
 
                     <div className="pt-6 border-t text-center border-gray-200">
                       <button
                         onClick={handleSubmit}
-                        className=" w-1/2 custom-button"
+                        className=" w-1/2 custom-button py-2 rounded-sm"
                       >
-                        تحديث كلمة المرور
+                        {isLoading ? "جاري التحديث..." : "تحديث كلمة المرور"}
                       </button>
                     </div>
                   </div>
                 )}
 
                 {/* Messages */}
-                {message && (
-                  <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                    <p className="text-emerald-800 font-medium">{message}</p>
-                  </div>
-                )}
-                {error && (
-                  <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-800 font-medium">{error}</p>
-                  </div>
-                )}
+                 <MessagePopup
+                   message={popup.message}
+                   type={popup.type}
+                   onClose={() => setPopup({ message: "", type: "" })}
+                 />
+               
               </div>
             </div>
           </div>

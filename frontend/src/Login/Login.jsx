@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Loader } from "../Components/Loader";
 import { MessagePopup } from '../Components/MessagePopup';
-
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 export const Login = ({ handleChange, formData }) => {
     const [loginError, setLoginError] = useState("");
     const [formErrors, setFormErrors] = useState({});
@@ -133,22 +138,41 @@ export const Login = ({ handleChange, formData }) => {
                         </>
                     ) : (
                         <>
-                            <div>
-                                <label className="block text-[0.8em] text-gray-600 mb-1">أدخل رمز OTP</label>
-                                <input
-                                    type="text"
-                                    value={otpCode}
-                                    onChange={(e) => setOtpCode(e.target.value)}
-                                    className="w-full px-3 py-1 custom-input"
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className="w-full bg-green-500 text-white py-1 rounded-md hover:bg-green-600 transition"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? "جاري التحقق..." : "تحقق من OTP"}
-                            </button>
+                <div className="max-w-md mx-auto p-6 space-y-4">
+                    <div>
+                        <label className="block text-[0.8em] text-gray-600 mb-2">
+                        أدخل رمز OTP
+                        </label>
+                        <div className="flex justify-center" dir="ltr">
+                        <InputOTP 
+                            maxLength={6} 
+                            value={otpCode}
+                            onChange={(value) => setOtpCode(value)}
+                        >
+                            <InputOTPGroup>
+                            <InputOTPSlot index={0} className="w-10 h-10 text-lg border-gray-300 " />
+                            <InputOTPSlot index={1} className="w-10 h-10 text-lg border-gray-300" />
+                            <InputOTPSlot index={2} className="w-10 h-10 text-lg border-gray-300" />
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                            <InputOTPSlot index={3} className="w-10 h-10 text-lg border-gray-300" />
+                            <InputOTPSlot index={4} className="w-10 h-10 text-lg border-gray-300" />
+                            <InputOTPSlot index={5} className="w-10 h-10 text-lg border-gray-300" />
+                            </InputOTPGroup>
+                        </InputOTP>
+                        </div>
+                     </div>
+            
+                        <button
+                            type="submit"
+                            onClick={handleOtpSubmit}
+                            className="w-full b custom-button py-2 rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isLoading || otpCode.length !== 6}
+                        >
+                            {isLoading ? "جاري التحقق..." : "تحقق من OTP"}
+                        </button>
+                </div>
                         </>
                     )}
                 </form>

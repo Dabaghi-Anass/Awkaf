@@ -2,16 +2,24 @@ import React, { useContext, useState } from "react";
 import { ZakatContext } from "../../../Components/ZakatProvider";
 import { Trash } from "../../../assets/icons/trash";
 import { Link } from "react-router-dom";
+import { Printed } from "./Printed";
+import { formatNumber } from "./CalForm";
 
+export const today = new Date().toISOString().split("T")[0];
 export const ZakatPrice = () => {
-  const { zakatFormInfos, setShowResult, saveZakatHistory, isUnnaire, nissab } = useContext(ZakatContext);
+  const { zakatFormInfos, setShowResult, saveZakatHistory, nissab } = useContext(ZakatContext);
 
   const zakatTax = zakatFormInfos.zakatAmount * 1.26;
 
-  const formatNumber = (num) => (!num ? "0" : num.toLocaleString("fr-FR"));
-  const handlePrint = () => window.print();
+ 
 
-  const today = new Date().toISOString().split("T")[0];
+  const handlePrint = () => {
+    window.print();
+  };
+  
+ 
+  
+  
 
   return (
      <>
@@ -20,7 +28,7 @@ export const ZakatPrice = () => {
         <div className="bg-white rounded-xl shadow-xl max-[510px]:w-[70%] w-full max-w-[30em] relative overflow-hidden animate-in fade-in zoom-in duration-300">
           
           {/* Header */}
-          <div className="bg-green3 p-4 text-white relative ">
+          <div className="bg-green4 p-4 text-white relative ">
             <h2 className="text-lg font-bold text-center max-[510px]:text-sm">تفاصيل الحساب</h2>
             <p className="text-emerald-100 text-center text-xs">
               نتائج حساب الزكاة المفصلة
@@ -31,7 +39,7 @@ export const ZakatPrice = () => {
               className="absolute top-2 right-2 p-1  rounded-full transition"
               onClick={() => setShowResult(false)}
             >
-              <Trash width={30} fill={"#035116"}  />
+              <Trash width={30} fill={"#ffffff"}  />
             </button>
           </div>
 
@@ -51,15 +59,15 @@ export const ZakatPrice = () => {
 
             {/* Details */}
             <div className="space-y-2 mb-4  ">
-              <div className="flex justify-between mx-auto bg-gray-50 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
+              <div className="flex justify-between mx-auto bg-gray-200 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
                 <span>قيمة النصاب:</span>
                 <span className="font-bold">{formatNumber(nissab)} د.ج</span>
               </div>
-              <div className="flex justify-between mx-auto bg-gray-50 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
+              <div className="flex justify-between mx-auto bg-gray-200 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
                 <span>الوعاء الزكوي:</span>
                 <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
               </div>
-              <div className="flex justify-between mx-auto bg-gray-50 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
+              <div className="flex justify-between mx-auto bg-gray-200 p-2 rounded max-[510px]:text-xs max-[510px]:w-[80%]">
                 <span>التاريخ:</span>
                 <span className="font-bold">{today}</span>
               </div>
@@ -69,8 +77,8 @@ export const ZakatPrice = () => {
             {/* Contact Notice */}
             <div className="bg-blue-50 border border-blue-200 rounded p-2 mb-4 text-xs text-right">
               إن أردت إخراج الزكاة دون ضريبة{" "}
-              <Link to="/contact" className="text-blue-600 font-semibold hover:underline">
-                اتصل بنا
+              <Link to="/contact" className="text-green3 font-bold hover:underline">
+                تواصل معنا
               </Link>
             </div>
 
@@ -78,13 +86,13 @@ export const ZakatPrice = () => {
             <div className="flex gap-2">
               <button
                 onClick={saveZakatHistory}
-                className="flex-1 bg-emerald-600 text-white font-bold py-2 rounded hover:bg-emerald-700 transition"
+                className="flex-1 custom-button py-2 rounded-sm"
               >
                 حفظ
               </button>
               <button
                 onClick={handlePrint}
-                className="flex-1 bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 transition"
+                className="flex-1 custom-button py-2 rounded-sm"
               >
                 طباعة
               </button>
@@ -93,42 +101,10 @@ export const ZakatPrice = () => {
         </div>
       </div>
 
-      {/* Printable Section */}
-      <div
-        id="printable-receipt"
-        className="hidden print:block p-6 text-black border border-gray-400 bg-white max-w-md mx-auto text-sm"
-      >
-        <div className="text-center mb-4 border-b pb-3">
-          <h1 className="text-xl font-bold text-green-700">وصل دفع الزكاة</h1>
-        </div>
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between">
-            <span>التاريخ:</span>
-            <span className="font-bold">{today}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>نوع الحول:</span>
-            <span className="font-bold">{isUnnaire ? "هجري" : "ميلادي"}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>قيمة النصاب:</span>
-            <span className="font-bold">{formatNumber(nissab)} د.ج</span>
-          </div>
-          <div className="flex justify-between">
-            <span>الوعاء الزكوي:</span>
-            <span className="font-bold">{formatNumber(zakatFormInfos.totalAmount)} د.ج</span>
-          </div>
-          <div className="bg-green-50 border border-green-300 rounded p-3 mt-3">
-            <div className="flex justify-between">
-              <span className="font-bold text-green-800">مبلغ الزكاة:</span>
-              <span className="font-bold text-green-700">{formatNumber(zakatFormInfos.zakatAmount)} د.ج</span>
-            </div>
-          </div>
-        </div>
-        <div className="mt-6 text-center text-gray-500 text-xs border-t pt-2">
-          <p>هذا وصل رسمي لدفع الزكاة - يُرجى الاحتفاظ به</p>
-        </div>
-      </div>
+      
+         <Printed />
+     
+     
     </>
   );
 };

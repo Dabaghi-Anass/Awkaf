@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/pagination"
 
 import Footer from "../../Components/Footer";
+import { MessagePopup } from "@/Components/MessagePopup";
 
 
 export default function Awkaf() {
@@ -23,7 +24,7 @@ export default function Awkaf() {
   const [loading, setLoading] = useState("");
   const projectPerPage = 9;
   const pagesVisited = pageNumber * projectPerPage;
-
+  const [popup, setPopup] = useState({ message: "", type: "" });
   const displayProjects = projects.slice(pagesVisited, pagesVisited + projectPerPage);
   const pageCount = Math.ceil(projects.length / projectPerPage);
 
@@ -43,14 +44,14 @@ export default function Awkaf() {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error("Backend error:", data);
+       
         throw new Error("Failed to fetch projects");
       }
 
       setProjects(data);
     } catch (error) {
-      console.error("Error fetching projects:", error);
-      alert("Failed to fetch projects");
+     setPopup({message:"حدث خطاء",type:"error"})
+      
     }
     setLoading(false);
   };
@@ -63,15 +64,23 @@ export default function Awkaf() {
     <>
       <Header />
      
-      
+      <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-700  text-white py-16 mt-15
+      max-sm:py-8">
+        <div className=" mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 max-sm:text-2xl">مشاريع الوقف</h1>
+          <p className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto max-sm:text-sm">
+            استثمر في الأجر الجاري وساهم في بناء مستقبل أفضل للأجيال القادمة
+          </p>
+         
+        </div>
+      </div>
 
       {/* Projects Section */}
-      <div className="bg-gray-300 py-6 mt-20">
+      <div className="bg-gray-300 py-6 ">
         <div className="container mx-auto px-4 ">
-          <h2 className="text-center text-2xl font-bold text-gray-800 mb-6">مشاريع الوقف</h2>
 
           {/* Project Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
+          <div className="grid  max-md:grid-cols-2 max-lg:grid-cols-3 max-sm:grid-cols-1 grid-cols-4 max-[515px]:grid-cols-1 gap-4 ">
             {displayProjects.map((project, id) => (
               <Project key={id} project={project} />
             ))}
@@ -102,7 +111,7 @@ export default function Awkaf() {
           <PaginationLink
             href="#"
             isActive={p === pageNumber}
-            className={p === pageNumber ? " bg-green-500 text-white border-0 hover:bg-green-500 hover:text-white" : "bg-white"}
+            className={p === pageNumber ? " bg-green4 text-white border-0 hover:bg-green4 hover:text-white" : "bg-white"}
             onClick={(e) => {
               e.preventDefault();
               setPageNumber(p);
@@ -135,7 +144,11 @@ export default function Awkaf() {
       <div className="flex justify-center my-8">
         <div className="w-24 h-1 bg-green-500"></div>
       </div>
-
+         <MessagePopup
+                 message={popup.message}
+                 type={popup.type}
+                 onClose={() => setPopup({ message: "", type: "" })}
+               />
       <Footer />
     </>
   );

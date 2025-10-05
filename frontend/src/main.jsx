@@ -18,7 +18,7 @@ import { ZakatProvider } from './Components/ZakatProvider.jsx';
 import { AdminRegister } from './pages/AdminRegister.jsx';
 import { AdminLogin } from './pages/AdminLogin.jsx';
 import { Contact } from './pages/Contact/Contact.jsx';
-import { WakfP } from './pages/WakfP.jsx';
+import { WakfP } from './pages/WakfProject/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
 import App from './App.jsx';
 import { ProtectedRoute } from './ProtectedRoutes.jsx';
@@ -29,9 +29,9 @@ import ErrorPage from './pages/ErrorPage.jsx';
 import { ForgotPassword } from './Components/ForgotPassword.jsx';
 import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
-import { UserInfos } from './Components/UserInfos.jsx';
+import { UserInfos } from './pages/UserInfos.jsx';
 import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
-
+import {HomePage} from './pages/HomePage.jsx'
 import "./i18n"; //
 import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
 import { Ma7acil } from './Components/Ma7acil.jsx';
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <Settings />
+          <HomePage />
         </ProtectedRoute>
       </ScrollToTop>
     ),
