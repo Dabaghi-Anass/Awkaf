@@ -6,6 +6,46 @@ export const Ma7acil = () => {
   const [monthType, setMonthType] = useState('hijri');
   const [collapsedCrops, setCollapsedCrops] = useState({});
 
+  const saveZakatHistory = async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            alert("Authentication required! Please log in.");
+            return;
+        }
+
+        const zakatData = {
+            zakat_result:zakatFormInfos.zakatAmount,
+            zakat_base:zakatFormInfos.totalAmount,
+            calculation_date: zakatFormInfos.calculationDate,
+            
+           
+        };
+
+        try {
+            const response = await fetch("http://localhost:8000/apif/save-zakat-history/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(zakatData),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("Backend error:", data);
+                throw new Error("Failed to save Zakat history");
+            }
+
+            setPopup({message:"تم حفظ الزكاة بنجاح!",type:"success"});
+            setZakatFormInfos({});
+            setShowResult(false);
+          
+        } catch (error) {
+            console.error("Error:", error);
+           setPopup({message:"حدث خطاء",type:"error"})
+        }
+    };
   const RATES = {
     rain: 0.10,
     mixed: 0.075,
