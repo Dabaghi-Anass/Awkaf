@@ -36,6 +36,7 @@ import "./i18n"; //
 import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
 import { Ma7acil } from './Components/Ma7acil.jsx';
 import Awkaf from './pages/Awkaf/Awkaf.jsx';
+import Ma7acilHistory from './pages/Ma7acilHistory.jsx';
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,16 @@ const router = createBrowserRouter([
       <ScrollToTop>
         <ProtectedRoute>
           <Home />
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "ma7acilHistory/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Ma7acilHistory />
         </ProtectedRoute>
       </ScrollToTop>
     ),

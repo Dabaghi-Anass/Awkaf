@@ -3,49 +3,10 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const Ma7acil = () => {
   const [crops, setCrops] = useState([]);
-  const [monthType, setMonthType] = useState('hijri');
   const [collapsedCrops, setCollapsedCrops] = useState({});
+  const [popup, setPopup] = useState({ message: '', type: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const saveZakatHistory = async () => {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-            alert("Authentication required! Please log in.");
-            return;
-        }
-
-        const zakatData = {
-            zakat_result:zakatFormInfos.zakatAmount,
-            zakat_base:zakatFormInfos.totalAmount,
-            calculation_date: zakatFormInfos.calculationDate,
-            
-           
-        };
-
-        try {
-            const response = await fetch("http://localhost:8000/apif/save-zakat-history/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(zakatData),
-            });
-
-            const data = await response.json();
-            if (!response.ok) {
-                console.error("Backend error:", data);
-                throw new Error("Failed to save Zakat history");
-            }
-
-            setPopup({message:"تم حفظ الزكاة بنجاح!",type:"success"});
-            setZakatFormInfos({});
-            setShowResult(false);
-          
-        } catch (error) {
-            console.error("Error:", error);
-           setPopup({message:"حدث خطاء",type:"error"})
-        }
-    };
   const RATES = {
     rain: 0.10,
     mixed: 0.075,
@@ -53,6 +14,86 @@ export const Ma7acil = () => {
   };
 
   const NISAB = 653; // 653 kg
+
+  const saveZakatHistory = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      alert("Authentication required! Please log in.");
+      return;
+    }
+
+    // Filter crops that have zakat due
+    const cropsWithZakat = crops.filter(crop => crop.zakatDue > 0);
+    
+    if (cropsWithZakat.length === 0) {
+      setPopup({ message: "لا توجد محاصيل مستحقة للزكاة للحفظ", type: "error" });
+      return;
+    }
+
+    setIsLoading(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    // Save each crop individually
+    for (const crop of cropsWithZakat) {
+      const zakatData = {
+        zakat_amount: crop.zakatDue,
+        total_amount: parseFloat(crop.quantity) || 0,
+        corp_type: crop.cropType || 'غير محدد',
+      };
+
+      try {
+        const response = await fetch("http://localhost:8000/apif/create-ma7acil/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(zakatData),
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          console.error("Backend error:", data);
+          failCount++;
+        } else {
+          successCount++;
+        }
+      } catch (error) {
+        console.error("Error saving crop:", error);
+        failCount++;
+      }
+    }
+
+    setIsLoading(false);
+
+    // Show result message
+    if (successCount > 0 && failCount === 0) {
+      setPopup({ 
+        message: `تم حفظ ${successCount} محصول بنجاح!`, 
+        type: "success" 
+      });
+      // Reset crops after successful save
+      setCrops([]);
+      setCollapsedCrops({});
+    } else if (successCount > 0 && failCount > 0) {
+      setPopup({ 
+        message: `تم حفظ ${successCount} محصول، فشل ${failCount} محصول`, 
+        type: "warning" 
+      });
+    } else {
+      setPopup({ 
+        message: "فشل حفظ المحاصيل، حاول مرة أخرى", 
+        type: "error" 
+      });
+    }
+
+    // Auto-hide popup after 3 seconds
+    setTimeout(() => {
+      setPopup({ message: '', type: '' });
+    }, 3000);
+  };
 
   const toggleCrop = (index) => {
     setCollapsedCrops(prev => ({
@@ -84,7 +125,6 @@ export const Ma7acil = () => {
   const removeCrop = (index) => {
     const updated = crops.filter((_, i) => i !== index);
     setCrops(updated);
-    // Clean up collapsed state
     const newCollapsed = { ...collapsedCrops };
     delete newCollapsed[index];
     setCollapsedCrops(newCollapsed);
@@ -139,6 +179,16 @@ export const Ma7acil = () => {
 
   return (
     <div dir="rtl" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
+      {/* Popup Notification */}
+      {popup.message && (
+        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg ${
+          popup.type === 'success' ? 'bg-green-500' : 
+          popup.type === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
+        } text-white font-bold`}>
+          {popup.message}
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-8 mb-8 mt-16">
         <div className="container mx-auto px-6">
@@ -167,28 +217,6 @@ export const Ma7acil = () => {
 
             {/* Form Content */}
             <div className="p-8">
-              {/* Month Type Selection */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-8">
-                <div className="flex items-center mb-4">
-                  <div className="w-1 h-6 bg-blue-600 ml-3 rounded-full"></div>
-                  <h3 className="font-bold text-blue-800 text-lg">نوع التاريخ</h3>
-                </div>
-                
-                <div className="relative">
-                  <select
-                    className="w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer"
-                    onChange={(e) => setMonthType(e.target.value)}
-                    value={monthType}
-                  >
-                    <option value="hijri">التاريخ الهجري</option>
-                    <option value="gregorian">التاريخ الميلادي</option>
-                  </select>
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <ChevronDown className="w-5 h-5 text-blue-600" />
-                  </div>
-                </div>
-              </div>
-
               {/* Crops List */}
               <div className="space-y-6">
                 {crops.map((crop, index) => (
@@ -250,7 +278,6 @@ export const Ma7acil = () => {
                               onChange={e => updateCrop(index, 'cropType', e.target.value)}
                               placeholder="أدخل نوع المحصول (قمح، شعير، تمر...)"
                             />
-                            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">🌾</span>
                           </div>
                         </div>
 
@@ -265,14 +292,13 @@ export const Ma7acil = () => {
                               value={crop.wateringMethod}
                               onChange={e => updateCrop(index, 'wateringMethod', e.target.value)}
                             >
-                              <option value="rain">سقي بالمطر (10%)</option>
-                              <option value="mixed">سقي مختلط (7.5%)</option>
-                              <option value="artificial">سقي اصطناعي (5%)</option>
+                              <option value="rain">سقي بالمطر </option>
+                              <option value="mixed">سقي مختلط </option>
+                              <option value="artificial">سقي اصطناعي </option>
                             </select>
                             <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                               <ChevronDown className="w-5 h-5 text-gray-400" />
                             </div>
-                            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">💧</span>
                           </div>
                         </div>
 
@@ -295,7 +321,6 @@ export const Ma7acil = () => {
                               placeholder="أدخل الكمية"
                             />
                             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">كغ</span>
-                            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">⚖️</span>
                           </div>
                         </div>
 
@@ -316,7 +341,6 @@ export const Ma7acil = () => {
                             <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                               <ChevronDown className="w-5 h-5 text-gray-400" />
                             </div>
-                            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">👥</span>
                           </div>
                         </div>
 
@@ -373,9 +397,9 @@ export const Ma7acil = () => {
                   </button>
                 </div>
 
-                {/* Calculate Button */}
+                {/* Calculate and Save Buttons */}
                 {crops.length > 0 && (
-                  <div className="text-center mt-10 pt-6 border-t border-gray-200">
+                  <div className="flex gap-4 justify-center mt-10 pt-6 border-t border-gray-200">
                     <button 
                       className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-12 rounded-full text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                       onClick={calculateZakat}
@@ -385,6 +409,19 @@ export const Ma7acil = () => {
                         حساب الزكاة
                       </span>
                     </button>
+                    
+                    {getTotalZakat() > 0 && (
+                      <button 
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 px-12 rounded-full text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={saveZakatHistory}
+                        disabled={isLoading}
+                      >
+                        <span className="flex items-center">
+                          <span className="text-xl ml-2">💾</span>
+                          {isLoading ? "جاري الحفظ..." : "حفظ النتائج"}
+                        </span>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
