@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/tooltip"
 import { ZakatContext } from "../../../Components/ZakatProvider";
 import { zakatForm } from "../../../Components/tools/table"
-import { ChevronDown, ChevronUp, Plus, Minus } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Minus,  } from "lucide-react";
 import { WarninIcon } from "@/assets/Svg/WarninIcon";
-
+import { Link } from "react-router-dom";
 import { GoldPrice } from "./GoldPrice";
 
 
@@ -341,6 +341,8 @@ export const CalForm = () => {
           
         </div>
       </div>
+
+      <Link to="/ma7acil" >Zakat Ma7acil</Link>
 
       {/* Gold Price Input & Nissab Info Card */}
       <GoldPrice></GoldPrice>

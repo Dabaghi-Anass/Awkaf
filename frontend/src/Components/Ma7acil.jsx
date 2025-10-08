@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { WarninIcon } from '@/assets/Svg/WarninIcon';
+import { MessagePopup } from './MessagePopup';
+import { Header } from './Header';
+import Footer from './Footer';
+
+
+
+
 
 export const Ma7acil = () => {
   const [crops, setCrops] = useState([]);
@@ -22,7 +30,6 @@ export const Ma7acil = () => {
       return;
     }
 
-    // Filter crops that have zakat due
     const cropsWithZakat = crops.filter(crop => crop.zakatDue > 0);
     
     if (cropsWithZakat.length === 0) {
@@ -34,7 +41,6 @@ export const Ma7acil = () => {
     let successCount = 0;
     let failCount = 0;
 
-    // Save each crop individually
     for (const crop of cropsWithZakat) {
       const zakatData = {
         zakat_amount: crop.zakatDue,
@@ -68,13 +74,11 @@ export const Ma7acil = () => {
 
     setIsLoading(false);
 
-    // Show result message
     if (successCount > 0 && failCount === 0) {
       setPopup({ 
         message: `تم حفظ ${successCount} محصول بنجاح!`, 
         type: "success" 
       });
-      // Reset crops after successful save
       setCrops([]);
       setCollapsedCrops({});
     } else if (successCount > 0 && failCount > 0) {
@@ -89,7 +93,6 @@ export const Ma7acil = () => {
       });
     }
 
-    // Auto-hide popup after 3 seconds
     setTimeout(() => {
       setPopup({ message: '', type: '' });
     }, 3000);
@@ -169,15 +172,9 @@ export const Ma7acil = () => {
     return labels[method] || method;
   };
 
-  const getOwnershipTypeLabel = (type) => {
-    const labels = {
-      individual: 'ملكية فردية',
-      shared: 'ملكية مشتركة'
-    };
-    return labels[type] || type;
-  };
-
   return (
+   <>
+   <Header></Header>
     <div dir="rtl" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
       {/* Popup Notification */}
       {popup.message && (
@@ -190,22 +187,20 @@ export const Ma7acil = () => {
       )}
 
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-8 mb-8 mt-16">
-        <div className="container mx-auto px-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-2">زكاة المحاصيل الزراعية</h1>
-            <p className="text-emerald-100">احسب زكاة محاصيلك الزراعية وفقاً للمعايير الشرعية المعتمدة</p>
-          </div>
+      <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-700 text-white py-16 mt-15 max-sm:py-8 mb-2">
+        <div className="container text-center mx-auto px-6">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 max-sm:text-2xl">زكاة المحاصيل الزراعية</h1>
+          <p className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto max-sm:text-sm">احسب زكاة محاصيلك الزراعية وفقاً للمعايير الشرعية المعتمدة</p>
         </div>
       </div>
 
       {/* Main Form Container */}
-      <div className="container mx-auto px-6 pb-12">
+      <div className="max-[515px]:px-0 mx-auto px-6 pb-12">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
             
             {/* Form Header */}
-            <div className="bg-gradient-to-r from-gray-50 to-emerald-50 border-b border-gray-200 p-6">
+            <div className="form-header bg-gradient-to-r from-gray-50 to-emerald-50 border-b max-[515px]:p-4 border-gray-200 p-6">
               <div className="flex items-center">
                 <div className="w-3 h-8 bg-emerald-600 ml-4 rounded-full"></div>
                 <div>
@@ -216,8 +211,7 @@ export const Ma7acil = () => {
             </div>
 
             {/* Form Content */}
-            <div className="p-8">
-              {/* Crops List */}
+            <div className="p-8 form-container">
               <div className="space-y-6">
                 {crops.map((crop, index) => (
                   <div key={index} className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg overflow-hidden">
@@ -228,7 +222,7 @@ export const Ma7acil = () => {
                     >
                       <div className="flex items-center">
                         <div className="w-1 h-6 bg-emerald-600 ml-3 rounded-full"></div>
-                        <h3 className="font-bold text-emerald-800 text-lg select-none">
+                        <h3 className="max-[515px]:text-sm font-bold text-emerald-800 text-lg select-none">
                           {crop.cropType || `المحصول ${index + 1}`}
                         </h3>
                         {crop.zakatDue > 0 && (
@@ -245,7 +239,7 @@ export const Ma7acil = () => {
                           }}
                           className="p-2 text-red-500 hover:bg-red-100 rounded-full transition-colors"
                         >
-                          🗑️
+                          <Trash className="w-3 h-3" stroke='#036116'></Trash>
                         </button>
                         <span className="text-sm text-emerald-600 font-medium">
                           {collapsedCrops[index] ? "إظهار" : "إخفاء"}
@@ -258,59 +252,62 @@ export const Ma7acil = () => {
 
                     {/* Crop Content */}
                     <div 
-                      className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                      className={`p-0 m-0 transition-all duration-300 ease-in-out overflow-hidden ${
                         collapsedCrops[index] 
                           ? "max-h-0 opacity-0" 
-                          : "max-h-[1000px] opacity-100"
+                          : "max-h-[2000px] opacity-100"
                       }`}
                     >
-                      <div className="px-4 pb-4 space-y-4">
+                      <div className="p-2">
                         {/* Crop Type */}
-                        <div className="bg-white/70 rounded-lg p-4">
-                          <label className="block font-semibold text-gray-700 text-sm mb-3">
+                        <div className="cal-input-bg my-3">
+                          <label className="font-semibold text-gray-700 text-sm flex-1 max-[515px]:text-xs block mb-3">
                             نوع المحصول
                           </label>
                           <div className="relative">
                             <input
                               type="text"
-                              className="w-full p-4 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white pr-12"
+                              className="cal-input"
                               value={crop.cropType}
                               onChange={e => updateCrop(index, 'cropType', e.target.value)}
                               placeholder="أدخل نوع المحصول (قمح، شعير، تمر...)"
                             />
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                              <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                            </div>
                           </div>
                         </div>
 
                         {/* Watering Method */}
-                        <div className="bg-white/70 rounded-lg p-4">
-                          <label className="block font-semibold text-gray-700 text-sm mb-3">
+                        <div className="cal-input-bg my-3">
+                          <label className="font-semibold text-gray-700 text-sm flex-1 max-[515px]:text-xs block mb-3">
                             طريقة السقي
                           </label>
                           <div className="relative">
                             <select
-                              className="w-full p-4 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white appearance-none cursor-pointer"
+                              className="select-form"
                               value={crop.wateringMethod}
                               onChange={e => updateCrop(index, 'wateringMethod', e.target.value)}
                             >
-                              <option value="rain">سقي بالمطر </option>
-                              <option value="mixed">سقي مختلط </option>
-                              <option value="artificial">سقي اصطناعي </option>
+                              <option value="rain">سقي بالمطر (10%)</option>
+                              <option value="mixed">سقي مختلط (7.5%)</option>
+                              <option value="artificial">سقي اصطناعي (5%)</option>
                             </select>
                             <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                              <ChevronDown className="w-5 h-5 text-gray-400" />
+                              <ChevronDown className="w-5 h-5 text-emerald-600" />
                             </div>
                           </div>
                         </div>
 
                         {/* Quantity */}
-                        <div className="bg-white/70 rounded-lg p-4">
-                          <label className="block font-semibold text-gray-700 text-sm mb-3">
+                        <div className="cal-input-bg my-3">
+                          <label className="font-semibold text-gray-700 text-sm flex-1 max-[515px]:text-xs block mb-3">
                             الكمية (كيلوغرام)
                           </label>
                           <div className="relative">
                             <input
                               type="text"
-                              className="w-full p-4 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white pr-12"
+                              className="cal-input"
                               value={formatNumber(crop.quantity)}
                               onChange={e => {
                                 const rawValue = e.target.value.replace(/,/g, "");
@@ -320,18 +317,21 @@ export const Ma7acil = () => {
                               }}
                               placeholder="أدخل الكمية"
                             />
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">كغ</span>
+                            <span className="DA">كغ</span>
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                              <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                            </div>
                           </div>
                         </div>
 
                         {/* Ownership Type */}
-                        <div className="bg-white/70 rounded-lg p-4">
-                          <label className="block font-semibold text-gray-700 text-sm mb-3">
+                        <div className="cal-input-bg my-3">
+                          <label className="font-semibold text-gray-700 text-sm flex-1 max-[515px]:text-xs block mb-3">
                             نوع الملكية
                           </label>
                           <div className="relative">
                             <select
-                              className="w-full p-4 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white appearance-none cursor-pointer"
+                              className="select-form"
                               value={crop.ownershipType}
                               onChange={e => updateCrop(index, 'ownershipType', e.target.value)}
                             >
@@ -339,36 +339,38 @@ export const Ma7acil = () => {
                               <option value="shared">ملكية مشتركة</option>
                             </select>
                             <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                              <ChevronDown className="w-5 h-5 text-gray-400" />
+                              <ChevronDown className="w-5 h-5 text-emerald-600" />
                             </div>
                           </div>
                         </div>
 
                         {/* Ownership Share (if shared) */}
                         {crop.ownershipType === 'shared' && (
-                          <div className="bg-white/70 rounded-lg p-4">
-                            <label className="block font-semibold text-gray-700 text-sm mb-3">
+                          <div className="cal-input-bg">
+                            <label className="font-semibold text-gray-700 text-sm flex-1 max-[515px]:text-xs block mb-3">
                               نصيبك من الملكية (%)
                             </label>
                             <div className="relative">
                               <input
                                 type="number"
-                                className="w-full p-4 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white pr-12"
+                                className="cal-input"
                                 value={crop.ownershipShare}
                                 onChange={e => updateCrop(index, 'ownershipShare', e.target.value)}
                                 placeholder="أدخل النسبة المئوية"
                                 min="0"
                                 max="100"
                               />
-                              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">%</span>
-                              <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">📊</span>
+                              <span className="DA">%</span>
+                              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                              </div>
                             </div>
                           </div>
                         )}
 
                         {/* Zakat Result */}
                         {crop.zakatDue > 0 && (
-                          <div className="bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-lg p-4">
+                          <div className="bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-lg p-4 my-2">
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-green-800">الزكاة المستحقة:</span>
                               <span className="text-2xl font-bold text-green-700">
@@ -387,39 +389,34 @@ export const Ma7acil = () => {
                 ))}
 
                 {/* Add Crop Button */}
-                <div className="text-center">
+                <div className="text-right">
                   <button
                     onClick={addCrop}
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center mx-auto"
+                    className="custom-button  py-2 px-4 rounded-sm  shadow-lg hover:shadow-xl flex items-center max-sm:text-sm max-sm:px-4 my-5"
                   >
-                    <span className="text-xl ml-2">➕</span>
-                    إضافة محصول جديد
+                     إضافة محصول جديد
+                   
                   </button>
                 </div>
 
                 {/* Calculate and Save Buttons */}
                 {crops.length > 0 && (
-                  <div className="flex gap-4 justify-center mt-10 pt-6 border-t border-gray-200">
+                  <div className="text-center mt-10 pt-6 border-t border-gray-200">
                     <button 
-                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-12 rounded-full text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                      className="custom-button py-4 mb-4 rounded-sm w-1/2 ml-2 font-bold"
                       onClick={calculateZakat}
                     >
-                      <span className="flex items-center">
-                        <span className="text-xl ml-2">🧮</span>
-                        حساب الزكاة
-                      </span>
+                      احسب الزكاة
                     </button>
+                    <br />
                     
                     {getTotalZakat() > 0 && (
                       <button 
-                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 px-12 rounded-full text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="custom-button py-4 rounded-sm w-1/2 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={saveZakatHistory}
                         disabled={isLoading}
                       >
-                        <span className="flex items-center">
-                          <span className="text-xl ml-2">💾</span>
-                          {isLoading ? "جاري الحفظ..." : "حفظ النتائج"}
-                        </span>
+                        {isLoading ? "جاري الحفظ..." : "حفظ النتائج"}
                       </button>
                     )}
                   </div>
@@ -429,7 +426,7 @@ export const Ma7acil = () => {
           </div>
 
           {/* Total Results Card */}
-          {crops.length > 0 && getTotalZakat() > 0 && (
+          {/*{crops.length > 0 && getTotalZakat() > 0 && (
             <div className="mt-8 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-8 shadow-lg">
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-green-800 mb-4">إجمالي الزكاة المستحقة</h3>
@@ -442,26 +439,30 @@ export const Ma7acil = () => {
               </div>
             </div>
           )}
-
+ */}
           {/* Information Card */}
-          <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6">
+          <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6 max-[460px]:p-4">
             <div className="flex items-center">
               <div className="bg-amber-100 p-3 rounded-full ml-4">
-                <span className="text-2xl">ℹ️</span>
+              <span className="text-2xl"><WarninIcon></WarninIcon></span>
               </div>
               <div>
                 <h3 className="font-bold text-amber-800 mb-1">معلومات مهمة</h3>
-                <ul className="text-amber-700 text-sm space-y-1">
-                  <li>• النصاب للمحاصيل الزراعية: {NISAB.toLocaleString()} كيلوغرام</li>
-                  <li>• السقي بالمطر أو الأنهار: 10% من المحصول</li>
-                  <li>• السقي المختلط: 7.5% من المحصول</li>
-                  <li>• السقي الاصطناعي (بالآلات): 5% من المحصول</li>
-                </ul>
+                <p className="text-amber-700 text-sm max-[460px]:text-xs">
+                  النصاب للمحاصيل الزراعية: {NISAB.toLocaleString()} كيلوغرام • السقي بالمطر أو الأنهار: 10% من المحصول • السقي المختلط: 7.5% من المحصول • السقي الاصطناعي (بالآلات): 5% من المحصول
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <MessagePopup
+              message={popup.message}
+              type={popup.type}
+              onClose={() => setPopup({ message: "", type: "" })}
+            />
     </div>
+    <Footer></Footer>
+   </>
   );
 };
