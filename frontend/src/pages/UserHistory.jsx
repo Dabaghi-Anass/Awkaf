@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { Header } from "../Components/Header";
 import Footer from "../Components/Footer";
 import {
@@ -10,13 +10,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Loader } from "../Components/Loader";
+import { MessagePopup } from "@/Components/MessagePopup";
+import { ConfirmDialog } from "@/Components/ConfirmDialog";
+import { ZakatContext } from "@/Components/ZakatProvider";
+import { Link ,Outlet} from "react-router-dom";
+
+// Confirmation Modal Component
+
 
 const UserHistory = () => {
+  const {setPopup, popup } = useContext(ZakatContext);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("accessToken");
@@ -27,7 +37,7 @@ const UserHistory = () => {
       const jsonPayload = JSON.parse(atob(base64));
       return jsonPayload.user_id;
     } catch (error) {
-      console.error("Error decoding token:", error);
+      setPopup({ message: "حدث خطاء", type: "error" });
       return null;
     }
   };
@@ -64,12 +74,15 @@ const UserHistory = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("هل أنت متأكد أنك تريد حذف هذا السجل؟")) return;
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowDeleteDialog(true);
+  };
 
+  const handleDelete = async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/apif/delete-zakat-history/${id}/`,
+        `http://127.0.0.1:8000/apif/delete-zakat-history/${deleteId}/`,
         {
           method: "DELETE",
           headers: {
@@ -78,12 +91,15 @@ const UserHistory = () => {
         }
       );
 
-      if (!response.ok) throw new Error("فشل في حذف السجل");
-
+      if (!response.ok) throw new Error("فشل في حذف السجل")
+      else {
+        setPopup({ message: "تم حذف السجل بنجاح", type: "success" });
+      }
+      
       // Refresh list
-      fetchHistory(currentPage);
+     
     } catch (err) {
-      alert(err.message);
+      setPopup({ message: err.message, type: "error" });
     }
   };
 
@@ -140,17 +156,21 @@ const UserHistory = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-100">
+      <div dir="rtl" className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8 mt-15">
           {/* Header */}
-          <div className="mb-8 text-right">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="mb-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
               تاريخ الزكاة
             </h1>
             <p className="text-gray-600">
               عرض سجل جميع حسابات الزكاة السابقة
             </p>
+            </div>
+           <Link to="/zakat-corps-history" className="text-sm decoration-green-500 underline text-green4">عرض سجل المحاصيل</Link>
           </div>
+          
 
           <div className="bg-white rounded-lg shadow-md">
             {loading ? (
@@ -203,8 +223,8 @@ const UserHistory = () => {
                           </TableCell>
                           <TableCell className="py-4">
                             <button
-                              onClick={() => handleDelete(item.id)}
-                              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                              onClick={() => handleDeleteClick(item.id)}
+                              className="px-3 py-1 bg-green3 text-white rounded hover:bg-red-600 transition-colors"
                             >
                               حذف
                             </button>
@@ -253,6 +273,23 @@ const UserHistory = () => {
         </div>
       </div>
       <Footer />
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleDelete}
+        title="تأكيد الحذف"
+        message="هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء."
+        confirmText="حذف"
+        cancelText="إلغاء"
+      />
+      <MessagePopup
+              message={popup.message}
+              type={popup.type}
+              onClose={() => setPopup({ message: "", type: "" })}
+            />
+            
     </>
   );
 };

@@ -27,8 +27,8 @@ export const MessagePopup = ({ message, type, onClose }) => {
   }
 
   return (
-    <div className="fixed top-4 z-50 right-2 w-[90%] max-w-sm ">
-      <Alert variant={variant} className={`relative ${bgClass}`}>
+    <div dir="rtl" className="fixed top-4 z-50 right-2 w-[90%] max-w-sm ">
+      <Alert variant={variant} className={`relative ${bgClass} animate-scale-in` }>
        
           {icon}
          
@@ -45,6 +45,24 @@ export const MessagePopup = ({ message, type, onClose }) => {
           ✕
         </button>
       </Alert>
+
+      <style >{`
+        @keyframes scale-in {
+          from {
+            transform: scale(0.9);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        .animate-scale-in {
+          animation: scale-in 0.2s ease-out;
+        }
+      `}</style>
     </div>
+    
   )
+  
 }

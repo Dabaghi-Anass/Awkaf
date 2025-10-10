@@ -37,6 +37,7 @@ import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTo
 import { Ma7acil } from './Components/Ma7acil.jsx';
 import Awkaf from './pages/Awkaf/Awkaf.jsx';
 import Ma7acilHistory from './pages/Ma7acilHistory.jsx';
+import { LanguageProvider } from './Components/LanguageProvider.jsx';
 
 const router = createBrowserRouter([
   {
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "ma7acilHistory/",
+    path: "zakat-corps-history/",
     element: (
       <ScrollToTop>
         <ProtectedRoute>
@@ -220,9 +221,11 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')).render(
-  <ZakatProvider>  
-    <AdminProvider>  
-      <RouterProvider router={router} />
-    </AdminProvider>
-  </ZakatProvider>
+  <LanguageProvider>  {/* Add this wrapper */}
+    <ZakatProvider>  
+      <AdminProvider>  
+        <RouterProvider router={router} />
+      </AdminProvider>
+    </ZakatProvider>
+  </LanguageProvider>  
 );

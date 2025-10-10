@@ -26,7 +26,7 @@ export const Ma7acil = () => {
   const saveZakatHistory = async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      alert("Authentication required! Please log in.");
+      setPopup({ message: "يجب تسجيل الدخول أولاً للحفظ", type: "error" });
       return;
     }
 
@@ -61,37 +61,23 @@ export const Ma7acil = () => {
         const data = await response.json();
         
         if (!response.ok) {
-          console.error("Backend error:", data);
-          failCount++;
+          setPopup({ message: "فشل حفظ المحاصيل، حاول مرة أخرى", type: "error" });
+          
         } else {
+          setPopup({ message: "تم حفظ المحاصيل بنجاح!", type: "success" });
           successCount++;
+          setCrops([]);
+          setCollapsedCrops({});
         }
       } catch (error) {
-        console.error("Error saving crop:", error);
+        setPopup({ message: "فشل حفظ المحاصيل، حاول مرة أخرى", type: "error" });
         failCount++;
       }
     }
 
     setIsLoading(false);
 
-    if (successCount > 0 && failCount === 0) {
-      setPopup({ 
-        message: `تم حفظ ${successCount} محصول بنجاح!`, 
-        type: "success" 
-      });
-      setCrops([]);
-      setCollapsedCrops({});
-    } else if (successCount > 0 && failCount > 0) {
-      setPopup({ 
-        message: `تم حفظ ${successCount} محصول، فشل ${failCount} محصول`, 
-        type: "warning" 
-      });
-    } else {
-      setPopup({ 
-        message: "فشل حفظ المحاصيل، حاول مرة أخرى", 
-        type: "error" 
-      });
-    }
+    
 
     setTimeout(() => {
       setPopup({ message: '', type: '' });
@@ -177,14 +163,7 @@ export const Ma7acil = () => {
    <Header></Header>
     <div dir="rtl" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
       {/* Popup Notification */}
-      {popup.message && (
-        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg ${
-          popup.type === 'success' ? 'bg-green-500' : 
-          popup.type === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
-        } text-white font-bold`}>
-          {popup.message}
-        </div>
-      )}
+      
 
       {/* Header Section */}
       <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-700 text-white py-16 mt-15 max-sm:py-8 mb-2">
@@ -369,7 +348,7 @@ export const Ma7acil = () => {
                         )}
 
                         {/* Zakat Result */}
-                        {crop.zakatDue > 0 && (
+                        {crop.zakatDue >= 0 && (
                           <div className="bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-lg p-4 my-2">
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-green-800">الزكاة المستحقة:</span>
@@ -389,10 +368,10 @@ export const Ma7acil = () => {
                 ))}
 
                 {/* Add Crop Button */}
-                <div className="text-right">
+                <div className="text-center">
                   <button
                     onClick={addCrop}
-                    className="custom-button  py-2 px-4 rounded-sm  shadow-lg hover:shadow-xl flex items-center max-sm:text-sm max-sm:px-4 my-5"
+                    className="custom-button py-4 mb-4 rounded-sm w-1/2 ml-2 font-bold"
                   >
                      إضافة محصول جديد
                    
@@ -460,6 +439,7 @@ export const Ma7acil = () => {
               message={popup.message}
               type={popup.type}
               onClose={() => setPopup({ message: "", type: "" })}
+             
             />
     </div>
     <Footer></Footer>

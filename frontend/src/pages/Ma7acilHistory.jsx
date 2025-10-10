@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { MessagePopup } from "@/Components/MessagePopup";
+import React, { useState, useEffect ,useContext} from "react";
+import { ZakatContext } from "@/Components/ZakatProvider";
+import { Header } from "@/Components/Header";
+import Footer from "@/Components/Footer";
+import { Loader } from "@/Components/Loader";
+import { ConfirmDialog } from "@/Components/ConfirmDialog";
 
-// Mock components - replace with your actual imports
-const Header = () => <div className="bg-emerald-600 text-white p-4 text-center font-bold">Header</div>;
-const Footer = () => <div className="bg-gray-800 text-white p-4 text-center mt-8">Footer</div>;
-const Loader = () => (
-  <div className="flex justify-center items-center py-12">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-  </div>
-);
+
 
 const Ma7acilHistory = () => {
+  const {setPopup, popup } = useContext(ZakatContext);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("accessToken");
     if (!token) return null;
@@ -29,6 +30,12 @@ const Ma7acilHistory = () => {
       return null;
     }
   };
+
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowDeleteDialog(true);
+  };
+
 
   const fetchHistory = async (page = 1) => {
     const userId = getUserIdFromToken();
@@ -62,12 +69,12 @@ const Ma7acilHistory = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("هل أنت متأكد أنك تريد حذف هذا السجل؟")) return;
+  const handleDelete = async () => {
+   
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/apif/delete-ma7acil/${id}/`,
+        `http://127.0.0.1:8000/apif/delete-ma7acil/${deleteId}/`,
         {
           method: "DELETE",
           headers: {
@@ -76,7 +83,11 @@ const Ma7acilHistory = () => {
         }
       );
 
-      if (!response.ok) throw new Error("فشل في حذف السجل");
+      if (!response.ok) {setPopup({ message: "فشل في حذف السجل", type: "error" })}
+      else {
+        setPopup({ message: "تم حذف السجل بنجاح", type: "success" });
+      }
+      setShowDeleteDialog(false);
 
       fetchHistory(currentPage);
     } catch (err) {
@@ -206,8 +217,8 @@ const Ma7acilHistory = () => {
                           </td>
                           <td className="py-4">
                             <button
-                              onClick={() => handleDelete(item.id)}
-                              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                              onClick={() => handleDeleteClick(item.id)}
+                              className="px-3 py-1 bg-green3 text-white rounded hover:bg-red-600 transition-colors"
                             >
                               حذف
                             </button>
@@ -255,6 +266,20 @@ const Ma7acilHistory = () => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+              isOpen={showDeleteDialog}
+              onClose={() => setShowDeleteDialog(false)}
+              onConfirm={handleDelete}
+              title="تأكيد الحذف"
+              message="هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء."
+              confirmText="حذف"
+              cancelText="إلغاء"
+            />
+        <MessagePopup
+                      message={popup.message}
+                      type={popup.type}
+                      onClose={() => setPopup({ message: "", type: "" })}
+                    />
       <Footer />
     </>
   );
