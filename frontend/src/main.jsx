@@ -1,6 +1,3 @@
-// First, create the ScrollToTop component
-// Create a new file: Components/ScrollToTop.jsx
-// Updated main.jsx with ScrollToTop integration
 import { createRoot } from 'react-dom/client'
 import {
   createBrowserRouter,
@@ -12,7 +9,7 @@ import Home from './pages/Home.jsx';
 import ZakatCal from './pages/ZakatCalculator/ZakatCal.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
-import { Admin } from './pages/Admin.jsx';
+
 import { DashboardAdmin } from './pages/DashboardAdmin.jsx';
 import { ZakatProvider } from './Components/ZakatProvider.jsx';
 import { AdminRegister } from './pages/AdminRegister.jsx';
@@ -20,7 +17,7 @@ import { AdminLogin } from './pages/AdminLogin.jsx';
 import { Contact } from './pages/Contact/Contact.jsx';
 import { WakfP } from './pages/WakfProject/WakfP.jsx';
 import { ManageAwkaf } from './pages/ManageAwkaf.jsx';
-import App from './App.jsx';
+
 import { ProtectedRoute } from './ProtectedRoutes.jsx';
 import { Contribution } from './pages/Contribution.jsx';
 import UserHistory from './pages/UserHistory.jsx';
@@ -30,13 +27,18 @@ import { ForgotPassword } from './Components/ForgotPassword.jsx';
 import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
 import { Settings } from './Components/Settings.jsx';
 import { UserInfos } from './pages/UserInfos.jsx';
-import { PrivateRouterAdmin } from './pages/PrivateRouterAdmin.jsx';
+import { PrivateRouterAdmin } from './PrivateRouterAdmin.jsx';
 import {HomePage} from './pages/HomePage.jsx'
-import "./i18n"; //
-import ScrollToTop from './Components/ScrollToTop.jsx'; // Import the ScrollToTop component
+import "./i18n";
+import ScrollToTop from './Components/ScrollToTop.jsx';
 import { Ma7acil } from './Components/Ma7acil.jsx';
 import Awkaf from './pages/Awkaf/Awkaf.jsx';
+import Ma7acilHistory from './pages/Ma7acilHistory.jsx';
+import { LanguageProvider } from './Components/LanguageProvider.jsx';
+import Layout from './Layout.jsx'; 
 
+import { ApiProvider } from './ApiProvider.jsx';
+import "./index.css";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -67,7 +69,21 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <Home />
+          <Layout>
+            <Home />
+          </Layout>
+        </ProtectedRoute>
+      </ScrollToTop>
+    ),
+  },
+  {
+    path: "zakat-corps-history/",
+    element: (
+      <ScrollToTop>
+        <ProtectedRoute>
+          <Layout>
+            <Ma7acilHistory />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -77,7 +93,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <HomePage />
+          <Layout>
+            <HomePage />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -87,7 +105,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <ZakatCal />
+          <Layout>
+            <ZakatCal />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -97,7 +117,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <UserInfos/>
+          <Layout>
+            <UserInfos/>
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -107,7 +129,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <Awkaf />
+          <Layout>
+            <Awkaf />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -117,7 +141,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <About />
+          <Layout>
+            <About />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -127,7 +153,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <Contact />
+          <Layout>
+            <Contact />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -137,7 +165,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <UserHistory />
+          <Layout>
+            <UserHistory />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -147,7 +177,9 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <PrivateRouterAdmin>
-          <DashboardAdmin />
+        
+            <DashboardAdmin />
+          
         </PrivateRouterAdmin>
       </ScrollToTop>
     ),
@@ -157,21 +189,31 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <ManageAwkaf />
+         
+            <ManageAwkaf />
+          
         </ProtectedRoute>
       </ScrollToTop>
     ),
   },
   {
     path: "Contribution/",
-    element: <ScrollToTop><Contribution /></ScrollToTop>,
+    element: (
+      <ScrollToTop>
+        <Layout>
+          <Contribution />
+        </Layout>
+      </ScrollToTop>
+    ),
   },
   {
     path: "kol/",
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <ZakatSelectionPage />
+          <Layout>
+            <ZakatSelectionPage />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -181,27 +223,22 @@ const router = createBrowserRouter([
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <WakfP />
+          <Layout>
+            <WakfP />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
   },
-  {
-    path: "Admin/",
-    element: (
-      <ScrollToTop>
-        <ProtectedRoute>
-          <Admin />
-        </ProtectedRoute>
-      </ScrollToTop>
-    ),
-  },
+  
   {
     path: "ma7acil/",
     element: (
       <ScrollToTop>
         <ProtectedRoute>
-          <Ma7acil />
+          <Layout>
+            <Ma7acil />
+          </Layout>
         </ProtectedRoute>
       </ScrollToTop>
     ),
@@ -209,9 +246,13 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')).render(
-  <ZakatProvider>  
-    <AdminProvider>  
-      <RouterProvider router={router} />
-    </AdminProvider>
-  </ZakatProvider>
+  <ApiProvider>
+  <LanguageProvider>
+    <ZakatProvider>  
+      <AdminProvider>  
+        <RouterProvider router={router} />
+      </AdminProvider>
+    </ZakatProvider>
+  </LanguageProvider>
+  </ApiProvider>
 );

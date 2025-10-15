@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { SendMessage } from "./Components/SendMessage";
-import { Header } from "../../Components/Header";
-import Footer from "../../Components/Footer";
+
 
 export const Contact = () => {
   const defaultValue = {
@@ -21,7 +20,7 @@ export const Contact = () => {
 
   return (
     <>
-      <Header />
+     
       <div dir="rtl" className="   flex flex-col items-center justify-center mx-auto bg-gray-100 p-6">
         <div className="bg-white sendMessage mt-15 shadow-lg rounded-lg px-8 py-2 max-w-[35em] w-full text-center">
           {/* Contact Title */}
@@ -42,7 +41,7 @@ export const Contact = () => {
         </div>
 
       </div>
-      <Footer></Footer>
+     
     </>
   );
 };

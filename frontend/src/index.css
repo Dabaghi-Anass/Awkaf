@@ -125,11 +125,11 @@ a{
   focus:ring-1 focus:ring-green-500 focus:border-green-500   w-full h-12 p-2 border  pr-10;
 }
 .cal-input{
-  @apply w-full px-4 py-3 pr-12 border text-[0.9em] border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2
+  @apply w-full  py-3  border text-[0.9em] border-gray-300 rounded-lg  focus:outline-none focus:ring-2
    focus:ring-green2 focus:border-green2 transition-all duration-200 bg-gray-50 hover:bg-white  max-[515px]:text-xs
 }
 .DA{
-  @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-emerald-600 font-semibold text-sm
+  @apply absolute  top-1/2 transform -translate-y-1/2 text-emerald-600 font-semibold text-sm
 }
 .cal-input-bg{
   @apply bg-white border border-gray-200 rounded-lg p-4 max-[515px]:p-2 hover:border-emerald-300 hover:shadow-md transition-all duration-200
@@ -160,7 +160,7 @@ a{
   @apply  bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mt-8
 }
 .select-form{
-  @apply w-full p-4 border border-blue-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer
+  @apply w-full p-4 border border-blue-300 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white font-semibold text-gray-700 appearance-none cursor-pointer
 }
 @media (max-width: 1024px) {
   .navbar .link{

@@ -13,10 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,13 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-ch9rw474p5yvf9rj!u=m4p839mh47w@7(%j4r)n5@pw4jgz1fy')
-ADMIN_SECRET_KEY = os.getenv('ADMIN_SECRET_KEY', 'my_super_secret_key')
+SECRET_KEY = 'django-insecure-ch9rw474p5yvf9rj!u=m4p839mh47w@7(%j4r)n5@pw4jgz1fy'
+ADMIN_SECRET_KEY = "my_super_secret_key"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ["*"]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -47,15 +43,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=int(os.getenv('JWT_ACCESS_TOKEN_LIFETIME', 7200))),  # 2 hours default
-    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=int(os.getenv('JWT_REFRESH_TOKEN_LIFETIME', 604800))),  # 7 days default
-    # Configuration pour les cookies httpOnly
-    "AUTH_COOKIE": "access_token",
-    "AUTH_COOKIE_REFRESH": "refresh_token",
-    "AUTH_COOKIE_HTTP_ONLY": True,  # CRITICAL: Empêche l'accès JavaScript
-    "AUTH_COOKIE_SECURE": os.getenv('CSRF_COOKIE_SECURE', 'False').lower() == 'true',  # HTTPS seulement
-    "AUTH_COOKIE_SAMESITE": "Lax",  # Protection CSRF
-    "AUTH_COOKIE_DOMAIN": None,  # Limite aux domaines autorisés
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
 
@@ -81,7 +70,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',  # Réactivé pour la sécurité
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -113,12 +102,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.mysql'),
-        'NAME': os.getenv('DB_NAME', 'awkaf'),
-        'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'awkaf',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',  # Try using 127.0.0.1 instead of localhost
+        'PORT': '3306',
         'OPTIONS': {
             'unix_socket': '/opt/lampp/var/mysql/mysql.sock',
         },
@@ -166,37 +155,21 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
-CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True').lower() == 'true'
-CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'True').lower() == 'true'
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'aminecheikh17@gmail.com')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'gsab dwhu wvti vzes')
+EMAIL_HOST_USER = "aminecheikh17@gmail.com"  # Replace with your Gmail
+EMAIL_HOST_PASSWORD = "gsab dwhu wvti vzes"  # Use the App Password from step 1
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+import os
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.getenv('MEDIA_ROOT', os.path.join(BASE_DIR, "media"))
-
-# Configuration de sécurité pour la production
-if not DEBUG:
-    # HTTPS obligatoire
-    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True').lower() == 'true'
-    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', 31536000))  # 1 an
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'True').lower() == 'true'
-    SECURE_HSTS_PRELOAD = os.getenv('SECURE_HSTS_PRELOAD', 'True').lower() == 'true'
-    
-    # Cookies sécurisés
-    CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'True').lower() == 'true'
-    SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'True').lower() == 'true'
-    
-    # Protection XSS et autres
-    SECURE_CONTENT_TYPE_NOSNIFF = os.getenv('SECURE_CONTENT_TYPE_NOSNIFF', 'True').lower() == 'true'
-    SECURE_BROWSER_XSS_FILTER = os.getenv('SECURE_BROWSER_XSS_FILTER', 'True').lower() == 'true'
-    X_FRAME_OPTIONS = os.getenv('X_FRAME_OPTIONS', 'DENY')
-    
-    # Configuration des fichiers statiques pour la production
-    STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

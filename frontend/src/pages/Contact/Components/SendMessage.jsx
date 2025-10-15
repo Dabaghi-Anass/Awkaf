@@ -1,37 +1,27 @@
 import React, { useState } from 'react';
 import { MessagePopup } from '../../../Components/MessagePopup';
-
+import { useApi } from "@/ApiProvider";
 export const SendMessage = ({ userMessage, handleChange, defaultValue, setUserMessage }) => {
+
+    const api = useApi();
     const [loading, setLoading] = useState(false);
     const [popup,setPopup]=useState({message:"",type:""});
     const sendMessage = async (event) => {
-        event.preventDefault();
-        setLoading(true);
+    event.preventDefault();
+    setLoading(true);
 
-        try {
-            const response = await fetch("http://127.0.0.1:8000/apif/send-email/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(userMessage),
-            });
+    const [data, status, error] = await api.post("/send-email/", userMessage);
 
-            const data = await response.json();
-            console.log("Response data:", data);
+    if (!error && status === 200) {
+      setPopup({ message: "تم إرسال الرسالة بنجاح!", type: "success" });
+      setUserMessage(defaultValue);
+    } else {
+      console.error("Error sending message:", error);
+      setPopup({ message: "حدث خطاء", type: "error" });
+    }
 
-            if (response.ok) {
-                setPopup({message:"تم إرسال الرسالة بنجاح!",type:"success"});
-                setUserMessage(defaultValue);
-            } else {
-                setPopup({message:"حدث خطاء",type:"error"});
-            }
-        } catch (error) {
-            setPopup({message:"حدث خطاء",type:"error"});
-        } finally {
-            setLoading(false);
-        }
-    };
+    setLoading(false);
+  };
     return (
         <div dir='rtl' className="  w-full   p-4 sm:p-6  form">
             <div className="space-y-4 sm:space-y-6   ">

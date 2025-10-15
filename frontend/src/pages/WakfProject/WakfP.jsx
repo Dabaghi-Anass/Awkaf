@@ -39,7 +39,7 @@ export const WakfP = () => {
 
   return (
     <>
-      <Header />
+  
       
       {isLoading ? (
         <Loader />
@@ -154,7 +154,7 @@ export const WakfP = () => {
         </>
       )}
 
-      <Footer />
+  
     </>
   );
 };

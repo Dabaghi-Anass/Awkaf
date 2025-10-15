@@ -1,24 +1,17 @@
-import React, { useState, useEffect,useContext } from "react";
-import { useApi } from "@/ApiProvider";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Loader } from "../Components/Loader";
 import { MessagePopup } from "@/Components/MessagePopup";
-import { ConfirmDialog } from "@/Components/ConfirmDialog";
+import React, { useState, useEffect ,useContext} from "react";
 import { ZakatContext } from "@/Components/ZakatProvider";
-import { Link ,Outlet} from "react-router-dom";
 
-// Confirmation Modal Component
+import { Loader } from "@/Components/Loader";
+import { ConfirmDialog } from "@/Components/ConfirmDialog";
+import { useApi } from "@/ApiProvider";
 
 
-const UserHistory = () => {
+
+const Ma7acilHistory = () => {
+
   const api = useApi();
+
   const {setPopup, popup } = useContext(ZakatContext);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +20,6 @@ const UserHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("accessToken");
     if (!token) return null;
@@ -37,35 +29,9 @@ const UserHistory = () => {
       const jsonPayload = JSON.parse(atob(base64));
       return jsonPayload.user_id;
     } catch (error) {
-      setPopup({ message: "حدث خطاء", type: "error" });
+      console.error("Error decoding token:", error);
       return null;
     }
-  };
-
-  const fetchHistory = async (page = 1) => {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      setError("المستخدم غير مصادق عليه");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    const [data, status, error] = await api.get(
-      `/get-zakat-history/${userId}/`,
-      { page }
-    );
-
-    if (!error && status === 200) {
-      setHistory(data.results || []);
-      setTotalPages(Math.ceil((data.count || 1) / 10));
-    } else {
-      console.error("Error fetching history:", error);
-      setError("فشل في جلب البيانات");
-    }
-
-    setLoading(false);
   };
 
   const handleDeleteClick = (id) => {
@@ -73,10 +39,37 @@ const UserHistory = () => {
     setShowDeleteDialog(true);
   };
 
+
+  const fetchHistory = async (page = 1) => {
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      setError("المستخدم غير مصادق عليه");
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+
+      const [data,status, error] = await api.get(`/get-ma7acil/${userId}/?page=${page}`);
+      if (error) throw new Error(error);
+      setHistory(data.results || []);
+      setTotalPages(Math.ceil((data.count || 1) / 10));
+    
+
+    }catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDelete = async () => {
+   
+
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/apif/delete-zakat-history/${deleteId}/`,
+        `http://127.0.0.1:8000/apif/delete-ma7acil/${deleteId}/`,
         {
           method: "DELETE",
           headers: {
@@ -85,15 +78,15 @@ const UserHistory = () => {
         }
       );
 
-      if (!response.ok) throw new Error("فشل في حذف السجل")
+      if (!response.ok) {setPopup({ message: "فشل في حذف السجل", type: "error" })}
       else {
         setPopup({ message: "تم حذف السجل بنجاح", type: "success" });
       }
-      
-      // Refresh list
-     
+      setShowDeleteDialog(false);
+
+      fetchHistory(currentPage);
     } catch (err) {
-      setPopup({ message: err.message, type: "error" });
+      alert(err.message);
     }
   };
 
@@ -119,9 +112,9 @@ const UserHistory = () => {
         </svg>
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">
-        لا يوجد سجل للزكاة
+        لا يوجد سجل للمحاصيل
       </h3>
-      <p className="text-gray-500">لم يتم العثور على أي حسابات زكاة سابقة</p>
+      <p className="text-gray-500">لم يتم العثور على أي محاصيل زراعية سابقة</p>
     </div>
   );
 
@@ -149,21 +142,18 @@ const UserHistory = () => {
 
   return (
     <>
-      <div dir="rtl" className="min-h-screen bg-gray-100">
+    
+      <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8 mt-15">
           {/* Header */}
-          <div className="mb-8 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              تاريخ الزكاة
+          <div className="mb-8 text-right">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              تاريخ المحاصيل
             </h1>
             <p className="text-gray-600">
-              عرض سجل جميع حسابات الزكاة السابقة
+              عرض سجل جميع المحاصيل الزراعية السابقة
             </p>
-            </div>
-           <Link to="/zakat-corps-history" className="text-sm decoration-green-500 underline text-green4">عرض سجل المحاصيل</Link>
           </div>
-          
 
           <div className="bg-white rounded-lg shadow-md">
             {loading ? (
@@ -176,56 +166,62 @@ const UserHistory = () => {
               <>
                 {/* Table */}
                 <div className="overflow-x-auto">
-                  <Table className="w-full">
-                    <TableHeader>
-                      <TableRow className="bg-green4 hover:bg-green4">
-                        <TableHead className="text-center font-semibold text-white">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-green4 hover:bg-green4">
+                        <th className="text-center font-semibold text-white py-3 px-4">
                           التاريخ
-                        </TableHead>
-                        <TableHead className="text-center font-semibold text-white">
-                          الوعاء الزكوي
-                        </TableHead>
-                        <TableHead className="text-center font-semibold text-white">
+                        </th>
+                        <th className="text-center font-semibold text-white py-3 px-4">
+                          نوع المحصول
+                        </th>
+                        <th className="text-center font-semibold text-white py-3 px-4">
+                          الكمية الإجمالية
+                        </th>
+                        <th className="text-center font-semibold text-white py-3 px-4">
                           قيمة الزكاة
-                        </TableHead>
-                        <TableHead className="text-center font-semibold text-white">
+                        </th>
+                        <th className="text-center font-semibold text-white py-3 px-4">
                           حذف
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {history.map((item) => (
-                        <TableRow
+                        <tr
                           key={item.id}
                           className="text-center hover:bg-gray-50 transition-colors border-b border-gray-100"
                         >
-                          <TableCell className="font-medium py-4">
-                            {new Date(item.calculation_date).toLocaleDateString(
-                              "fr-FR"
-                            )}
-                          </TableCell>
-                          <TableCell className="py-4">
+                          <td className="font-medium py-4">
+                            {new Date(item.date).toLocaleDateString("fr-FR")}
+                          </td>
+                          <td className="py-4">
                             <span className="font-semibold text-green-600">
-                              {item.zakat_base.toLocaleString("fr-FR")} د.ج
+                              {item.corp_type}
                             </span>
-                          </TableCell>
-                          <TableCell className="py-4">
+                          </td>
+                          <td className="py-4">
+                            <span className="font-semibold text-green-600">
+                              {item.total_amount.toLocaleString("fr-FR")} كغ
+                            </span>
+                          </td>
+                          <td className="py-4">
                             <span className="font-semibold text-blue-600">
-                              {item.zakat_result.toLocaleString("fr-FR")} د.ج
+                              {item.zakat_amount.toLocaleString("fr-FR")} كغ
                             </span>
-                          </TableCell>
-                          <TableCell className="py-4">
+                          </td>
+                          <td className="py-4">
                             <button
                               onClick={() => handleDeleteClick(item.id)}
                               className="px-3 py-1 bg-green3 text-white rounded hover:bg-red-600 transition-colors"
                             >
                               حذف
                             </button>
-                          </TableCell>
-                        </TableRow>
+                          </td>
+                        </tr>
                       ))}
-                    </TableBody>
-                  </Table>
+                    </tbody>
+                  </table>
                 </div>
 
                 {/* Pagination */}
@@ -265,26 +261,23 @@ const UserHistory = () => {
           </div>
         </div>
       </div>
-      
-
-      {/* Confirmation Dialog */}
       <ConfirmDialog
-        isOpen={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
-        onConfirm={handleDelete}
-        title="تأكيد الحذف"
-        message="هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء."
-        confirmText="حذف"
-        cancelText="إلغاء"
-      />
-      <MessagePopup
-              message={popup.message}
-              type={popup.type}
-              onClose={() => setPopup({ message: "", type: "" })}
+              isOpen={showDeleteDialog}
+              onClose={() => setShowDeleteDialog(false)}
+              onConfirm={handleDelete}
+              title="تأكيد الحذف"
+              message="هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء."
+              confirmText="حذف"
+              cancelText="إلغاء"
             />
-            
+        <MessagePopup
+                      message={popup.message}
+                      type={popup.type}
+                      onClose={() => setPopup({ message: "", type: "" })}
+                    />
+      
     </>
   );
 };
 
-export default UserHistory;
+export default Ma7acilHistory;
