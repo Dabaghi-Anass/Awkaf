@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 
 import {Loader} from "../../Components/Loader"
-import { Header } from "../../Components/Header";
+
 import Project from "../../Components/Project";
-import WakfPic from "../../Components/WakfPic";
+import { useApi } from "@/ApiProvider";
 import {
   Pagination,
   PaginationContent,
@@ -14,22 +14,20 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-import Footer from "../../Components/Footer";
 import { MessagePopup } from "@/Components/MessagePopup";
 
 
 export default function Awkaf() {
-   const [projects, setProjects] = useState([]);
-    const [page, setPage] = useState(1);
-    const [pageSize] = useState(4);
-    const [totalPages, setTotalPages] = useState(1);
+
+  const api = useApi();
+  const [projects, setProjects] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(8);
+  const [totalPages, setTotalPages] = useState(1);
   const [popup, setPopup] = useState({ message: "", type: "" });
   
   
-
-
-
-  // Fetch projects from the backend
+  
   useEffect(() => {
      fetchProjects(page, pageSize);
    }, [page]);
@@ -41,42 +39,35 @@ export default function Awkaf() {
    }, []);
  
    const fetchTotalPages = async () => {
-     try {
-       const response = await fetch("http://127.0.0.1:8000/apif/list/waqf-projects/");
-       const data = await response.json();
-       if (Array.isArray(data)) {
-         setTotalPages(Math.ceil(data.length / pageSize));
-         
-       }
-     } catch (error) {
-       console.error("Error fetching total pages:", error);
-       setTotalPages(1);
-     }
-   };
+    const [data, status, error] = await api.get("/list/waqf-projects/");
+
+    if (!error && Array.isArray(data)) {
+      setTotalPages(Math.ceil(data.length / pageSize));
+    } else {
+      console.error("Error fetching total pages:", error);
+      setTotalPages(1);
+    }
+  };
    
    
    const fetchProjects = async (pageNumber, pageSize) => {
-     try {
-       const response = await fetch(
-         `http://127.0.0.1:8000/apif/list/waqf-projects/?page=${pageNumber}&page_size=${pageSize}`
-       );
-       if (!response.ok) {
-         console.error("Failed to fetch projects:", response.status);
-         return;
-       }
-       const data = await response.json();
-       
-       setProjects(Array.isArray(data) ? data : []);
-     } catch (error) {
-       console.error("Error fetching projects:", error);
-       setProjects([]);
-     }
-   };
+    const [data, status, error] = await api.get("/list/waqf-projects/", {
+      page: pageNumber,
+      page_size: pageSize,
+    });
+
+    if (!error && Array.isArray(data)) {
+      setProjects(data);
+    } else {
+      console.error("Error fetching projects:", error);
+      setProjects([]);
+    }
+  };
    
 
   return (
     <>
-      <Header />
+     
      
       <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-700  text-white py-16 mt-15
       max-sm:py-8">
@@ -163,7 +154,7 @@ export default function Awkaf() {
                  type={popup.type}
                  onClose={() => setPopup({ message: "", type: "" })}
                />
-      <Footer />
+     
     </>
   );
 }

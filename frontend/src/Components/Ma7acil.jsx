@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import { WarninIcon } from '@/assets/Svg/WarninIcon';
 import { MessagePopup } from './MessagePopup';
-import { Header } from './Header';
-import Footer from './Footer';
 
+import { useApi } from "@/ApiProvider";
 
 
 
 
 export const Ma7acil = () => {
+  const api = useApi();
   const [crops, setCrops] = useState([]);
   const [collapsedCrops, setCollapsedCrops] = useState({});
   const [popup, setPopup] = useState({ message: '', type: '' });
@@ -23,67 +23,53 @@ export const Ma7acil = () => {
 
   const NISAB = 653; // 653 kg
 
-  const saveZakatHistory = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setPopup({ message: "يجب تسجيل الدخول أولاً للحفظ", type: "error" });
-      return;
+ const saveZakatHistory = async () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    setPopup({ message: "يجب تسجيل الدخول أولاً للحفظ", type: "error" });
+    return;
+  }
+
+  const cropsWithZakat = crops.filter((crop) => crop.zakatDue > 0);
+
+  if (cropsWithZakat.length === 0) {
+    setPopup({ message: "لا توجد محاصيل مستحقة للزكاة للحفظ", type: "error" });
+    return;
+  }
+
+  setIsLoading(true);
+  let successCount = 0;
+  let failCount = 0;
+
+  for (const crop of cropsWithZakat) {
+    const zakatData = {
+      zakat_amount: crop.zakatDue,
+      total_amount: parseFloat(crop.quantity) || 0,
+      corp_type: crop.cropType || "غير محدد",
+    };
+
+    // ✅ Use ApiProvider POST method instead of fetch
+    const [data, status, error] = await api.post("/create-ma7acil/", zakatData);
+
+    if (!error && status >= 200 && status < 300) {
+      successCount++;
+      setPopup({ message: "تم حفظ المحاصيل بنجاح!", type: "success" });
+      setCrops([]);
+      setCollapsedCrops({});
+    } else {
+      failCount++;
+      console.error("Save failed:", error || data);
+      setPopup({ message: "فشل حفظ المحاصيل، حاول مرة أخرى", type: "error" });
     }
+  }
 
-    const cropsWithZakat = crops.filter(crop => crop.zakatDue > 0);
-    
-    if (cropsWithZakat.length === 0) {
-      setPopup({ message: "لا توجد محاصيل مستحقة للزكاة للحفظ", type: "error" });
-      return;
-    }
+  setIsLoading(false);
 
-    setIsLoading(true);
-    let successCount = 0;
-    let failCount = 0;
-
-    for (const crop of cropsWithZakat) {
-      const zakatData = {
-        zakat_amount: crop.zakatDue,
-        total_amount: parseFloat(crop.quantity) || 0,
-        corp_type: crop.cropType || 'غير محدد',
-      };
-
-      try {
-        const response = await fetch("http://localhost:8000/apif/create-ma7acil/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(zakatData),
-        });
-
-        const data = await response.json();
-        
-        if (!response.ok) {
-          setPopup({ message: "فشل حفظ المحاصيل، حاول مرة أخرى", type: "error" });
-          
-        } else {
-          setPopup({ message: "تم حفظ المحاصيل بنجاح!", type: "success" });
-          successCount++;
-          setCrops([]);
-          setCollapsedCrops({});
-        }
-      } catch (error) {
-        setPopup({ message: "فشل حفظ المحاصيل، حاول مرة أخرى", type: "error" });
-        failCount++;
-      }
-    }
-
-    setIsLoading(false);
-
-    
-
-    setTimeout(() => {
-      setPopup({ message: '', type: '' });
-    }, 3000);
-  };
-
+  // optional cleanup popup after few seconds
+  setTimeout(() => {
+    setPopup({ message: "", type: "" });
+  }, 3000);
+};
   const toggleCrop = (index) => {
     setCollapsedCrops(prev => ({
       ...prev,
@@ -160,7 +146,7 @@ export const Ma7acil = () => {
 
   return (
    <>
-   <Header></Header>
+  
     <div dir="rtl" className="w-full mx-auto min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50">
       {/* Popup Notification */}
       
@@ -442,7 +428,7 @@ export const Ma7acil = () => {
              
             />
     </div>
-    <Footer></Footer>
+    
    </>
   );
 };

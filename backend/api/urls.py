@@ -45,7 +45,7 @@ urlpatterns = [
     path('create-company-with-fields/', CompanyTypeCreateView.as_view()), # ✅ avec .as_view() ici
     path('calculate-zakat/', ZakatCalculationView.as_view()),
     path('check-token/', CheckTokenView.as_view(), name='check-token'),
-     path('me/', CurrentUserView.as_view(), name='current-user'),
+    path('me/', CurrentUserView.as_view(), name='current-user'),
     path('delete-zakat-history/<int:pk>/', views.delete_zakat_history, name='delete_zakat_history'),
     path('create-ma7acil/', views.create_ma7acil, name='create_ma7acil'),
     path('get-ma7acil/<int:user_id>/', views.get_ma7acil_by_user, name='get_ma7acil_by_user'),

@@ -1,14 +1,17 @@
 import { MessagePopup } from "@/Components/MessagePopup";
 import React, { useState, useEffect ,useContext} from "react";
 import { ZakatContext } from "@/Components/ZakatProvider";
-import { Header } from "@/Components/Header";
-import Footer from "@/Components/Footer";
+
 import { Loader } from "@/Components/Loader";
 import { ConfirmDialog } from "@/Components/ConfirmDialog";
+import { useApi } from "@/ApiProvider";
 
 
 
 const Ma7acilHistory = () => {
+
+  const api = useApi();
+
   const {setPopup, popup } = useContext(ZakatContext);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,22 +50,14 @@ const Ma7acilHistory = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/apif/get-ma7acil/${userId}/?page=${page}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
 
-      if (!response.ok) throw new Error("فشل في جلب البيانات");
-      const data = await response.json();
+      const [data,status, error] = await api.get(`/get-ma7acil/${userId}/?page=${page}`);
+      if (error) throw new Error(error);
       setHistory(data.results || []);
       setTotalPages(Math.ceil((data.count || 1) / 10));
-    } catch (error) {
+    
+
+    }catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
@@ -147,7 +142,7 @@ const Ma7acilHistory = () => {
 
   return (
     <>
-      <Header />
+    
       <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8 mt-15">
           {/* Header */}
@@ -280,7 +275,7 @@ const Ma7acilHistory = () => {
                       type={popup.type}
                       onClose={() => setPopup({ message: "", type: "" })}
                     />
-      <Footer />
+      
     </>
   );
 };

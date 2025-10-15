@@ -106,7 +106,7 @@ export const CalForm = () => {
 
   const calcZakat = (method) => {
     if(nissab === null) {
-      setPopup({message: t('ui.nissabError'), type:'error'});
+      setPopup({message: (" يرجى تحديد نسبة النصاب"), type:'error'});
       return
     }   
     const values = flattenData(formData);

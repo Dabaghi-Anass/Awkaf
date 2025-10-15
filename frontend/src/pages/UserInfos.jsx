@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Header } from "../Components/Header"
-import Footer from "../Components/Footer"
+import { useApi } from "@/ApiProvider"
 import { MessagePopup } from "@/Components/MessagePopup"
 
 
@@ -8,6 +7,7 @@ import { MessagePopup } from "@/Components/MessagePopup"
 
 
 export const UserInfos = () => {
+  const api = useApi();
   const [formData, setFormData] = useState({
     username: "",
     first_name: "",
@@ -90,7 +90,7 @@ export const UserInfos = () => {
     }
 
     if (formData.old_password && !formData.password) {
-      setPopup({message:"يرجىادخال كلمة المرور",type:"error"})
+      setPopup({message:"يرجى ادخال كلمة المرور",type:"error"})
       return
     }
 
@@ -99,7 +99,7 @@ export const UserInfos = () => {
     if (formData[key]) payload[key] = formData[key]
   }
 
-  // 🚨 Only keep password fields if on password tab
+  
   if (activeTab !== "password") {
     delete payload.password
     delete payload.old_password
@@ -110,41 +110,38 @@ export const UserInfos = () => {
     
     setIsLoading(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/apif/user/update/", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
+   
+    const [data, status, error] = await api.patch("/user/update/", payload, {
+      withCredentials: true,
+    });
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        if (data.old_password) {
-          setPopup({message:data.old_password,type:"error"})
-        } else if (typeof data === "object") {
-          const firstError = Object.values(data)[0]
-          setPopup({message:firstError,type:"error"})
-        } else {
-          setPopup({message:data,type:"error"})
-        }
-        return
+    if (error || status !== 200) {
+      if (data?.old_password) {
+        setPopup({ message: data.old_password, type: "error" });
+      } else if (typeof data === "object" && Object.values(data)[0]) {
+        const firstError = Object.values(data)[0];
+        setPopup({ message: firstError, type: "error" });
+      } else {
+        setPopup({ message: data || "حدث خطاء", type: "error" });
       }
       setIsLoading(false);
-
-      setPopup({message:'تم تحديث البيانات بنجاح',type:'success'})
-      setFormData((prev) => ({ ...prev, password: "", old_password: "" }))
-    } catch (err) {
-      setPopup({message:"حدث خطاء",type:"error"})
+      return;
     }
+
+    setPopup({ message: "تم تحديث البيانات بنجاح", type: "success" });
+    setFormData((prev) => ({ ...prev, password: "", old_password: "" }));
+  } catch (err) {
+    console.error("Error updating user:", err);
+    setPopup({ message: "حدث خطاء", type: "error" });
+  } finally {
+    setIsLoading(false);
+  }
   }
  
   
   return (
     <>
-      <Header />
+    
       
       <div className="min-h-screen my-8 bg-gradient-to-br from-gray-50 to-emerald-50 py-12">
         <div className="container mx-auto px-6">
@@ -334,7 +331,7 @@ export const UserInfos = () => {
         </div>
       </div>
 
-      <Footer />
+     =
     </>
   )
 }

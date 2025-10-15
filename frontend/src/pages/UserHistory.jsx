@@ -1,6 +1,5 @@
 import React, { useState, useEffect,useContext } from "react";
-import { Header } from "../Components/Header";
-import Footer from "../Components/Footer";
+import { useApi } from "@/ApiProvider";
 import {
   Table,
   TableBody,
@@ -19,6 +18,7 @@ import { Link ,Outlet} from "react-router-dom";
 
 
 const UserHistory = () => {
+  const api = useApi();
   const {setPopup, popup } = useContext(ZakatContext);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,32 +46,26 @@ const UserHistory = () => {
     const userId = getUserIdFromToken();
     if (!userId) {
       setError("المستخدم غير مصادق عليه");
-      setLoading(false);
       return;
     }
 
     setLoading(true);
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/apif/get-zakat-history/${userId}/?page=${page}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    setError(null);
 
-      if (!response.ok) throw new Error("فشل في جلب البيانات");
-      const data = await response.json();
+    const [data, status, error] = await api.get(
+      `/get-zakat-history/${userId}/`,
+      { page }
+    );
+
+    if (!error && status === 200) {
       setHistory(data.results || []);
       setTotalPages(Math.ceil((data.count || 1) / 10));
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    } else {
+      console.error("Error fetching history:", error);
+      setError("فشل في جلب البيانات");
     }
+
+    setLoading(false);
   };
 
   const handleDeleteClick = (id) => {
@@ -155,7 +149,6 @@ const UserHistory = () => {
 
   return (
     <>
-      <Header />
       <div dir="rtl" className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8 mt-15">
           {/* Header */}
@@ -272,7 +265,7 @@ const UserHistory = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      
 
       {/* Confirmation Dialog */}
       <ConfirmDialog

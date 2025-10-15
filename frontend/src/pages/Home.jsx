@@ -1,7 +1,6 @@
 import BacEffect from './CircleEffect.jsx';
 import Weclome from './WelcomePart.jsx';
-import { Header } from "../Components/Header";
-import Footer from "../Components/Footer";
+
 
 
 import "./Home.css" 
@@ -13,7 +12,7 @@ function Home() {
 
     <div dir='rtl' className="App my-0 mx-auto ">
 
-        <Header />
+      
 
         <Weclome 
           
@@ -28,8 +27,7 @@ function Home() {
 
           <div className="w-full h-[11px] top-[997px] bg-green-500"></div>
 
-        <Footer />
-
+      
 
     </div>
   );

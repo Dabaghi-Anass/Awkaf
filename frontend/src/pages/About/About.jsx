@@ -1,6 +1,4 @@
 import React from "react";
-import { Header } from "../../Components/Header";
-import Footer from "../../Components/Footer";
 
 import { Link } from "react-router-dom";
 import { Hero } from "./Components/Hero";
@@ -13,7 +11,7 @@ import { Conditions } from "./Components/Conditions";
 export default function About() {
   return (
     <>
-      <Header />
+     
 
       {/* Hero Section */}
         <Hero/>
@@ -133,8 +131,7 @@ export default function About() {
         </div>
       </section>
 
-      <Footer />
-
+   
     </>
   );
 }
