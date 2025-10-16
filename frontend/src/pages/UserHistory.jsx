@@ -157,19 +157,20 @@ const UserHistory = () => {
 
   return (
     <>
-      <div dir="rtl" className="min-h-screen bg-gray-100">
+      <div dir="" className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8 mt-15">
           {/* Header */}
           <div className="mb-8 flex justify-between items-center">
+             <Link to="/zakat-corps-history" className="text-sm px-4 py-2 bg-green4 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-105">عرض سجل  الحسابات لزكاة المحاصيل</Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2 text-right">
               تاريخ الزكاة
             </h1>
             <p className="text-gray-600">
               عرض سجل جميع حسابات الزكاة السابقة
             </p>
             </div>
-           <Link to="/zakat-corps-history" className="text-sm decoration-green-500 underline text-green4">عرض سجل المحاصيل</Link>
+          
           </div>
           
 
@@ -187,16 +188,16 @@ const UserHistory = () => {
                   <Table className="w-full">
                     <TableHeader>
                       <TableRow className="bg-green4 hover:bg-green4">
-                        <TableHead className="text-center font-semibold text-white">
+                        <TableHead className="text-center font-semibold text-white py-3 px-4">
                           التاريخ
                         </TableHead>
-                        <TableHead className="text-center font-semibold text-white">
+                        <TableHead className="text-center font-semibold text-white py-3 px-4">
                           الوعاء الزكوي
                         </TableHead>
-                        <TableHead className="text-center font-semibold text-white">
+                        <TableHead className="text-center font-semibold text-white py-3 px-4">
                           قيمة الزكاة
                         </TableHead>
-                        <TableHead className="text-center font-semibold text-white">
+                        <TableHead className="text-center font-semibold text-white py-3 px-4">
                           حذف
                         </TableHead>
                       </TableRow>

@@ -5,6 +5,7 @@ import { ZakatContext } from "@/Components/ZakatProvider";
 import { Loader } from "@/Components/Loader";
 import { ConfirmDialog } from "@/Components/ConfirmDialog";
 import { useApi } from "@/ApiProvider";
+import { Link } from "react-router-dom";
 
 
 
@@ -154,13 +155,17 @@ const Ma7acilHistory = () => {
       <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8 mt-15">
           {/* Header */}
-          <div className="mb-8 text-right">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="mb-8 text-right flex justify-between items-center">
+            <Link to="/userHistory" className="text-sm px-4 py-2 bg-green4 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-105">العودة</Link>
+
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
               تاريخ المحاصيل
             </h1>
             <p className="text-gray-600">
               عرض سجل جميع المحاصيل الزراعية السابقة
             </p>
+            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-md">

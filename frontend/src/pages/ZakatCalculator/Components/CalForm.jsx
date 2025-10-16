@@ -321,7 +321,7 @@ export const CalForm = () => {
       
       <LanguageSwitcher></LanguageSwitcher>
 
-      <Link to="/ma7acil">Zakat Ma7acil</Link>
+    
 
       <GoldPrice></GoldPrice>
       
