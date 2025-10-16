@@ -5,6 +5,7 @@ import { ZakatContext } from "@/Components/ZakatProvider";
 import { Loader } from "@/Components/Loader";
 import { ConfirmDialog } from "@/Components/ConfirmDialog";
 import { useApi } from "@/ApiProvider";
+import { Link } from "react-router-dom";
 
 
 
@@ -67,27 +68,35 @@ const Ma7acilHistory = () => {
   const handleDelete = async () => {
    
 
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/apif/delete-ma7acil/${deleteId}/`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+   try {
+    
+    
+    const [data, status, error] = await api.delete(
+      `/delete-ma7acil/${deleteId}/`
+    );
 
-      if (!response.ok) {setPopup({ message: "فشل في حذف السجل", type: "error" })}
-      else {
-        setPopup({ message: "تم حذف السجل بنجاح", type: "success" });
-      }
-      setShowDeleteDialog(false);
+    console.log("Delete response:", { data, status, error });
 
-      fetchHistory(currentPage);
-    } catch (err) {
-      alert(err.message);
+    if (error || !(status >= 200 && status < 300)) {
+      setPopup({
+        message: error || data?.detail || "فشل في حذف السجل",
+        type: "error",
+      });
+    } else {
+      setPopup({
+        message: "تم حذف السجل بنجاح",
+        type: "success",
+      });
+     
+      fetchHistory(); 
     }
+  } catch (err) {
+    console.error("Error deleting zakat history:", err);
+    setPopup({
+      message: err.message || "خطأ في حذف السجل",
+      type: "error",
+    });
+  }
   };
 
   useEffect(() => {
@@ -146,13 +155,17 @@ const Ma7acilHistory = () => {
       <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8 mt-15">
           {/* Header */}
-          <div className="mb-8 text-right">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="mb-8 text-right flex justify-between items-center">
+            <Link to="/userHistory" className="text-sm px-4 py-2 bg-green4 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-105">العودة</Link>
+
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
               تاريخ المحاصيل
             </h1>
             <p className="text-gray-600">
               عرض سجل جميع المحاصيل الزراعية السابقة
             </p>
+            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-md">

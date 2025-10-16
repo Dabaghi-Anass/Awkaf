@@ -7,8 +7,8 @@ export const SideBar = ({ activeTab, setActiveTab }) => {
   const menuItems = [
     { name: "Users", label: "Manage Users" },
     { name: "Projects", label: "Manage Projects" },
-    { name: "Form", label: "Manage Form" },
     { name: "Settings", label: "Settings" },
+    { name: "dashboardOverview", label: "dashboard" },
     { name: "Logout", label: "Logout" },
   ];
 

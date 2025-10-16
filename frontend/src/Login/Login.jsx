@@ -8,6 +8,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
+import { useApi } from "@/ApiProvider";
 export const Login = ({ handleChange, formData }) => {
     const [loginError, setLoginError] = useState("");
     const [formErrors, setFormErrors] = useState({});
@@ -16,6 +17,7 @@ export const Login = ({ handleChange, formData }) => {
     const [isLoading, setIsLoading] = useState("");
     const [popup,setPopup]=useState({message:'',type:''});
     const navigate = useNavigate();
+    const api = useApi();
     
 
     const validate = (values) => {
@@ -29,69 +31,77 @@ export const Login = ({ handleChange, formData }) => {
         return errors;
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const errors = validate(formData);
-        setFormErrors(errors);
+  const handleSubmit = async (event) => {
+  event.preventDefault();
 
-        if (Object.keys(errors).length > 0) return;
+  const errors = validate(formData);
+  setFormErrors(errors);
+  if (Object.keys(errors).length > 0) return;
 
-        setIsLoading(true);
-        try {
-            const response = await fetch("http://127.0.0.1:8000/apif/token/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
-            const result = await response.json();
+  setIsLoading(true);
 
-            if (response.ok && result.message === "OTP sent to your email. Enter OTP to proceed.") {
-                setOtpSent(true);
-                setPopup({message:"تم إرسال رمز OTP إلى بريدك الإلكتروني.",type:"success"});
-            } else if (result.access && result.refresh) {
-                localStorage.setItem("accessToken", result.access);
-                localStorage.setItem("refreshToken", result.refresh);
-                navigate('/');
-            } else {
-                setLoginError(result.detail || "إسم المستخدم أو كلمة المرور غير صحيحة");
-            }
-        } catch (error) {
-            setLoginError("حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  // ✅ Use ApiProvider instead of fetch
+  const [result, status, error] = await api.post("/token/", formData);
 
-    const handleOtpSubmit = async (e) => {
-        e.preventDefault();
-        if (!otpCode.trim()) {
-            alert("يرجى إدخال رمز OTP.");
-            return;
-        }
+  if (!error && status >= 200 && status < 300) {
+    if (result.message === "OTP sent to your email. Enter OTP to proceed.") {
+      setOtpSent(true);
+      setPopup({ message: "تم إرسال رمز OTP إلى بريدك الإلكتروني.", type: "success" });
+    } 
+    else if (result.access && result.refresh) {
+      localStorage.setItem("accessToken", result.access);
+      localStorage.setItem("refreshToken", result.refresh);
+      navigate("/");
+    } 
+    else {
+      setLoginError(result.detail || "إسم المستخدم أو كلمة المرور غير صحيحة");
+    }
+  } else {
+    console.error("Login failed:", error || result);
+    setLoginError("حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.");
+  }
 
-        setIsLoading(true);
-        try {
-            const response = await fetch("http://127.0.0.1:8000/apif/token/verify/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: formData.username, otp: otpCode }),
-            });
-            const tokens = await response.json();
+  setIsLoading(false);
+};
 
-            if (response.ok) {
-                localStorage.setItem("accessToken", tokens.access_token);
-                localStorage.setItem("refreshToken", tokens.refresh_token);
-                setPopup({message:"تم التحقق من OTP بنجاح.",type:"success"});
-                navigate("/home");
-            } else {
-                setPopup({message:"فشل التحقق من OTP. حاول مرة أخرى.",type:"error"});
-            }
-        } catch (error) {
-            setPopup({message:"حدث خطاء غير متوقع. حاول مرة أخرى لاحقًا.",type:"error"});
-        } finally {
-            setIsLoading(false);
-        }
-    };
+
+const handleOtpSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!otpCode.trim()) {
+    alert("يرجى إدخال رمز OTP.");
+    return;
+  }
+
+  setIsLoading(true);
+
+  // ✅ Prepare the request body
+  const body = {
+    username: formData.username,
+    otp: otpCode,
+  };
+
+  // ✅ Use ApiProvider for POST request
+  const [tokens, status, error] = await api.post("/token/verify/", body);
+
+  if (!error && status >= 200 && status < 300) {
+    
+    localStorage.setItem("accessToken", tokens.access_token);
+    localStorage.setItem("refreshToken", tokens.refresh_token);
+
+    setPopup({ message: "تم التحقق من OTP بنجاح.", type: "success" });
+    navigate("/home");
+  } else {
+    console.error("OTP verification failed:", error || tokens);
+    setPopup({
+      message: "فشل التحقق من OTP. حاول مرة أخرى.",
+      type: "error",
+    });
+  }
+
+  setIsLoading(false);
+};
+
     
     
 
