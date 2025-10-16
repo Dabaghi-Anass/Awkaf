@@ -789,14 +789,28 @@ class LogoutView(APIView):
 
     def post(self, request):
         try:
-            refresh_token = request.data.get("refresh_token")
+            # Prefer refresh token from httpOnly cookie
+            refresh_token = request.COOKIES.get("refresh_token")
+
+            # Fallback: allow body token for backwards compatibility
             if not refresh_token:
-                return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+                refresh_token = request.data.get("refresh_token")
 
-            token = RefreshToken(refresh_token)
-            token.blacklist()  # ✅ Blacklist the token
+            # Prepare response and clear cookies regardless
+            response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
+            response.delete_cookie("access_token", path="/")
+            response.delete_cookie("refresh_token", path="/")
 
-            return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
+            # If we have a refresh token, try to blacklist it
+            if refresh_token:
+                try:
+                    token = RefreshToken(refresh_token)
+                    token.blacklist()
+                except Exception:
+                    # Ignore blacklist errors to ensure logout always succeeds
+                    pass
+
+            return response
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

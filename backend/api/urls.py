@@ -11,6 +11,7 @@ from .views import (
     create_table,  get_table_data ,rename_table, modify_table,ZakatCalculationView,delete_table,WaqfProjectListView ,delete_company,update_company_with_fields,CheckTokenView
 )
 from .views import CompanyTypeCreateView
+from .views import LogoutView
 from . import views  # or from your_app_name import views if outside
 urlpatterns = [
     # InputField URLs
@@ -50,6 +51,7 @@ urlpatterns = [
     path('create-ma7acil/', views.create_ma7acil, name='create_ma7acil'),
     path('get-ma7acil/<int:user_id>/', views.get_ma7acil_by_user, name='get_ma7acil_by_user'),
     path('delete-ma7acil/<int:pk>/', views.delete_ma7acil, name='delete_ma7acil'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 
     
 ]
