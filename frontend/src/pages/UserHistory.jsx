@@ -74,27 +74,35 @@ const UserHistory = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/apif/delete-zakat-history/${deleteId}/`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+  try {
+    
+    
+    const [data, status, error] = await api.delete(
+      `/delete-zakat-history/${deleteId}/`
+    );
 
-      if (!response.ok) throw new Error("فشل في حذف السجل")
-      else {
-        setPopup({ message: "تم حذف السجل بنجاح", type: "success" });
-      }
-      
-      // Refresh list
+    console.log("Delete response:", { data, status, error });
+
+    if (error || !(status >= 200 && status < 300)) {
+      setPopup({
+        message: error || data?.detail || "فشل في حذف السجل",
+        type: "error",
+      });
+    } else {
+      setPopup({
+        message: "تم حذف السجل بنجاح",
+        type: "success",
+      });
      
-    } catch (err) {
-      setPopup({ message: err.message, type: "error" });
+      fetchHistory(); 
     }
+  } catch (err) {
+    console.error("Error deleting zakat history:", err);
+    setPopup({
+      message: err.message || "خطأ في حذف السجل",
+      type: "error",
+    });
+  }
   };
 
   useEffect(() => {

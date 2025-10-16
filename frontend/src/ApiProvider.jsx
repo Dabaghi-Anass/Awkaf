@@ -2,8 +2,6 @@ import { createContext, useContext, useState } from "react";
 
 const ApiContext = createContext();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
-    const AUTH_TOKEN = localStorage.getItem("accessToken") || "";
-
 
 /**
  * @typedef {[any, number, string|null]} ApiResponse
@@ -22,6 +20,30 @@ export function ApiProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   /**
+   * URLs that should not trigger authentication or token refresh
+   */
+  const AUTH_EXCLUDED_URLS = [
+    "/token/",
+    "/token/verify/",
+    "/admin/login/",
+    "/admin/verify/",
+    "/register/",
+    "/verify-email/",
+    "/forgot-password/",
+    "/reset-password/",
+  ];
+
+  /**
+   * Check if URL should be excluded from authentication
+   * @private
+   * @param {string} url - API endpoint
+   * @returns {boolean}
+   */
+  const isAuthExcluded = (url) => {
+    return AUTH_EXCLUDED_URLS.some(excludedUrl => url.startsWith(excludedUrl));
+  };
+
+  /**
    * Makes an HTTP request with automatic token refresh on 401
    * @private
    * @param {string} url - API endpoint (without base URL)
@@ -32,19 +54,21 @@ export function ApiProvider({ children }) {
    * @returns {Promise<ApiResponse>}
    */
   const makeRequest = async (url, method, body = null, params = null, isRetry = false) => {
-    if (url === "/token") {
-      return await refreshToken(url, method, body, params);
-    }
-
-
+    // Get fresh token for each request
+    const AUTH_TOKEN = localStorage.getItem("accessToken") || "";
+    
     const options = {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AUTH_TOKEN}`,
       },
       credentials: "include",
     };
+
+    // Add Authorization header only for authenticated endpoints
+    if (!isAuthExcluded(url) && AUTH_TOKEN) {
+      options.headers.Authorization = `Bearer ${AUTH_TOKEN}`;
+    }
 
     // Build URL with query parameters
     let fullUrl = `${baseUrl}${url}`;
@@ -63,29 +87,38 @@ export function ApiProvider({ children }) {
       options.body = JSON.stringify(body);
     }
 
+   try {
+    const response = await fetch(fullUrl, options);
+    const status = response.status;
+    const ok = response.ok;
+
+    //  FIX: Handle empty responses (common for DELETE requests)
+    let data = null;
     try {
-      const response = await fetch(fullUrl, options);
-      const data = await response.json();
-      const status = response.status;
-      const ok = response.ok;
-
-      // Handle 401 with token refresh (except for login endpoint)
-      if (status === 401 && !isRetry && url !== "auth/login") {
-        return await refreshToken(url, method, body, params);
-      }
-
-      // Return error for 401 after retry
-      if (status === 401 && isRetry && url !== "auth/login") {
-        return [null, 401, "Unauthorized"];
-      }
-
-      // Return response as tuple
-      return [data, status, ok ? null : data.message || "Request failed"];
-    } catch (err) {
-      return [null, 500, err.message || "Network error"];
-    } finally {
-      setIsLoading(false);
+      data = await response.json();
+    } catch (e) {
+      // Empty response is OK - just set data to null
+      data = null;
     }
+
+    // Handle 401 with token refresh (only for authenticated endpoints)
+    if (status === 401 && !isRetry && !isAuthExcluded(url)) {
+      return await refreshToken(url, method, body, params);
+    }
+
+    // Return error for 401 after retry or for excluded URLs
+    if (status === 401 && (isRetry || isAuthExcluded(url))) {
+      return [data, 401, data?.error || data?.detail || "Unauthorized"];
+    }
+
+    // Return response as tuple
+    return [data, status, ok ? null : data?.error || data?.detail || data?.message || "Request failed"];
+  } catch (err) {
+    console.error("Network error:", err);
+    return [null, 500, err.message || "Network error"];
+  } finally {
+    setIsLoading(false);
+  }
   };
 
   /**
@@ -99,31 +132,46 @@ export function ApiProvider({ children }) {
    */
   const refreshToken = async (originalUrl, originalMethod, originalBody, originalParams) => {
     try {
-      const response = await fetch(`${baseUrl}/token/refresh`, {
+      const refreshToken = localStorage.getItem("refreshToken");
+      
+      if (!refreshToken) {
+        return [null, 401, "No refresh token available"];
+      }
+
+      const response = await fetch(`${baseUrl}/token/refresh/`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-                  Authorization: `Bearer ${AUTH_TOKEN}`,
-
         },
+        body: JSON.stringify({ refresh: refreshToken }),
       });
 
       if (response.ok) {
         const data = await response.json();
-
-        // If the original request was for auth/me, return the data
-        if (originalUrl === "/token/refresh") {
-          return [data, response.status, null];
+        
+        // Update access token
+        if (data.access) {
+          localStorage.setItem("accessToken", data.access);
         }
 
-        // Otherwise, retry the original request
+        // If refresh token is also renewed
+        if (data.refresh) {
+          localStorage.setItem("refreshToken", data.refresh);
+        }
+
+        // Retry the original request
         return await makeRequest(originalUrl, originalMethod, originalBody, originalParams, true);
       }
 
+      // If refresh fails, clear tokens and return error
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       return [null, response.status, "Token refresh failed"];
     } catch (err) {
       console.error("Refresh failed:", err);
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       return [null, 500, "Token refresh failed"];
     }
   };

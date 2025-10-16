@@ -114,6 +114,15 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 
+
+import threading
+from django.core.mail import send_mail
+
+def send_otp_email_async(user):
+    def task():
+        send_otp_email(user)
+    threading.Thread(target=task).start()
+
 class UserLoginRequestOTP(APIView):
     permission_classes = [AllowAny]
 
@@ -137,7 +146,7 @@ class UserLoginRequestOTP(APIView):
             return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Send OTP email
-        send_otp_email(user)
+        send_otp_email_async(user)
         return Response({"message": "OTP sent to your email. Enter OTP to proceed."})
 
 class UserVerifyOTP(APIView):

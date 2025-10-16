@@ -67,27 +67,35 @@ const Ma7acilHistory = () => {
   const handleDelete = async () => {
    
 
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/apif/delete-ma7acil/${deleteId}/`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+   try {
+    
+    
+    const [data, status, error] = await api.delete(
+      `/delete-ma7acil/${deleteId}/`
+    );
 
-      if (!response.ok) {setPopup({ message: "فشل في حذف السجل", type: "error" })}
-      else {
-        setPopup({ message: "تم حذف السجل بنجاح", type: "success" });
-      }
-      setShowDeleteDialog(false);
+    console.log("Delete response:", { data, status, error });
 
-      fetchHistory(currentPage);
-    } catch (err) {
-      alert(err.message);
+    if (error || !(status >= 200 && status < 300)) {
+      setPopup({
+        message: error || data?.detail || "فشل في حذف السجل",
+        type: "error",
+      });
+    } else {
+      setPopup({
+        message: "تم حذف السجل بنجاح",
+        type: "success",
+      });
+     
+      fetchHistory(); 
     }
+  } catch (err) {
+    console.error("Error deleting zakat history:", err);
+    setPopup({
+      message: err.message || "خطأ في حذف السجل",
+      type: "error",
+    });
+  }
   };
 
   useEffect(() => {
