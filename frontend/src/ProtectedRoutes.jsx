@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { Loader } from './Components/Loader';
-import { verifyUser } from './VerifyUser';
-
+import React, { useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { Loader } from "./Components/Loader";
+import { verifyUser } from "./VerifyUser";
 
 export const ProtectedRoute = ({ children }) => {
   const [authorized, setAuthorized] = useState(null);
@@ -10,18 +9,11 @@ export const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("accessToken");
-
-      if (!token) {
-        setAuthorized(false);
-        return;
-      }
-
       try {
-        const user = await verifyUser(token);
+        const user = await verifyUser();
         const isStaff = user.is_staff === 1 || user.is_staff === true;
-
-        // Prevent non-admin users from accessing DashboardAdmin
+        console.log("isStaff", isStaff);
+        // Protect admin route
         if (location.pathname === "/DashboardAdmin/" && !isStaff) {
           setAuthorized(false);
         } else {
@@ -29,7 +21,6 @@ export const ProtectedRoute = ({ children }) => {
         }
       } catch (err) {
         console.error("Authentication failed:", err);
-        localStorage.removeItem("accessToken");
         setAuthorized(false);
       }
     };

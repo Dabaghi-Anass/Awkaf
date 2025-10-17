@@ -26,7 +26,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("apif/user/register/", CreateUserView.as_view(), name="register"),
-    path("apif/token/", UserLoginRequestOTP.as_view(), name="user_login"),    path("apif/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("apif/token/", UserLoginRequestOTP.as_view(), name="user_login"),   
+    path("apif/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
     path("apif/token/verify/", UserVerifyOTP.as_view(), name="user_verify_otp"),
     path("apif-auth/", include("rest_framework.urls")),
     path("apif/", include("api.urls")), 

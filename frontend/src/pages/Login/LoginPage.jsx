@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
-import '../CSS/Login.css';
-import { Login } from '../Login/Login.jsx';
+import { Login } from './Login';
+
+
 
 export const LoginPage = () => {
 

@@ -156,36 +156,58 @@ class UserVerifyOTP(APIView):
         username = request.data.get("username")
         otp = request.data.get("otp")
 
-        # Check if user exists
+        # ✅ Check if user exists
         user = User.objects.filter(username=username).first()
         if not user:
             return Response({"error": "Invalid username"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if OTP exists for the user
+        # ✅ Check if OTP exists
         otp_obj = OTPCode.objects.filter(user=user).first()
         if not otp_obj:
             return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if OTP is expired
+        # ✅ Check expiration
         if (now() - otp_obj.created_at) > timedelta(minutes=5):
-            otp_obj.delete()  # Delete expired OTP
+            otp_obj.delete()
             return Response({"error": "OTP has expired. Request a new one."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if OTP matches
+        # ✅ Check match
         if otp_obj.otp != otp:
             return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Activate user and delete OTP
+        # ✅ Activate and clean up
         user.is_active = True
         user.save()
         otp_obj.delete()
 
-        # Generate JWT tokens
+        # ✅ Generate tokens
         refresh = RefreshToken.for_user(user)
-        return Response({
-            "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh)
-        })
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        # ✅ Build response
+        response = Response({"message": "OTP verified successfully"}, status=status.HTTP_200_OK)
+
+        # ✅ Store tokens in secure HTTP-only cookies
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=False,         # Set to False only in local dev (True in production with HTTPS)
+            samesite="Lax",     # Allows cross-site requests (for frontend/backend on different domains)
+            max_age=5 * 60       # Match your access token lifetime (in seconds)
+        )
+
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=False,
+            samesite="Lax",
+            max_age=24 * 60 * 60  # 1 day
+        )
+
+        return response
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -242,36 +264,57 @@ class AdminVerifyOTP(APIView):
         username = request.data.get("username")
         otp = request.data.get("otp")
 
-        # Check if admin exists
+        # 1️⃣ Check if admin exists
         user = User.objects.filter(username=username, is_staff=True).first()
         if not user:
             return Response({"error": "Invalid username"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if OTP exists for the admin
+        # 2️⃣ Check if OTP exists for the admin
         otp_obj = OTPCode.objects.filter(user=user).first()
         if not otp_obj:
             return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if OTP is expired
+        # 3️⃣ Check expiration (5 minutes)
         if (now() - otp_obj.created_at) > timedelta(minutes=5):
-            otp_obj.delete()  # Delete expired OTP
+            otp_obj.delete()
             return Response({"error": "OTP has expired. Request a new one."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if OTP matches
+        # 4️⃣ Check OTP match
         if otp_obj.otp != otp:
             return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Activate admin and delete OTP
+        # 5️⃣ Activate admin & delete OTP
         user.is_active = True
         user.save()
         otp_obj.delete()
 
-        # Generate JWT tokens
+        # 6️⃣ Generate JWT tokens
         refresh = RefreshToken.for_user(user)
-        return Response({
-            "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh)
-        })
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        # 7️⃣ Create response
+        response = Response({"message": "OTP verified successfully!"}, status=status.HTTP_200_OK)
+
+        # 8️⃣ Store tokens in HttpOnly cookies
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=False,  # only secure in production
+            samesite="Lax",
+            max_age=60 * 5  # 5 minutes
+        )
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=False,
+            samesite="Lax",
+            max_age=60 * 60 * 24 * 7  # 7 days
+        )
+
+        return response
         
 # views.py
 
@@ -649,17 +692,21 @@ User = get_user_model()
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
-    # Only JSONRenderer + TemplateHTMLRenderer → no DRF browsable API
     renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
-    # When rendering HTML, use this template:
     template_name = "reset_password_form.html"
 
     def get(self, request, uidb64, token):
-        # decode & verify token
+        print("📩 [GET] Password reset link opened!")
+        print(f"🔹 UIDB64: {uidb64}")
+        print(f"🔹 Token: {token}")
+
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
+            print(f"🧠 Decoded UID: {uid}")
             user = User.objects.get(pk=uid)
-        except Exception:
+            print(f"🧍 User found → ID: {user.id}, Email: {user.email}")
+        except Exception as e:
+            print(f"❌ Error decoding UID or fetching user: {e}")
             return Response(
                 {"error": "Invalid link."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -667,24 +714,31 @@ class ResetPasswordView(APIView):
             )
 
         if not default_token_generator.check_token(user, token):
+            print(f"⚠️ Token invalid or expired for user ID {user.id}")
             return Response(
                 {"error": "Token invalid or expired."},
                 status=status.HTTP_400_BAD_REQUEST,
                 template_name=self.template_name
             )
 
-        # token valid → render form, passing uidb64 & token into context
+        print(f"✅ Token valid for user ID {user.id}")
         return Response(
             {"uidb64": uidb64, "token": token},
             template_name=self.template_name
         )
 
     def post(self, request, uidb64, token):
-        # decode & verify
+        print("📩 [POST] Password reset submission received!")
+        print(f"🔹 UIDB64: {uidb64}")
+        print(f"🔹 Token: {token}")
+
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
+            print(f"🧠 Decoded UID: {uid}")
             user = User.objects.get(pk=uid)
-        except Exception:
+            print(f"🧍 User found → ID: {user.id}, Email: {user.email}")
+        except Exception as e:
+            print(f"❌ Error decoding UID or fetching user: {e}")
             return Response(
                 {"error": "Invalid link."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -692,33 +746,40 @@ class ResetPasswordView(APIView):
             )
 
         if not default_token_generator.check_token(user, token):
+            print(f"⚠️ Token invalid or expired for user ID {user.id}")
             return Response(
                 {"error": "Token invalid or expired."},
                 status=status.HTTP_400_BAD_REQUEST,
                 template_name=self.template_name
             )
 
-        # get new password (works for JSON or form POST)
         new_password = request.data.get("password") or request.POST.get("password")
         if not new_password:
+            print(f"⚠️ Empty password field for user ID {user.id}")
             return Response(
                 {"error": "Password cannot be empty."},
                 status=status.HTTP_400_BAD_REQUEST,
                 template_name=self.template_name
             )
 
+        print(f"🔑 Setting new password for user ID {user.id}")
         user.set_password(new_password)
         user.save()
+        print(f"💾 Password updated successfully for user ID {user.id}")
 
-        # optional confirmation email
-        send_mail(
-            "Your password was changed",
-            "Your password has been successfully reset.",
-            "noreply@yourdomain.com",
-            [user.email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                "Your password was changed",
+                "Your password has been successfully reset.",
+                "noreply@yourdomain.com",
+                [user.email],
+                fail_silently=False,
+            )
+            print(f"📬 Confirmation email sent to {user.email}")
+        except Exception as e:
+            print(f"🚫 Failed to send confirmation email: {e}")
 
+        print(f"🎉 Password reset complete for user ID {user.id}")
         return Response(
             {"success": "Your password has been reset!"},
             template_name=self.template_name
@@ -1429,7 +1490,12 @@ from .serializer import UserInfoSerializer
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
+    # Runs once when Django loads the class (server start or reload)
+    print("🟢 CurrentUserView class loaded")
+
     def get(self, request):
+        # Runs every time a request hits the endpoint
+        print("🔵 CurrentUserView called by:", request.user)
         serializer = UserInfoSerializer(request.user)
         return Response(serializer.data)
 

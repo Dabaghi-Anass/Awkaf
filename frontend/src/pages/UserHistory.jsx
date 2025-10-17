@@ -28,45 +28,60 @@ const UserHistory = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
-  const getUserIdFromToken = () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return null;
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = JSON.parse(atob(base64));
-      return jsonPayload.user_id;
-    } catch (error) {
-      setPopup({ message: "حدث خطاء", type: "error" });
-      return null;
+  const getUserIdFromToken = async () => {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/apif/me/", {
+      method: "GET",
+      credentials: "include", // ✅ send cookies automatically
+    });
+
+    if (!response.ok) {
+      throw new Error("Unauthorized");
     }
-  };
+
+    const userData = await response.json();
+    return userData.id; // or userData.user_id depending on your backend response
+  } catch (error) {
+    setPopup({ message: "حدث خطأ أثناء جلب بيانات المستخدم", type: "error" });
+    return null;
+  }
+};
+
 
   const fetchHistory = async (page = 1) => {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      setError("المستخدم غير مصادق عليه");
-      return;
-    }
+  const userId = await getUserIdFromToken();
+  if (!userId) {
+    setError("المستخدم غير مصادق عليه");
+    return;
+  }
 
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
+  
+  const [data, status, error] = await api.get(
+    `/get-zakat-history/${userId}/`,
+    { page }
+  );
 
-    const [data, status, error] = await api.get(
-      `/get-zakat-history/${userId}/`,
-      { page }
-    );
-
-    if (!error && status === 200) {
+  if (!error && status === 200) {
+    // Check if the response contains a "message" field (error case)
+    if (data.message && !data.results) {
+      setHistory([]);
+      setError(null); // Clear error so EmptyState shows
+      setTotalPages(1);
+    } else {
       setHistory(data.results || []);
       setTotalPages(Math.ceil((data.count || 1) / 10));
-    } else {
-      console.error("Error fetching history:", error);
-      setError("فشل في جلب البيانات");
+      setError(null);
     }
+  } else {
+    console.error("Error fetching history:", error);
+    setError(error || data?.detail || "فشل في جلب البيانات");
+    setHistory([]);
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
   const handleDeleteClick = (id) => {
     setDeleteId(id);
@@ -81,7 +96,7 @@ const UserHistory = () => {
       `/delete-zakat-history/${deleteId}/`
     );
 
-    console.log("Delete response:", { data, status, error });
+    
 
     if (error || !(status >= 200 && status < 300)) {
       setPopup({
@@ -178,8 +193,6 @@ const UserHistory = () => {
             {loading ? (
               <Loader />
             ) : error ? (
-              <ErrorState />
-            ) : history.length === 0 ? (
               <EmptyState />
             ) : (
               <>

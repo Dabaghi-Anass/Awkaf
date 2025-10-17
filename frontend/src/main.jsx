@@ -7,8 +7,8 @@ import {
 import About from './pages/About/About.jsx'
 import Home from './pages/Home.jsx';
 import ZakatCal from './pages/ZakatCalculator/ZakatCal.jsx';
-import { LoginPage } from './pages/LoginPage.jsx';
-import { RegisterPage } from './pages/RegisterPage.jsx';
+
+import { RegisterPage } from './pages/Register/RegisterPage.jsx';
 
 import { DashboardAdmin } from './pages/AdminDashboard/DashboardAdmin.jsx';
 import { ZakatProvider } from './Components/ZakatProvider.jsx';
@@ -24,7 +24,7 @@ import UserHistory from './pages/UserHistory.jsx';
 import { AdminProvider } from './Components/AdminProvider.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import { ForgotPassword } from './Components/ForgotPassword.jsx';
-import ZakatSelectionPage from './Components/ZakatSelectionPage.jsx';
+import ZakatSelectionPage from './Components/Unused/ZakatSelectionPage.jsx';
 import { Settings } from './pages/AdminDashboard/Components/Settings.jsx';
 import { UserInfos } from './pages/UserInfos.jsx';
 import { PrivateRouterAdmin } from './PrivateRouterAdmin.jsx';
@@ -39,6 +39,7 @@ import Layout from './Layout.jsx';
 
 import { ApiProvider } from './ApiProvider.jsx';
 import "./index.css";
+import { LoginPage } from './pages/Login/LoginPage.jsx';
 const router = createBrowserRouter([
   {
     path: "/",

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { MessagePopup } from "@/Components/MessagePopup";
+import { useApi } from "@/ApiProvider";
 
 export const Settings = () => {
+  
   const [formData, setFormData] = useState({
     username: "",
     first_name: "",
@@ -13,52 +15,34 @@ export const Settings = () => {
   const [popup, setPopup] = useState({ message: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
-
+  const api = useApi();
   useEffect(() => {
-    fetchUserInfo();
-  }, []);
-
-  const fetchUserInfo = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setPopup({
-        message: "Authentication token not found. Please login again.",
-        type: "error",
-      });
-      setIsFetching(false);
-      return;
-    }
-
-    try {
-      const res = await fetch("http://127.0.0.1:8000/apif/me/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to load user information");
+      
+  
+      const fetchUserInfo = async () => {
+        try {
+          
+  
+          const [data,status,error] = await api.get("/me/");
+  
+          if (error) throw new Error("فشل تحميل معلومات المستخدم.")
+  
+  
+          setFormData((prev) => ({
+            ...prev,
+            username: data.username || "",
+            first_name: data.first_name || "",
+            last_name: data.last_name || "",
+            email: data.email || "",
+          }))
+        } catch (err) {
+          console.error(err)
+          setPopup({message:"حدث خطاء",type:"error"})
+        }
       }
-
-      const data = await res.json();
-
-      setFormData((prev) => ({
-        ...prev,
-        username: data.username || "",
-        first_name: data.first_name || "",
-        last_name: data.last_name || "",
-        email: data.email || "",
-      }));
-    } catch (err) {
-      console.error("Error fetching user info:", err);
-      setPopup({
-        message: "Could not fetch admin data. Please try again.",
-        type: "error",
-      });
-    } finally {
-      setIsFetching(false);
-    }
-  };
+  
+      fetchUserInfo()
+    }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,15 +99,6 @@ export const Settings = () => {
 
     setIsLoading(true);
 
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setPopup({
-        message: "Authentication token not found. Please login again.",
-        type: "error",
-      });
-      setIsLoading(false);
-      return;
-    }
 
     // Build payload with only modified fields
     const payload = {};
@@ -140,72 +115,35 @@ export const Settings = () => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/apif/user/update/", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+   
+    const [data, status, error] = await api.patch("/user/update/", payload, {
+      withCredentials: true,
+    });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle specific error messages
-        let errorMessage = "Failed to update profile";
-
-        if (data.old_password) {
-          errorMessage = Array.isArray(data.old_password) 
-            ? data.old_password[0] 
-            : data.old_password;
-        } else if (data.password) {
-          errorMessage = Array.isArray(data.password) 
-            ? data.password[0] 
-            : data.password;
-        } else if (data.email) {
-          errorMessage = Array.isArray(data.email) 
-            ? data.email[0] 
-            : data.email;
-        } else if (data.username) {
-          errorMessage = Array.isArray(data.username) 
-            ? data.username[0] 
-            : data.username;
-        } else if (typeof data === "object" && Object.keys(data).length > 0) {
-          const firstError = Object.values(data)[0];
-          errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
-        }
-
-        setPopup({
-          message: errorMessage,
-          type: "error",
-        });
-        return;
+    if (error || status !== 200) {
+      if (data?.old_password) {
+        setPopup({ message: data.old_password, type: "error" });
+      } else if (typeof data === "object" && Object.values(data)[0]) {
+        const firstError = Object.values(data)[0];
+        setPopup({ message: firstError, type: "error" });
+      } else {
+        setPopup({ message: data || "حدث خطاء", type: "error" });
       }
-
-      setPopup({
-        message: "Profile updated successfully!",
-        type: "success",
-      });
-
-      // Clear password fields after successful update
-      setFormData((prev) => ({ 
-        ...prev, 
-        password: "", 
-        old_password: "" 
-      }));
-    } catch (err) {
-      console.error("Error updating profile:", err);
-      setPopup({
-        message: "Server error. Please try again later.",
-        type: "error",
-      });
-    } finally {
       setIsLoading(false);
+      return;
     }
+
+    setPopup({ message: "تم تحديث البيانات بنجاح", type: "success" });
+    setFormData((prev) => ({ ...prev, password: "", old_password: "" }));
+  } catch (err) {
+    console.error("Error updating user:", err);
+    setPopup({ message: "حدث خطاء", type: "error" });
+  } finally {
+    setIsLoading(false);
+  }
   };
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">

@@ -1,7 +1,8 @@
 
-import '../CSS/Register.css'
+
 import { useState } from 'react';
-import { Register } from '../Components/Register';
+import { Register } from './Components/Register';
+
 
 
 export const RegisterPage = () => {

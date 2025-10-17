@@ -130,8 +130,7 @@ export const AdminLogin = () => {
     });
 
     if (!error && status >= 200 && status < 300) {
-      localStorage.setItem("accessToken", result.access_token);
-      localStorage.setItem("refreshToken", result.refresh_token);
+      
 
       setPopup({ 
         message: "تم التحقق من OTP بنجاح!", 
@@ -139,7 +138,7 @@ export const AdminLogin = () => {
       });
 
       // Navigate to admin dashboard after successful verification
-      setTimeout(() => navigate("/DashboardAdmin"), 1000);
+       navigate("/DashboardAdmin")
     } else {
       console.error("OTP verification failed:", error || result);
       

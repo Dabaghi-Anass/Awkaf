@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
-import { AdTopBar } from '../Components/AdTopBar';
-import { AdRightBar } from '../Components/AdRightBar';
-import { AdLeftBar } from '../Components/AdLeftBar';
+import { AdTopBar } from './AdTopBar';
+import { AdRightBar } from './AdRightBar';
+import { AdLeftBar } from '../ui/AdLeftBar';
 import '../CSS/Admin.css';
 
 export const Admin = () => {

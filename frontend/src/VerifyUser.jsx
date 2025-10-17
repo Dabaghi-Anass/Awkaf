@@ -1,15 +1,15 @@
-export const verifyUser = async (token) => {
+export const verifyUser = async () => {
   const response = await fetch("http://127.0.0.1:8000/apif/me/", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
+  method: "GET",
+  credentials: "include", // ✅ This tells the browser to send cookies automatically
+});
 
+ 
   if (!response.ok) {
     throw new Error("Unauthorized");
   }
-
-  return response.json();
+  
+  
+  return response.json() ;
+ 
 };

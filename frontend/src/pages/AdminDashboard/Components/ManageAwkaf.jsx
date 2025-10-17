@@ -20,79 +20,64 @@ export const ManageAwkaf = () => {
     setProjectData({ ...projectData, image: e.target.files[0] });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      //  Build FormData for file upload
-      const formData = new FormData();
-      Object.entries(projectData).forEach(([key, value]) => {
-        if (key === "image" && value instanceof File) {
-          formData.append(key, value);
-        } else if (key !== "image") {
-          formData.append(key, value);
-        }
-      });
-
-      //  Determine URL and method
-      const url = isEditing
-        ? `/waqf-projects/${projectData.id}/`
-        : "/waqf-projects/";
-      const method = isEditing ? "PUT" : "POST";
-
-      //  Use api methods - but pass FormData directly
-      // Note: We need to bypass the standard api methods for FormData
-      const token = localStorage.getItem("accessToken");
-      const baseUrl = import.meta.env.VITE_API_BASE_URL;
-      const fullUrl = `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
-
-      const response = await fetch(fullUrl, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // Don't set Content-Type - browser will set it with boundary for FormData
-        },
-        body: formData,
-      });
-
-      //  Handle response
-      let data = null;
-      try {
-        data = await response.json();
-      } catch (e) {
-        data = null;
+  try {
+    // Build FormData for file upload
+    const formData = new FormData();
+    Object.entries(projectData).forEach(([key, value]) => {
+      if (key === "image" && value instanceof File) {
+        formData.append(key, value);
+      } else if (key !== "image") {
+        formData.append(key, value);
       }
+    });
 
-      const status = response.status;
+    // Determine URL and method
+    const url = isEditing
+      ? `/waqf-projects/${projectData.id}/`
+      : "/waqf-projects/";
+    const method = isEditing ? "put" : "post";
 
-      if (status >= 200 && status < 300) {
-        setPopup({
-          message: isEditing ? "Project Updated Successfully!" : "Project Added!",
-          type: "success",
-        });
-        setProjectData(defaultProject);
-        setIsLoading(false);
-        setTimeout(() => {
-          setActiveTab("Projects");
-        }, 500);
-      } else {
-        setPopup({
-          message: data?.detail || `Error submitting project: ${JSON.stringify(data)}`,
-          type: "error",
-        });
-        
-      }
-    } catch (error) {
-      
+    // Use api instance
+    let data, status, error;
+
+    if (method === "post") {
+      [data, status, error] = await api.post(url, formData);
+    } else {
+      [data, status, error] = await api.put(url, formData);
+    }
+
+    // Handle response
+    if (!error && status >= 200 && status < 300) {
       setPopup({
-        message: "Error submitting project",
+        message: isEditing
+          ? "Project Updated Successfully!"
+          : "Project Added!",
+        type: "success",
+      });
+      setProjectData(defaultProject);
+      setTimeout(() => setActiveTab("Projects"), 500);
+    } else {
+      setPopup({
+        message:
+          data?.detail ||
+          `Error submitting project: ${JSON.stringify(data || error)}`,
         type: "error",
       });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (err) {
+    console.error("Error submitting project:", err);
+    setPopup({
+      message: "Error submitting project",
+      type: "error",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     if (!isEditing) {

@@ -91,3 +91,41 @@ class JWTCookieMiddleware(MiddlewareMixin):
         response.delete_cookie('access_token', path='/')
         response.delete_cookie('refresh_token', path='/')
         logger.info("JWT cookies cleared")
+
+
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+
+class CookieJWTAuthentication(JWTAuthentication):
+    """
+    Custom authentication class that reads the JWT from HttpOnly cookies
+    instead of the Authorization header.
+    """
+
+    def authenticate(self, request):
+        print("🟢 CookieJWTAuthentication called")
+
+        # Get the access token from cookies
+        access_token = request.COOKIES.get('access_token')
+        if not access_token:
+            print("⚠️ No access_token found in cookies")
+            return None  # No token in cookies → DRF will try the next auth class
+
+        print("✅ Access token found in cookies:", access_token[:20] + "..." if len(access_token) > 20 else access_token)
+
+        try:
+            # Validate the token
+            validated_token = self.get_validated_token(access_token)
+            print("🔐 Token successfully validated")
+
+            # Get user from token
+            user = self.get_user(validated_token)
+            print(f"👤 Authenticated user: {user}")
+
+            # Return the associated user and the token
+            return user, validated_token
+
+        except (InvalidToken, TokenError) as e:
+            print("❌ Invalid token:", e)
+            return None  # Invalid token → not authenticated

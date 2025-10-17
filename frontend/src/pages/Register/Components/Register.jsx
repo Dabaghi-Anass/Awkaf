@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MessagePopup } from './MessagePopup';
+
 import { useApi } from '@/ApiProvider';
+import { MessagePopup } from '@/Components/MessagePopup';
 
 export const Register = ({ handleChange, formData }) => {
     const formRef = useRef(null);

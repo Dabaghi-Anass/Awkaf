@@ -21,20 +21,24 @@ const Ma7acilHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const getUserIdFromToken = () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return null;
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = JSON.parse(atob(base64));
-      return jsonPayload.user_id;
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      return null;
-    }
-  };
+  const getUserIdFromToken = async () => {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/apif/me/", {
+      method: "GET",
+      credentials: "include", // ✅ send cookies automatically
+    });
 
+    if (!response.ok) {
+      throw new Error("Unauthorized");
+    }
+
+    const userData = await response.json();
+    return userData.id; // or userData.user_id depending on your backend response
+  } catch (error) {
+    setPopup({ message: "حدث خطأ أثناء جلب بيانات المستخدم", type: "error" });
+    return null;
+  }
+};
   const handleDeleteClick = (id) => {
     setDeleteId(id);
     setShowDeleteDialog(true);
@@ -42,7 +46,7 @@ const Ma7acilHistory = () => {
 
 
   const fetchHistory = async (page = 1) => {
-    const userId = getUserIdFromToken();
+    const userId = await getUserIdFromToken();
     if (!userId) {
       setError("المستخدم غير مصادق عليه");
       setLoading(false);
@@ -75,7 +79,7 @@ const Ma7acilHistory = () => {
       `/delete-ma7acil/${deleteId}/`
     );
 
-    console.log("Delete response:", { data, status, error });
+   
 
     if (error || !(status >= 200 && status < 300)) {
       setPopup({
@@ -91,7 +95,7 @@ const Ma7acilHistory = () => {
       fetchHistory(); 
     }
   } catch (err) {
-    console.error("Error deleting zakat history:", err);
+    
     setPopup({
       message: err.message || "خطأ في حذف السجل",
       type: "error",

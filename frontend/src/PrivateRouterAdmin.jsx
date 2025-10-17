@@ -10,20 +10,16 @@ export const PrivateRouterAdmin = ({ children }) => {
 
   useEffect(() => {
     const checkAdminAuth = async () => {
-      const token = localStorage.getItem("accessToken");
-
-      if (!token) {
-        setIsAuthorized(false);
-        return;
-      }
+    
+      
 
       try {
-        const user = await verifyUser(token);
+        const user = await verifyUser();
         const isStaff = user.is_staff === 1 || user.is_staff === true;
         setIsAuthorized(isStaff);
       } catch (err) {
-        console.error("Admin authentication failed:", err);
-        localStorage.removeItem("accessToken");
+       
+       
         setIsAuthorized(false);
       }
     };

@@ -4,7 +4,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import React,{useState}  from 'react'
-import { zakatForm } from "./tools/table"
+import { zakatForm } from "../tools/table"
 export const InputZakat = ({field}) => {
 
 

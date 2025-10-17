@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Loader } from "../Components/Loader";
-import { MessagePopup } from '../Components/MessagePopup';
+import { MessagePopup } from '../../Components/MessagePopup';
 import {
   InputOTP,
   InputOTPGroup,
@@ -40,7 +39,7 @@ export const Login = ({ handleChange, formData }) => {
 
   setIsLoading(true);
 
-  // ✅ Use ApiProvider instead of fetch
+ 
   const [result, status, error] = await api.post("/token/", formData);
 
   if (!error && status >= 200 && status < 300) {
@@ -75,19 +74,18 @@ const handleOtpSubmit = async (e) => {
 
   setIsLoading(true);
 
-  // ✅ Prepare the request body
+  
   const body = {
     username: formData.username,
     otp: otpCode,
   };
 
-  // ✅ Use ApiProvider for POST request
+  
   const [tokens, status, error] = await api.post("/token/verify/", body);
 
   if (!error && status >= 200 && status < 300) {
     
-    localStorage.setItem("accessToken", tokens.access_token);
-    localStorage.setItem("refreshToken", tokens.refresh_token);
+    
 
     setPopup({ message: "تم التحقق من OTP بنجاح.", type: "success" });
     navigate("/home");

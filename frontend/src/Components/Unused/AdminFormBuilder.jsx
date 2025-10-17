@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import {Trash} from '../assets/icons/trash.jsx';
-import {Add} from '../assets/icons/Add.jsx';
+import {Trash} from '../../assets/icons/trash.jsx';
+import {Add} from '../../assets/icons/Add.jsx';
 import '../CSS/DashboardAdmin.css';
 const AdminFormBuilder = () => {
   const [companyName, setCompanyName] = useState("");

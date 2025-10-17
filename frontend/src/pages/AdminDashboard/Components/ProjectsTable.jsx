@@ -88,13 +88,10 @@ export const ProjectsTable = () => {
     try {
       setIsLoading(true);
 
-      // ✅ Debug: Log the project ID being deleted
-      console.log("Deleting project with ID:", deleteId);
-
-      // ✅ Use api.delete instead of fetch
+    
       const [data, status, error] = await api.delete(`/waqf-projects/${deleteId}/`);
 
-      console.log("Delete response:", { data, status, error });
+      
 
       if (error || !(status >= 200 && status < 300)) {
         setPopup({
@@ -111,7 +108,7 @@ export const ProjectsTable = () => {
         );
       }
     } catch (err) {
-      console.error("Error deleting project:", err);
+      
       setPopup({
         message: "Error deleting project",
         type: "error",
@@ -151,7 +148,7 @@ export const ProjectsTable = () => {
                   <td className="p-2">{project.partners}</td>
                   <td className="p-2">{project.created_at}</td>
                   <td className="p-2">{project.updated_at}</td>
-                  <td className="p-2 flex gap-2">
+                  <td className="p-2 flex gap-2 justify-center">
                     <button
                       onClick={() => handleEdit(project)}
                       disabled={isLoading}

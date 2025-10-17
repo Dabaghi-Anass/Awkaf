@@ -54,50 +54,52 @@ export function ApiProvider({ children }) {
    * @returns {Promise<ApiResponse>}
    */
   const makeRequest = async (url, method, body = null, params = null, isRetry = false) => {
-    // Get fresh token for each request
-    const AUTH_TOKEN = localStorage.getItem("accessToken") || "";
-    
-    const options = {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    };
+  const options = {
+    method: method,
+    headers: {},
+    credentials: "include",
+  };
 
-    // Add Authorization header only for authenticated endpoints
-    if (!isAuthExcluded(url) && AUTH_TOKEN) {
-      options.headers.Authorization = `Bearer ${AUTH_TOKEN}`;
-    }
 
-    // Build URL with query parameters
-    let fullUrl = `${baseUrl}${url}`;
-    if (params) {
-      const queryString = new URLSearchParams(params).toString();
-      fullUrl += `?${queryString}`;
-    }
 
-    // Add body for POST/PUT/PATCH requests
-    if (
-      body &&
-      (method.toLowerCase() === "post" ||
-        method.toLowerCase() === "put" ||
-        method.toLowerCase() === "patch")
-    ) {
+  // Build URL with query parameters
+  let fullUrl = `${baseUrl}${url}`;
+  if (params) {
+    const queryString = new URLSearchParams(params).toString();
+    fullUrl += `?${queryString}`;
+  }
+
+  // Add body for POST/PUT/PATCH requests
+  if (
+    body &&
+    (method.toLowerCase() === "post" ||
+      method.toLowerCase() === "put" ||
+      method.toLowerCase() === "patch")
+  ) {
+    // Check if body is FormData
+    if (body instanceof FormData) {
+      // Don't set Content-Type header - let browser set it with boundary
+      options.body = body;
+    } else {
+      // Regular JSON body
+      options.headers["Content-Type"] = "application/json";
       options.body = JSON.stringify(body);
     }
+  } else {
+    // For GET, DELETE, etc.
+    options.headers["Content-Type"] = "application/json";
+  }
 
-   try {
+  try {
     const response = await fetch(fullUrl, options);
     const status = response.status;
     const ok = response.ok;
 
-    //  FIX: Handle empty responses (common for DELETE requests)
+    // Handle empty responses (common for DELETE requests)
     let data = null;
     try {
       data = await response.json();
     } catch (e) {
-      // Empty response is OK - just set data to null
       data = null;
     }
 
@@ -119,7 +121,7 @@ export function ApiProvider({ children }) {
   } finally {
     setIsLoading(false);
   }
-  };
+};
 
   /**
    * Attempts to refresh the authentication token

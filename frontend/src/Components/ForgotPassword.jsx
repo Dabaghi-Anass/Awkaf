@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 
+import { useApi } from "@/ApiProvider";
+
 export const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
-
+    const api = useApi();
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage("");
         setError("");
+        //ydk fih
 
+        const [data, status, error] = await api.post("/user/request-password-reset/", { email });
         try {
             const res = await fetch("http://127.0.0.1:8000/apif/user/request-password-reset/", {
                 method: "POST",

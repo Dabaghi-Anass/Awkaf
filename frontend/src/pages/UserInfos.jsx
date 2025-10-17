@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
-import { useApi } from "@/ApiProvider"
-import { MessagePopup } from "@/Components/MessagePopup"
 
+import { MessagePopup } from "@/Components/MessagePopup"
+import { useApi } from "@/ApiProvider"
 
 // Mock components for demonstration
 
@@ -22,21 +22,17 @@ export const UserInfos = () => {
   const [popup,setPopup]=useState({message:'',type:''});
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken")
-    if (!token) {
-     setPopup({message:"لم يتم العثور على رمز الدخول.",type:"error"})
-      return
-    }
+    
 
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/apif/me/", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        
 
-        if (!res.ok) throw new Error("فشل تحميل معلومات المستخدم.")
+        const [data,status,error] = await api.get("/me/");
 
-        const data = await res.json()
+        if (error) throw new Error("فشل تحميل معلومات المستخدم.")
+
+
         setFormData((prev) => ({
           ...prev,
           username: data.username || "",
@@ -78,16 +74,6 @@ export const UserInfos = () => {
     if (Object.keys(errors).length > 0) return;
    }
     
-   
-
-    
-
-    const token = localStorage.getItem("accessToken")
-    if (!token) {
-     setPopup({message:"لم يتم العثور على رمز الدخول.",type:"error"})
-
-      return
-    }
 
     if (formData.old_password && !formData.password) {
       setPopup({message:"يرجى ادخال كلمة المرور",type:"error"})

@@ -17,7 +17,7 @@ import { useApi } from "@/ApiProvider";
 
 
 export const ManageUsers = () => {
-  const api = useApi(); // ✅ Use ApiProvider
+  const api = useApi(); //  Use ApiProvider
   const { setPopup, popup } = useContext(ZakatContext);
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
@@ -42,7 +42,7 @@ export const ManageUsers = () => {
 
   const fetchTotalPages = async () => {
     try {
-      // ✅ Use api.get instead of fetch
+      //  Use api.get instead of fetch
       const [data, status, error] = await api.get("/admin/non-staff-users/");
 
       if (!error && Array.isArray(data)) {
@@ -61,7 +61,7 @@ export const ManageUsers = () => {
     try {
       setIsLoading(true);
       
-      // ✅ Use api.get with params
+      //  Use api.get with params
       const [data, status, error] = await api.get("/admin/non-staff-users/", {
         page: pageNumber,
         page_size: pageSize,
@@ -85,8 +85,8 @@ export const ManageUsers = () => {
   const deleteUser = async () => {
     try {
       setIsLoading(true);
-      
-      // ✅ Use api.delete instead of fetch
+    
+      //  Use api.delete instead of fetch
       const [data, status, error] = await api.delete(`/admin/delete-user/${deleteId}/`);
 
       if (error || !(status >= 200 && status < 300)) {

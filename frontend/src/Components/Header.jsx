@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react"; // icons for mobile toggle
+import { useApi } from "@/ApiProvider";
 
 export const Header = () => {
+  const api = useApi();
   const location = useLocation();
+
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+  const handleLogout = async () => {
+    const [data, status, error] =  await api.post("/logout/");
     navigate("/");
   };
 
