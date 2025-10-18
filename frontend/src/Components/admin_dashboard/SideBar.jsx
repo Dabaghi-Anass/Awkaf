@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useApi } from "@/ApiProvider";
 
 export const SideBar = ({ activeTab, setActiveTab }) => {
   const navigate = useNavigate();
+  const api= useApi();
 
   const menuItems = [
     { name: "Users", label: "Manage Users" },
@@ -11,12 +13,14 @@ export const SideBar = ({ activeTab, setActiveTab }) => {
     { name: "dashboardOverview", label: "dashboard" },
     { name: "Logout", label: "Logout" },
   ];
+  const handleLogout = async () => {
+    const [data, status, error] =  await api.post("/logout/");
+    navigate("/");
+  };
 
   const handleItemClick = (name) => {
     if (name === "Logout") {
-      
-      localStorage.removeItem("accessToken");
-      navigate("/");
+      handleLogout();
     } else {
       setActiveTab(name);
     }

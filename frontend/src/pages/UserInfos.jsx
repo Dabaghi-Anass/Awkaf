@@ -317,7 +317,7 @@ export const UserInfos = () => {
         </div>
       </div>
 
-     =
+     
     </>
   )
 }

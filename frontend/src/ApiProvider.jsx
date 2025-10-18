@@ -40,7 +40,7 @@ export function ApiProvider({ children }) {
    * @returns {boolean}
    */
   const isAuthExcluded = (url) => {
-    return AUTH_EXCLUDED_URLS.some(excludedUrl => url.startsWith(excludedUrl));
+    return AUTH_EXCLUDED_URLS.some((excludedUrl) => url.startsWith(excludedUrl));
   };
 
   /**
@@ -54,75 +54,74 @@ export function ApiProvider({ children }) {
    * @returns {Promise<ApiResponse>}
    */
   const makeRequest = async (url, method, body = null, params = null, isRetry = false) => {
-  const options = {
-    method: method,
-    headers: {},
-    credentials: "include",
-  };
+    const options = {
+      method: method,
+      headers: {},
+      credentials: "include",
+    };
 
+    // Build URL with query parameters
+    let fullUrl = `${baseUrl}${url}`;
+    if (params) {
+      const queryString = new URLSearchParams(params).toString();
+      fullUrl += `?${queryString}`;
+    }
 
-
-  // Build URL with query parameters
-  let fullUrl = `${baseUrl}${url}`;
-  if (params) {
-    const queryString = new URLSearchParams(params).toString();
-    fullUrl += `?${queryString}`;
-  }
-
-  // Add body for POST/PUT/PATCH requests
-  if (
-    body &&
-    (method.toLowerCase() === "post" ||
-      method.toLowerCase() === "put" ||
-      method.toLowerCase() === "patch")
-  ) {
-    // Check if body is FormData
-    if (body instanceof FormData) {
-      // Don't set Content-Type header - let browser set it with boundary
-      options.body = body;
+    // Add body for POST/PUT/PATCH requests
+    if (
+      body &&
+      (method.toLowerCase() === "post" ||
+        method.toLowerCase() === "put" ||
+        method.toLowerCase() === "patch")
+    ) {
+      // Check if body is FormData
+      if (body instanceof FormData) {
+        // Don't set Content-Type header - let browser set it with boundary
+        options.body = body;
+      } else {
+        // Regular JSON body
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(body);
+      }
     } else {
-      // Regular JSON body
+      // For GET, DELETE, etc.
       options.headers["Content-Type"] = "application/json";
-      options.body = JSON.stringify(body);
     }
-  } else {
-    // For GET, DELETE, etc.
-    options.headers["Content-Type"] = "application/json";
-  }
 
-  try {
-    const response = await fetch(fullUrl, options);
-    const status = response.status;
-    const ok = response.ok;
-
-    // Handle empty responses (common for DELETE requests)
-    let data = null;
     try {
-      data = await response.json();
-    } catch (e) {
-      data = null;
+      const response = await fetch(fullUrl, options);
+      const status = response.status;
+      const ok = response.ok;
+
+      // Handle empty responses (common for DELETE requests)
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = null;
+      }
+
+      // Handle 401 with token refresh (only for authenticated endpoints and not a retry)
+      if (status === 401 && !isRetry && !isAuthExcluded(url)) {
+        console.log("Token expired, attempting refresh...");
+        return await refreshToken(url, method, body, params);
+      }
+
+      // Handle non-OK responses (including 401 after retry)
+      if (!ok) {
+        const errorMessage = data?.error || data?.detail || data?.message || "Request failed";
+        return [data, status, errorMessage];
+      }
+
+      // Return successful response
+      return [data, status, null];
+    } catch (err) {
+      console.error("Network error:", err);
+      return [null, 500, err.message || "Network error"];
+    } finally {
+      setIsLoading(false);
     }
-
-    // Handle 401 with token refresh (only for authenticated endpoints)
-    if (status === 401 && !isRetry && !isAuthExcluded(url)) {
-      return await refreshToken(url, method, body, params);
-    }
-
-    // Return error for 401 after retry or for excluded URLs
-    if (status === 401 && (isRetry || isAuthExcluded(url))) {
-      return [data, 401, data?.error || data?.detail || "Unauthorized"];
-    }
-
-    // Return response as tuple
-    return [data, status, ok ? null : data?.error || data?.detail || data?.message || "Request failed"];
-  } catch (err) {
-    console.error("Network error:", err);
-    return [null, 500, err.message || "Network error"];
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
   /**
    * Attempts to refresh the authentication token
    * @private
@@ -134,24 +133,17 @@ export function ApiProvider({ children }) {
    */
   const refreshToken = async (originalUrl, originalMethod, originalBody, originalParams) => {
     try {
-      const refreshToken = localStorage.getItem("refreshToken");
-      
-      if (!refreshToken) {
-        return [null, 401, "No refresh token available"];
-      }
-
       const response = await fetch(`${baseUrl}/token/refresh/`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ refresh: refreshToken }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // Update access token
         if (data.access) {
           localStorage.setItem("accessToken", data.access);

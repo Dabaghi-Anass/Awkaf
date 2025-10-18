@@ -12,7 +12,7 @@ export default function ErrorPage() {
           <div className="relative">
             <div className="absolute inset-0 bg-red-500 opacity-20 rounded-full blur-2xl animate-pulse"></div>
             <div className="relative bg-white rounded-full p-6 shadow-lg">
-              <AlertCircle className="w-16 h-16 text-red-500" strokeWidth={1.5} />
+              <AlertCircle className="w-10 h-10 text-red-500" strokeWidth={1.5} />
             </div>
           </div>
         </div>
@@ -21,17 +21,17 @@ export default function ErrorPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center border border-gray-100">
           {/* 404 Large Text */}
           <div className="mb-6">
-            <h1 className="text-8xl md:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600 mb-2">
+            <h1 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600 mb-2">
               404
             </h1>
-            <div className="h-1 w-24 bg-gradient-to-r from-red-500 to-green-500 mx-auto rounded-full"></div>
+            <div className="h-1 w-20 bg-gradient-to-r from-red-500 to-green-500 mx-auto rounded-full"></div>
           </div>
 
           {/* Error Message */}
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
             الصفحة غير موجودة
           </h2>
-          <p className="text-gray-600 text-base md:text-lg mb-8 leading-relaxed max-w-md mx-auto">
+          <p className="text-gray-600 text-base md:text-sm mb-8 leading-relaxed max-w-md mx-auto">
             عذراً، الصفحة التي تبحث عنها غير موجودة أو ليس لديك صلاحية للوصول إليها. يرجى التحقق من الرابط أو العودة إلى الصفحة الرئيسية.
           </p>
 

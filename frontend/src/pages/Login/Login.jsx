@@ -100,6 +100,30 @@ const handleOtpSubmit = async (e) => {
   setIsLoading(false);
 };
 
+ const handleResendOtp = async () => {
+    setIsLoading(true);
+    setOtpCode("");
+
+    const [result, status, error] = await api.post("/admin/login/", {
+      username: data.username,
+      password: data.password,
+      secret_key: data.secretKey,
+    });
+
+    if (!error && status >= 200 && status < 300) {
+      setPopup({ 
+        message: "تم إرسال رمز OTP جديد إلى بريدك الإلكتروني.", 
+        type: "success" 
+      });
+    } else {
+      setPopup({ 
+        message: "فشل إرسال رمز OTP. حاول مرة أخرى.", 
+        type: "error" 
+      });
+    }
+
+    setIsLoading(false);
+  };
     
     
 
@@ -146,41 +170,60 @@ const handleOtpSubmit = async (e) => {
                         </>
                     ) : (
                         <>
-                <div className="max-w-md mx-auto p-6 space-y-4">
-                    <div>
-                        <label className="block text-[0.8em] text-gray-600 mb-2">
-                        أدخل رمز OTP
-                        </label>
-                        <div className="flex justify-center" dir="ltr">
-                        <InputOTP 
-                            maxLength={6} 
-                            value={otpCode}
-                            onChange={(value) => setOtpCode(value)}
-                        >
-                            <InputOTPGroup>
-                            <InputOTPSlot index={0} className="w-10 h-10 text-lg border-gray-300 " />
-                            <InputOTPSlot index={1} className="w-10 h-10 text-lg border-gray-300" />
-                            <InputOTPSlot index={2} className="w-10 h-10 text-lg border-gray-300" />
-                            </InputOTPGroup>
-                            <InputOTPSeparator />
-                            <InputOTPGroup>
-                            <InputOTPSlot index={3} className="w-10 h-10 text-lg border-gray-300" />
-                            <InputOTPSlot index={4} className="w-10 h-10 text-lg border-gray-300" />
-                            <InputOTPSlot index={5} className="w-10 h-10 text-lg border-gray-300" />
-                            </InputOTPGroup>
-                        </InputOTP>
-                        </div>
-                     </div>
-            
-                        <button
-                            type="submit"
-                            onClick={handleOtpSubmit}
-                            className="w-full b custom-button py-2 rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isLoading || otpCode.length !== 6}
-                        >
-                            {isLoading ? "جاري التحقق..." : "تحقق من OTP"}
-                        </button>
-                </div>
+                <div className="max-w-md mx-auto space-y-4">
+                                  <div>
+                                    <label className="block text-[0.8em] text-gray-600 mb-2">
+                                      أدخل رمز OTP
+                                    </label>
+                                    <div className="flex justify-center" dir="ltr">
+                                      <InputOTP 
+                                        maxLength={6} 
+                                        value={otpCode}
+                                        onChange={(value) => setOtpCode(value)}
+                                      >
+                                        <InputOTPGroup>
+                                          <InputOTPSlot index={0} className="w-10 h-10 text-lg border-gray-300" />
+                                          <InputOTPSlot index={1} className="w-10 h-10 text-lg border-gray-300" />
+                                          <InputOTPSlot index={2} className="w-10 h-10 text-lg border-gray-300" />
+                                        </InputOTPGroup>
+                                        <InputOTPSeparator />
+                                        <InputOTPGroup>
+                                          <InputOTPSlot index={3} className="w-10 h-10 text-lg border-gray-300" />
+                                          <InputOTPSlot index={4} className="w-10 h-10 text-lg border-gray-300" />
+                                          <InputOTPSlot index={5} className="w-10 h-10 text-lg border-gray-300" />
+                                        </InputOTPGroup>
+                                      </InputOTP>
+                                    </div>
+                                  </div>
+                
+                                  <button
+                                    type="submit"
+                                    className="w-full custom-button py-2 rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled={isLoading || otpCode.length !== 6}
+                                  >
+                                    {isLoading ? "جاري التحقق..." : "تحقق من OTP"}
+                                  </button>
+                
+                                  <button
+                                    type="button"
+                                    onClick={handleResendOtp}
+                                    className="w-full text-center text-[0.8em] text-green-600 hover:underline"
+                                    disabled={isLoading}
+                                  >
+                                    إعادة إرسال رمز OTP
+                                  </button>
+                
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setOtpSent(false);
+                                      setOtpCode("");
+                                    }}
+                                    className="w-full text-center text-[0.8em] text-gray-600 hover:underline"
+                                  >
+                                    العودة إلى تسجيل الدخول
+                                  </button>
+                                </div>
                         </>
                     )}
                 </form>

@@ -1599,3 +1599,40 @@ def delete_ma7acil(request, pk):
         status=status.HTTP_204_NO_CONTENT
     )
 
+
+
+
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework.response import Response
+from rest_framework import status
+
+class CookieTokenRefreshView(TokenRefreshView):
+    """
+    Custom TokenRefreshView that reads the refresh token from HttpOnly cookies.
+    """
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get('refresh_token')
+
+        if refresh_token is None:
+            return Response({'detail': 'Refresh token not found in cookies.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = self.get_serializer(data={'refresh': refresh_token})
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        # Optionally: also set a new access_token cookie
+        data = serializer.validated_data
+        response = Response(data, status=status.HTTP_200_OK)
+        response.set_cookie(
+            key="access_token",
+            value=data["access"],
+            httponly=True,
+            secure=False,  # True in production with HTTPS
+            samesite="Lax",
+            max_age=15 * 60,  # match access token lifetime
+        )
+        return response

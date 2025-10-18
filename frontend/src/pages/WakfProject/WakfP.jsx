@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Header } from "../../Components/Header";
-import Footer from "../../Components/Footer";
+
 import { ZakatContext } from "../../Components/ZakatProvider";
 import { Loader } from "../../Components/Loader";
 import { Support } from "./Components/Support";
@@ -35,7 +34,7 @@ export const WakfP = () => {
 
   const imageUrl = project.image?.startsWith("http")
     ? project.image
-    : `http://localhost:8000${project.image}`;
+    : `VITE_API_URL${project.image}`;
 
   return (
     <>

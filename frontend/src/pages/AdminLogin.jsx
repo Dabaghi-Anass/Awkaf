@@ -161,6 +161,7 @@ export const AdminLogin = () => {
         }
       }
       
+
       setPopup({ 
         message: errorMessage, 
         type: "error" 
@@ -196,7 +197,7 @@ export const AdminLogin = () => {
   };
 
   // Show loader while loading
-  if (loading) return <Loader />;
+  
 
   return (
     <>
