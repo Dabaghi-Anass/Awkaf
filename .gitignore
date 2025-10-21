@@ -25,6 +25,4 @@ dist-ssr
 
 __pycache__/*
 .env.production
-.env
-
 venv
