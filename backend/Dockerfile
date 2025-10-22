@@ -14,7 +14,6 @@ ENV PYTHONUNBUFFERED=1 \
     DB_PASSWORD=anass \
     DB_HOST=113.30.149.128 \
     DB_PORT=3306 \
-    DB_UNIX_SOCKET=/opt/lampp/var/mysql/mysql.sock \
     EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend \
     EMAIL_HOST=smtp.gmail.com \
     EMAIL_PORT=587 \
@@ -51,13 +50,13 @@ COPY . .
 # Make directories
 RUN mkdir -p /app/media /app/staticfiles
 
-# Collect static files
-RUN python manage.py collectstatic --noinput || true
-
-# Run migrations + create superuser automatically
-RUN python manage.py makemigrations --noinput && \
-    python manage.py migrate --noinput
+# Create startup script
+RUN echo '#!/bin/bash\n\
+python manage.py makemigrations --noinput\n\
+python manage.py migrate --noinput\n\
+python manage.py collectstatic --noinput || true\n\
+python manage.py runserver 0.0.0.0:8080' > /app/start.sh && chmod +x /app/start.sh
 
 EXPOSE 8080
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+CMD ["/app/start.sh"]
