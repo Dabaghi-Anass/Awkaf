@@ -110,13 +110,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'awkaf',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',  # Try using 127.0.0.1 instead of localhost
-        'PORT': '3306',
-        'OPTIONS': {
-            'unix_socket': '/opt/lampp/var/mysql/mysql.sock',
-        },
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', '0000'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Try using 127.0.0.1 instead of localhost
+        'PORT': os.getenv('DB_PORT', 3306),
+        
     }
 }
 
