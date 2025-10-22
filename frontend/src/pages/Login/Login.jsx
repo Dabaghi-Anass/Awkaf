@@ -61,6 +61,7 @@ export const Login = ({ handleChange, formData }) => {
 			}
 		} else {
 			console.error("Login failed:", error || result);
+			console.log(error);
 			setLoginError("حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.");
 		}
 
