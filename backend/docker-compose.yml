@@ -9,6 +9,10 @@ services:
             MYSQL_ROOT_PASSWORD: root
         ports:
             - "3307:3306"
+        command: --bind-address=0.0.0.0
+        volumes:
+            - db_data:/var/lib/mysql
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
     django:
         build: .
@@ -22,3 +26,6 @@ services:
             DB_NAME: awkaf
             DB_USER: anass
             DB_PASSWORD: anass
+
+volumes:
+    db_data:
