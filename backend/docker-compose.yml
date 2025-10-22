@@ -13,7 +13,7 @@ services:
     django:
         build: .
         ports:
-            - "8080:8080"
+            - "9010:8080"
         depends_on:
             - db
         environment:
