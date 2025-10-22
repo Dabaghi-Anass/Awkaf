@@ -56,12 +56,7 @@ RUN python manage.py collectstatic --noinput || true
 
 # Run migrations + create superuser automatically
 RUN python manage.py makemigrations --noinput && \
-    python manage.py migrate --noinput && \
-    python manage.py shell -c "\
-from django.contrib.auth import get_user_model; \
-User = get_user_model(); \
-User.objects.filter(username='admin').exists() or \
-User.objects.create_superuser('admin', 'anass.debbaghi123@gmail.com', 'admin')"
+    python manage.py migrate --noinput
 
 EXPOSE 8080
 
